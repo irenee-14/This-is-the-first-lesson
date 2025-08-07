@@ -1,0 +1,23 @@
+// Button.module.scss
+@use "@/styles/abstracts" as *;
+
+.button {
+  @include button-variant($primary-color);
+
+  &.large {
+    padding: map-get($spacings, "lg");
+  }
+
+  &.small {
+    padding: map-get($spacings, "xs") map-get($spacings, "sm");
+    font-size: 0.875rem;
+  }
+
+  &.secondary {
+    @include button-variant($secondary-color);
+  }
+
+  &.success {
+    @include button-variant($success-color);
+  }
+}
