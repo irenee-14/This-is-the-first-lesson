@@ -1,10 +1,12 @@
 // src/styles/abstracts/_mixins.scss
+@use "sass:map";
 @use "variables" as *;
+@use "sass:color";
 
 // 반응형 미디어 쿼리
 @mixin respond-to($breakpoint) {
   @if map-has-key($breakpoints, $breakpoint) {
-    @media (min-width: map-get($breakpoints, $breakpoint)) {
+    @media (min-width: map.get($breakpoints, $breakpoint)) {
       @content;
     }
   } @else {
@@ -24,13 +26,14 @@
   background-color: $bg-color;
   color: $text-color;
   border: none;
-  padding: map-get($spacings, "sm") map-get($spacings, "md");
+  padding: map.get($spacings, "sm") map.get($spacings, "md");
   border-radius: $border-radius;
   cursor: pointer;
   transition: all 0.3s ease;
 
   &:hover {
-    background-color: darken($bg-color, 10%);
+    // background-color: darken($bg-color, 10%);
+    background-color: color.adjust($bg-color, $lightness: -10%);
     transform: translateY(-2px);
   }
 
@@ -48,11 +51,11 @@
 @mixin card {
   background: white;
   border-radius: $border-radius;
-  padding: map-get($spacings, "lg");
-  box-shadow: map-get($shadows, "md");
+  padding: map.get($spacings, "lg");
+  box-shadow: map.get($shadows, "md");
 
   &:hover {
-    box-shadow: map-get($shadows, "lg");
+    box-shadow: map.get($shadows, "lg");
   }
 }
 

@@ -1,4 +1,5 @@
 // src/styles/components/_button.scss
+@use "sass:map";
 @use "../abstracts" as *;
 
 .btn {
@@ -13,12 +14,12 @@
   }
 
   &--large {
-    padding: map-get($spacings, "md") map-get($spacings, "xl");
-    font-size: map-get($font-sizes, "lg");
+    padding: map.get($spacings, "md") map.get($spacings, "xl");
+    font-size: map.get($font-sizes, "lg");
   }
 
   &--small {
-    padding: map-get($spacings, "xs") map-get($spacings, "sm");
-    font-size: map-get($font-sizes, "sm");
+    padding: map.get($spacings, "xs") map.get($spacings, "sm");
+    font-size: map.get($font-sizes, "sm");
   }
 }
