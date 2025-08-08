@@ -1,18 +1,22 @@
-import { useState } from "react";
 import "./App.scss";
-import { Button } from "./components/Button/Button";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
+import Home from "./pages/Home";
+import Character from "./pages/Character";
+import NotFound from "./pages/NotFound";
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
     <>
-      <Button />
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-      </div>
+      <Router>
+        <main>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/character" element={<Character />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </main>
+      </Router>
     </>
   );
 }
