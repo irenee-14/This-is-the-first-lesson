@@ -5,7 +5,7 @@ const Home: React.FC = () => {
   const navigate = useNavigate();
 
   const handleNavigateToAbout = (): void => {
-    navigate("/character");
+    navigate("/characters");
   };
 
   return (
