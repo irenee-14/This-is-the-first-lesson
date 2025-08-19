@@ -1,7 +1,8 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import "./styles/main.scss";
 import App from "./App.tsx";
+import "pretendard/dist/web/variable/pretendardvariable.css";
+import "./styles/globals.css";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
