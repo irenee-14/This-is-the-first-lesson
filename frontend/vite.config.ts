@@ -12,14 +12,6 @@ export default defineConfig({
       "@utils": path.resolve(__dirname, "./src/utils"),
     },
   },
-  css: {
-    preprocessorOptions: {
-      scss: {
-        // 모든 SCSS 파일에 자동으로 import
-        additionalData: `@use "@/styles/abstracts" as *;`,
-      },
-    },
-  },
 
   server: {
     port: 5173,

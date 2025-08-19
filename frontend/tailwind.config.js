@@ -19,7 +19,6 @@ export default {
           white: "#FCFDFD",
           "black-opacity-70": "#0D121CB2",
         },
-
         gray: {
           950: "#2A2A33",
           900: "#373843",
@@ -69,37 +68,25 @@ export default {
           "sans-serif",
         ],
       },
-      fontWeight: {
-        regular: "400",
-        medium: "500",
-        semibold: "600",
-        bold: "700",
-      },
       fontSize: {
-        xxs: "11px",
-        xs: "12px",
-        s: "14px",
-        m: "16px",
-        l: "18px",
-        xl: "24px",
+        xxs: "0.6875rem", // 11px
+        xs: "0.75rem", // 12px
+        s: "0.875rem", // 14px
+        m: "1rem", // 16px
+        l: "1.125rem", // 18px
+        xl: "1.5rem", // 24px
       },
       borderRadius: {
-        xxs: "4px",
-        xs: "8px",
-        s: "12px",
-        m: "16px",
-        l: "20px",
-        xl: "24px",
-        xxl: "32px",
-        xxxl: "40px",
+        full: "9999px", // circular
       },
       spacing: {
-        1: "4px",
-        2: "8px",
-        4: "16px",
-        6: "24px",
-        8: "32px",
-        10: "40px",
+        1: "0.25rem", // 4px
+        1.5: "0.375rem", // 6px
+        2: "0.5rem", // 8px
+        4: "1rem", // 16px
+        5: "1.25rem", // 20px
+        6: "1.5rem", // 24px
+        8: "2rem", // 32px
       },
     },
   },

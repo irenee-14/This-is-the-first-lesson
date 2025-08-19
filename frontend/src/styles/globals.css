@@ -2,6 +2,36 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer components {
+  .btn-base {
+    @apply inline-flex items-center justify-center font-medium transition-all
+      flex-shrink-0 rounded-full;
+  }
+
+  .btn-s {
+    @apply h-10 px-4 text-s gap-1;
+  }
+  .btn-m {
+    @apply h-12 px-5 text-m gap-1.5;
+  }
+  .btn-l {
+    @apply h-14 px-6 text-l gap-2;
+  }
+
+  .btn-primary {
+    @apply bg-purple-600 text-white hover:bg-purple-700 active:bg-purple-800
+      disabled:bg-purple-200;
+  }
+  .btn-secondary {
+    @apply bg-gray-700 text-white hover:bg-gray-800 active:bg-purple-900
+      disabled:bg-gray-300;
+  }
+  .btn-tertiary {
+    @apply border border-gray-400 text-gray-800 hover:bg-gray-100
+      active:bg-gray-200 disabled:text-gray-400 disabled:border-gray-200;
+  }
+}
+
 @layer base {
   * {
     font-family: "Pretendard Variable", "Pretendard", -apple-system,
