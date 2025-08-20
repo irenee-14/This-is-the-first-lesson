@@ -22,21 +22,40 @@ const buttonVariants = cva("btn-base", {
     size: "m",
   },
 });
+
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean;
+  leftIcon?: React.ReactNode;
+  rightIcon?: React.ReactNode;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, ...props }, ref) => {
+  (
+    {
+      className,
+      variant,
+      size,
+      asChild = false,
+      leftIcon,
+      rightIcon,
+      children,
+      ...props
+    },
+    ref
+  ) => {
     const Comp = (asChild ? Slot : "button") as React.ElementType;
     return (
       <Comp
-        className={cn(buttonVariants({ variant, size, className }))}
+        className={cn(buttonVariants({ variant, size }), className)}
         ref={ref}
         {...props}
-      />
+      >
+        {leftIcon && <span className="flex items-center">{leftIcon}</span>}
+        {children}
+        {rightIcon && <span className="flex items-center">{rightIcon}</span>}
+      </Comp>
     );
   }
 );

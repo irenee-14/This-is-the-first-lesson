@@ -1,19 +1,24 @@
+/* Base */
 .chip-base {
-  @apply inline-flex items-center justify-center font-normal rounded-full  text-white  bg-gray-950;
-}
-.chip-s {
-  @apply h-6 px-2 text-xs gap-[3px];
-}
-.chip-m {
-  @apply h-7 px-2 text-xs gap-[3px] font-medium;
-}
-.chip-l {
-  @apply h-8 px-3 text-sm gap-1 font-medium;
+  @apply inline-flex items-center justify-center font-normal
+         focus:outline-none disabled:cursor-not-allowed;
 }
 
+/* Variant styles */
 .chip-filled {
-  @apply bg-gray-950 text-white;
+  @apply bg-gray-950  text-white;
 }
 .chip-outlined {
-  @apply outline outline-[0.5px] outline-offset-[-0.25px] outline-white;
+  @apply border border-gray-400 text-white;
+}
+
+/* Sizes */
+.chip-s {
+  @apply h-6 px-2 text-xs gap-[3px] font-normal [&_svg]:w-3 [&_svg]:h-3;
+}
+.chip-m {
+  @apply h-7 px-2 text-xs gap-[3px] font-medium [&_svg]:w-3 [&_svg]:h-3;
+}
+.chip-l {
+  @apply h-8 px-3 text-sm gap-1 font-medium [&_svg]:w-4 [&_svg]:h-4;
 }

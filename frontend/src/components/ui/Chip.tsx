@@ -1,6 +1,5 @@
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
-
 import { cn } from "@/lib/utils";
 import "@/styles/components/chip.css";
 
@@ -27,16 +26,33 @@ const chipVariants = cva("chip-base", {
   },
 });
 
-export interface BadgeProps
+export interface ChipProps
   extends React.HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof chipVariants> {}
+    VariantProps<typeof chipVariants> {
+  leftIcon?: React.ReactNode;
+  rightIcon?: React.ReactNode;
+  children: React.ReactNode;
+}
 
-function Chip({ className, size, shape, variantStyle, ...props }: BadgeProps) {
+function Chip({
+  className,
+  size,
+  shape,
+  variantStyle,
+  leftIcon,
+  rightIcon,
+  children,
+  ...props
+}: ChipProps) {
   return (
     <div
       className={cn(chipVariants({ size, shape, variantStyle }), className)}
       {...props}
-    />
+    >
+      {leftIcon && <span className="flex items-center">{leftIcon}</span>}
+      <span>{children}</span>
+      {rightIcon && <span className="flex items-center">{rightIcon}</span>}
+    </div>
   );
 }
 

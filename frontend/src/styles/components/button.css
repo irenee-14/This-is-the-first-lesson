@@ -1,9 +1,12 @@
+/* Base */
 .btn-base {
   @apply inline-flex items-center justify-center font-medium transition-all flex-shrink-0 rounded-full
          focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring
-         disabled:pointer-events-none disabled:cursor-not-allowed [&_svg]:pointer-events-none [&_svg]:shrink-0;
+         disabled:pointer-events-none disabled:cursor-not-allowed
+         [&_svg]:pointer-events-none [&_svg]:shrink-0;
 }
 
+/* Variants */
 .btn-primary {
   @apply bg-purple-600 text-white hover:bg-purple-700 active:bg-purple-800 disabled:bg-purple-200;
 }
@@ -17,6 +20,7 @@
          disabled:text-gray-400 disabled:border-gray-200;
 }
 
+/* Sizes */
 .btn-s {
   @apply h-10 px-4 text-sm gap-1 [&_svg]:size-4;
 }
