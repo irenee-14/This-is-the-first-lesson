@@ -101,3 +101,9 @@ backend/test/types/index.js
 # compiled app
 backend/dist
 
+#------------------------------------------------
+
+# Ignore all .env files across the repo
+**/.env
+**/.env.*
+
