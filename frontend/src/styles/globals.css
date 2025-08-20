@@ -3,19 +3,20 @@
 @tailwind utilities;
 
 @layer components {
+  /* button */
   .btn-base {
     @apply inline-flex items-center justify-center font-medium transition-all
       flex-shrink-0 rounded-full;
   }
 
   .btn-s {
-    @apply h-10 px-4 text-s gap-1;
+    @apply h-10 px-4 text-sm gap-1;
   }
   .btn-m {
-    @apply h-12 px-5 text-m gap-1.5;
+    @apply h-12 px-5 text-base font-semibold gap-1.5;
   }
   .btn-l {
-    @apply h-14 px-6 text-l gap-2;
+    @apply h-14 px-6 text-lg font-semibold gap-2;
   }
 
   .btn-primary {
@@ -29,6 +30,26 @@
   .btn-tertiary {
     @apply border border-gray-400 text-gray-800 hover:bg-gray-100
       active:bg-gray-200 disabled:text-gray-400 disabled:border-gray-200;
+  }
+
+  /* chip */
+  .chip-base {
+    @apply inline-flex items-center justify-center font-normal rounded-full  text-white  bg-gray-950;
+  }
+  .chip-s {
+    @apply h-6 px-2 text-xs gap-[3px];
+  }
+  .chip-m {
+    @apply h-7 px-2 text-xs gap-[3px] font-medium;
+  }
+  .chip-l {
+    @apply h-8 px-3 text-sm gap-1 font-medium;
+  }
+  .chip-square {
+    @apply rounded-lg;
+  }
+  .chip-outlined {
+    @apply outline outline-[0.5px] outline-offset-[-0.25px] outline-white;
   }
 }
 
@@ -44,6 +65,7 @@
   }
 
   body {
+    background-color: theme("colors.indigoGray.black");
     font-family: "Pretendard Variable", "Pretendard", -apple-system,
       BlinkMacSystemFont, system-ui, sans-serif;
     font-weight: 400;
