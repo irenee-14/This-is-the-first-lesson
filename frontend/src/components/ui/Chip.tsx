@@ -1,39 +1,43 @@
-import React from "react";
-import clsx from "clsx";
+import * as React from "react";
+import { cva, type VariantProps } from "class-variance-authority";
 
-type ChipProps = {
-  shape?: "rounded" | "square";
-  style?: "filled" | "outlined";
-  size?: "s" | "m" | "l";
-  className?: string;
-  children: React.ReactNode;
-};
+import { cn } from "@/lib/utils";
+import "@/styles/components/chip.css";
 
-const Chip: React.FC<ChipProps> = ({
-  shape = "rounded",
-  style = "filled",
-  size = "s",
-  className,
-  children,
-}) => {
-  const sizeClass =
-    size === "s" ? "chip-s" : size === "m" ? "chip-m" : "chip-l";
-  const shapeClass = shape === "rounded" ? "chip-rounded" : "chip-square";
-  const styleClass = style === "filled" ? "chip-filled" : "chip-outlined";
+const chipVariants = cva("chip-base", {
+  variants: {
+    size: {
+      s: "chip-s",
+      m: "chip-m",
+      l: "chip-l",
+    },
+    shape: {
+      rounded: "rounded-full",
+      square: "rounded-lg",
+    },
+    variantStyle: {
+      filled: "chip-filled",
+      outlined: "chip-outlined",
+    },
+  },
+  defaultVariants: {
+    size: "s",
+    shape: "rounded",
+    variantStyle: "filled",
+  },
+});
 
+export interface BadgeProps
+  extends React.HTMLAttributes<HTMLDivElement>,
+    VariantProps<typeof chipVariants> {}
+
+function Chip({ className, size, shape, variantStyle, ...props }: BadgeProps) {
   return (
     <div
-      className={clsx(
-        "chip-base",
-        sizeClass,
-        shapeClass,
-        styleClass,
-        className
-      )}
-    >
-      {children}
-    </div>
+      className={cn(chipVariants({ size, shape, variantStyle }), className)}
+      {...props}
+    />
   );
-};
+}
 
 export default Chip;

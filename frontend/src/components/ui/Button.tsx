@@ -1,51 +1,46 @@
-import React from "react";
-import clsx from "clsx";
+import * as React from "react";
+import { Slot } from "@radix-ui/react-slot";
+import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "@/lib/utils";
+import "@/styles/components/button.css";
 
-// btn-s btn-m btn-l btn-primary btn-secondary btn-tertiary
+const buttonVariants = cva("btn-base", {
+  variants: {
+    variant: {
+      primary: "btn-primary",
+      secondary: "btn-secondary",
+      tertiary: "btn-tertiary",
+    },
+    size: {
+      s: "btn-s",
+      m: "btn-m",
+      l: "btn-l",
+    },
+  },
+  defaultVariants: {
+    variant: "primary",
+    size: "m",
+  },
+});
+export interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+    VariantProps<typeof buttonVariants> {
+  asChild?: boolean;
+}
 
-type ButtonProps = {
-  type?: "submit" | "reset" | "button" | undefined;
-  variant?: "primary" | "secondary" | "tertiary";
-  size?: "s" | "m" | "l";
-  onClick?: React.MouseEventHandler<HTMLButtonElement>;
-  className?: string;
-  disabled?: boolean;
-  children: React.ReactNode;
-};
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ className, variant, size, asChild = false, ...props }, ref) => {
+    const Comp = (asChild ? Slot : "button") as React.ElementType;
+    return (
+      <Comp
+        className={cn(buttonVariants({ variant, size, className }))}
+        ref={ref}
+        {...props}
+      />
+    );
+  }
+);
 
-const Button: React.FC<ButtonProps> = ({
-  type,
-  variant = "primary",
-  size = "m",
-  onClick,
-  className,
-  disabled = false,
-  children,
-}) => {
-  const sizeClass = size === "s" ? "btn-s" : size === "m" ? "btn-m" : "btn-l";
-  const variantClass =
-    variant === "primary"
-      ? "btn-primary"
-      : variant === "secondary"
-      ? "btn-secondary"
-      : "btn-tertiary";
-
-  return (
-    <button
-      type={type || "button"}
-      className={clsx(
-        "btn-base",
-        sizeClass,
-        variantClass,
-        disabled && "cursor-not-allowed",
-        className
-      )}
-      onClick={onClick}
-      disabled={disabled}
-    >
-      {children}
-    </button>
-  );
-};
+Button.displayName = "Button";
 
 export default Button;
