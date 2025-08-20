@@ -1,54 +1,96 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+  darkMode: ["class"],
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
       colors: {
         indigoGray: {
-          black: "#12121D",
-          900: "#2F304B",
-          800: "#343658",
-          700: "#3B3D69",
-          600: "#484C81",
-          500: "#5C629B",
-          400: "#7C81B4",
-          300: "#AAADCF",
-          200: "#D2D4E5",
-          100: "#EBEBF3",
           50: "#F5F5FA",
+          100: "#EBEBF3",
+          200: "#D2D4E5",
+          300: "#AAADCF",
+          400: "#7C81B4",
+          500: "#5C629B",
+          600: "#484C81",
+          700: "#3B3D69",
+          800: "#343658",
+          900: "#2F304B",
+          black: "#12121D",
           white: "#FCFDFD",
           "black-opacity-70": "#0D121CB2",
         },
         gray: {
-          950: "#2A2A33",
-          900: "#373843",
-          800: "#3E3E4E",
-          700: "#48495C",
-          600: "#595A70",
-          500: "#6E7189",
-          400: "#8C8EA4",
-          300: "#B5B6C4",
-          200: "#D7D8E0",
-          100: "#EDEDF1",
           50: "#F7F7F8",
+          100: "#EDEDF1",
+          200: "#D7D8E0",
+          300: "#B5B6C4",
+          400: "#8C8EA4",
+          500: "#6E7189",
+          600: "#595A70",
+          700: "#48495C",
+          800: "#3E3E4E",
+          900: "#373843",
+          950: "#2A2A33",
         },
         purple: {
-          900: "#27115F",
-          800: "#4A1FB8",
-          700: "#5925DC",
-          600: "#6938EF",
-          500: "#7A5AF8",
-          400: "#9B8AFB",
-          300: "#BDB4FE",
-          200: "#D9D6FE",
-          100: "#EBE9FE",
           50: "#F4F3FF",
+          100: "#EBE9FE",
+          200: "#D9D6FE",
+          300: "#BDB4FE",
+          400: "#9B8AFB",
+          500: "#7A5AF8",
+          600: "#6938EF",
+          700: "#5925DC",
+          800: "#4A1FB8",
+          900: "#27115F",
         },
         unsafe: "#E43DB7",
         safe: "#6A4CC6",
         "unsafe-opacity-25": "#E43D8740",
         "safe-font": "#BA99F0",
         "safe-opacity-25": "#6A4CC640",
+
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
+        card: {
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
+        },
+        popover: {
+          DEFAULT: "hsl(var(--popover))",
+          foreground: "hsl(var(--popover-foreground))",
+        },
+        primary: {
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
+        },
+        secondary: {
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
+        },
+        muted: {
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
+        },
+        accent: {
+          DEFAULT: "hsl(var(--accent))",
+          foreground: "hsl(var(--accent-foreground))",
+        },
+        destructive: {
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
+        },
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
+        chart: {
+          1: "hsl(var(--chart-1))",
+          2: "hsl(var(--chart-2))",
+          3: "hsl(var(--chart-3))",
+          4: "hsl(var(--chart-4))",
+          5: "hsl(var(--chart-5))",
+        },
       },
       fontFamily: {
         sans: [
@@ -68,27 +110,22 @@ export default {
           "sans-serif",
         ],
       },
-      fontSize: {
-        xxs: "0.6875rem", // 11px
-        xs: "0.75rem", // 12px
-        s: "0.875rem", // 14px
-        m: "1rem", // 16px
-        l: "1.125rem", // 18px
-        xl: "1.5rem", // 24px
-      },
       borderRadius: {
-        full: "9999px", // circular
+        full: "9999px",
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
       },
       spacing: {
-        1: "0.25rem", // 4px
-        1.5: "0.375rem", // 6px
-        2: "0.5rem", // 8px
-        4: "1rem", // 16px
-        5: "1.25rem", // 20px
-        6: "1.5rem", // 24px
-        8: "2rem", // 32px
+        1: "0.25rem",
+        2: "0.5rem",
+        4: "1rem",
+        5: "1.25rem",
+        6: "1.5rem",
+        8: "2rem",
+        1.5: "0.375rem",
       },
     },
   },
-  plugins: [],
+  plugins: [require("tailwindcss-animate")],
 };
