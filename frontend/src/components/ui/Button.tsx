@@ -4,19 +4,23 @@ import clsx from "clsx";
 // btn-s btn-m btn-l btn-primary btn-secondary btn-tertiary
 
 type ButtonProps = {
+  type?: "submit" | "reset" | "button" | undefined;
   variant?: "primary" | "secondary" | "tertiary";
   size?: "s" | "m" | "l";
-  disabled?: boolean;
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
   className?: string;
+  disabled?: boolean;
   children: React.ReactNode;
 };
 
 const Button: React.FC<ButtonProps> = ({
+  type,
   variant = "primary",
   size = "m",
+  onClick,
+  className,
   disabled = false,
   children,
-  className,
 }) => {
   const sizeClass = size === "s" ? "btn-s" : size === "m" ? "btn-m" : "btn-l";
   const variantClass =
@@ -28,6 +32,7 @@ const Button: React.FC<ButtonProps> = ({
 
   return (
     <button
+      type={type || "button"}
       className={clsx(
         "btn-base",
         sizeClass,
@@ -35,6 +40,7 @@ const Button: React.FC<ButtonProps> = ({
         disabled && "cursor-not-allowed",
         className
       )}
+      onClick={onClick}
       disabled={disabled}
     >
       {children}
