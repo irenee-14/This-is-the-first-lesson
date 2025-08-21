@@ -17,7 +17,7 @@ export default function BottomNav() {
   const [selected, setSelected] = useState("characters");
 
   return (
-    <nav className="fixed bottom-0 left-0 w-96 h-14 px-4 pt-2 bg-gray-950 border-t-[1.5px] border-primary inline-flex justify-center items-start gap-6 overflow-hidden z-50">
+    <nav className="w-96 h-14 fixed bottom-0 left-1/2 -translate-x-1/2 px-4 pt-2 bg-gray-950 border-t-[1.5px] border-primary inline-flex justify-center items-start gap-6 overflow-hidden z-50">
       {navItems.map((item) => {
         const Icon = item.icon;
         const isActive = selected === item.key;
