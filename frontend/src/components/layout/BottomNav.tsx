@@ -13,7 +13,7 @@ const navItems = [
   { key: "mypage", label: "My Page", icon: MenuIcon },
 ];
 
-export default function NavBottom() {
+export default function BottomNav() {
   const [selected, setSelected] = useState("characters");
 
   return (
