@@ -20,7 +20,7 @@ export default function SwitchSafe({ initialMode = "safe" }: SwitchSafeProps) {
   return (
     <div
       className={cn(
-        "inline-flex items-center gap-1 px-4 py-3 rounded-2xl transition-colors",
+        "px-4 py-3 inline-flex items-center gap-1 rounded-2xl transition-colors",
         bgColor
       )}
     >

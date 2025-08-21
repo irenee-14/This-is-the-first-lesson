@@ -45,13 +45,21 @@ export default {
           800: "#4A1FB8",
           900: "#27115F",
         },
+        primary: {
+          DEFAULT: "#6938EF", // purple-600
+          foreground: "#FCFDFD", // indigoGray-50
+        },
+        phone: "#12121D", // indigoGray-black
+
+        "Black-Font": "#12121D", // indigoGray-black
+        "White-Font": "#F5F5FA", // indigoGray-50
         unsafe: "#E43DB7",
         safe: "#6A4CC6",
         "unsafe-opacity-25": "#E43D8740",
         "safe-font": "#BA99F0",
         "safe-opacity-25": "#6A4CC640",
 
-        background: "hsl(var(--background))",
+        background: "#12121D", // indigoGray-black
         foreground: "hsl(var(--foreground))",
         card: {
           DEFAULT: "hsl(var(--card))",
@@ -60,10 +68,6 @@ export default {
         popover: {
           DEFAULT: "hsl(var(--popover))",
           foreground: "hsl(var(--popover-foreground))",
-        },
-        primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
