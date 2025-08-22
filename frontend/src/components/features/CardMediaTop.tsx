@@ -21,14 +21,14 @@ export default function CardMediaTop({
   return (
     <div
       className={cn(
-        "w-40 inline-flex flex-col justify-start items-start gap-2",
+        "w-[9.75rem] inline-flex flex-col justify-start items-start gap-2",
         onClick && "cursor-pointer",
         className
       )}
       onClick={onClick}
     >
       <div
-        className="w-40 h-40 relative bg-indigo-900 rounded"
+        className="w-[9.75rem] h-[9.75rem] relative bg-indigo-900 rounded"
         style={{
           backgroundImage: imageUrl ? `url(${imageUrl})` : undefined,
           backgroundSize: "cover",

@@ -2,11 +2,15 @@ import SwitchSafe from "@/components/ui/SwitchSafe";
 
 export default function TopNav() {
   return (
-    <nav className="w-96 h-14 flex items-center justify-between px-6 bg-phone text-White-Font shadow-md">
+    <nav
+      className="fixed top-0 left-1/2 -translate-x-1/2
+                 w-full max-w-sm md:max-w-md lg:max-w-lg h-[3.375rem]
+                 flex items-center justify-between px-6
+                 bg-phone text-White-Font shadow-md z-50"
+    >
       {/* 로고 */}
-      <div className="w-14 h-4 flex items-center">
-        <img src="/image/logo.svg" alt="logo" className="h-10 w-auto" />
-      </div>
+      <img src="/image/logo.svg" alt="logo" className="h-[1.125rem] w-auto" />
+
       {/* 오른쪽 스위치 */}
       <div className="flex items-center">
         <SwitchSafe />

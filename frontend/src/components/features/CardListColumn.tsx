@@ -23,7 +23,7 @@ export default function CardListColumn({
   return (
     <div
       className={cn(
-        "self-stretch flex flex-col justify-start items-start gap-4 scrollbar-hide",
+        "self-stretch inline-flex flex-col justify-start items-start gap-4 scrollbar-hide",
         className
       )}
     >

@@ -22,14 +22,19 @@ const router = createBrowserRouter([
 
 function App() {
   return (
-    <div className="min-h-screen flex flex-col items-center relative">
-      <TopNav />
+    <div className="min-h-screen flex flex-col items-center">
+      <div className="flex-1 w-96 flex justify-center">
+        <TopNav />
+        <main
+          className="w-full max-w-sm md:max-w-md lg:max-w-lg flex-1
+                   mt-[3.375rem] mb-[3.5rem]
+                   pl-safe-left pr-safe-right"
+        >
+          <RouterProvider router={router} />
+        </main>
 
-      <div className="flex-1 w-96 flex justify-center mt-4 mb-16">
-        <RouterProvider router={router} />
+        <BottomNav />
       </div>
-
-      <BottomNav />
     </div>
   );
 }
