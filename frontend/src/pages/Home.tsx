@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "@components/ui/Button";
 import Chip from "@components/ui/Chip";
-import Input from "@/components/ui/input";
+import Input from "@/components/ui/Input";
 import Dropdown from "@/components/ui/Dropdown";
 import Switch from "@/components/ui/Switch";
 import SwitchSafe from "@/components/ui/SwitchSafe";

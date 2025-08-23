@@ -31,11 +31,21 @@ export interface InputProps
     VariantProps<typeof inputVariants> {
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
+  onRightIconClick?: () => void;
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
   (
-    { className, variant, textColor, shape, leftIcon, rightIcon, ...props },
+    {
+      className,
+      variant,
+      textColor,
+      shape,
+      leftIcon,
+      rightIcon,
+      onRightIconClick,
+      ...props
+    },
     ref
   ) => {
     return (
@@ -51,9 +61,12 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           className="flex-1 bg-transparent focus:outline-none"
         />
         {rightIcon && (
-          <div className="w-5 h-5 flex items-center input-icon">
+          <button
+            onClick={onRightIconClick}
+            className="w-5 h-5 flex items-center input-icon"
+          >
             {rightIcon}
-          </div>
+          </button>
         )}
       </div>
     );
