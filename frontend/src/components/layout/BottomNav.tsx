@@ -22,7 +22,7 @@ export default function BottomNav() {
       className="fixed bottom-0 left-1/2 -translate-x-1/2
                  w-full max-w-sm md:max-w-md lg:max-w-lg h-[3.5rem] px-4 pt-2
                  bg-phone border-t border-primary
-                 inline-flex justify-between items-start gap-6
+                 inline-flex justify-between items-start gap-5
                  overflow-hidden z-50"
     >
       {navItems.map((item) => {

@@ -11,7 +11,7 @@ const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(
     {
       className,
       trackColor = "bg-gray-400",
-      checkedColor = "bg-purple-600",
+      checkedColor = "peer-checked:bg-purple-600",
       ...props
     },
     ref
@@ -29,7 +29,7 @@ const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(
           className={cn(
             "w-full h-full rounded-full transition-colors duration-200",
             trackColor,
-            `peer-checked:${checkedColor}`
+            checkedColor
           )}
         />
         {/* 썸 */}

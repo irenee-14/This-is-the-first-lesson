@@ -27,8 +27,7 @@ function App() {
         <TopNav />
         <main
           className="w-full max-w-sm md:max-w-md lg:max-w-lg flex-1
-                   mt-[3.375rem] mb-[3.5rem]
-                   pl-safe-left pr-safe-right"
+                   mt-[3.375rem] mb-[3.5rem]"
         >
           <RouterProvider router={router} />
         </main>

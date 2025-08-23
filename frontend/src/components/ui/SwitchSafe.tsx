@@ -30,7 +30,7 @@ export default function SwitchSafe({ initialMode = "safe" }: SwitchSafeProps) {
           textColor
         )}
       >
-        <SafeIcon className="w-5 h-5 stroke-current" />
+        <SafeIcon className="w-auto h-5 stroke-current" />
         {labelText}
       </span>
 
@@ -38,7 +38,7 @@ export default function SwitchSafe({ initialMode = "safe" }: SwitchSafeProps) {
         checked={checked}
         onChange={() => setMode(checked ? "unsafe" : "safe")}
         trackColor="bg-unsafe-opacity-25"
-        checkedColor="bg-safe"
+        checkedColor="peer-checked:bg-safe"
       />
     </div>
   );
