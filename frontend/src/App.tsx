@@ -6,8 +6,7 @@ import CharacterDetail from "./pages/CharactersDetail";
 import Backgrounds from "./pages/Backgrounds";
 import BackgroundDetail from "./pages/BackgroundDetail";
 import Personas from "./pages/Personas";
-import BottomNav from "./components/layout/BottomNav";
-import TopNav from "./components/layout/TopNav";
+import ComponentDemo from "./pages/ComponentDemo";
 
 const router = createBrowserRouter([
   // { path: "/", element: <Home /> },
@@ -17,20 +16,15 @@ const router = createBrowserRouter([
   { path: "/backgrounds/:writerId", element: <Backgrounds /> },
   { path: "/backgrounds/:bgId", element: <BackgroundDetail /> },
   { path: "/personas", element: <Personas /> },
+  { path: "/demo", element: <ComponentDemo /> },
   { path: "*", element: <NotFound /> },
 ]);
 
 function App() {
   return (
-    <div className="min-h-screen">
-      <TopNav />
-
-      <main className="w-full max-w-[360px] md:max-w-md lg:max-w-lg mx-auto flex-1 mt-14 mb-20">
-        <RouterProvider router={router} />
-      </main>
-
-      <BottomNav />
-    </div>
+    <main className="min-h-screen w-full max-w-sm md:max-w-md lg:max-w-lg mx-auto flex-1">
+      <RouterProvider router={router} />
+    </main>
   );
 }
 

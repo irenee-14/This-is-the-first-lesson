@@ -2,7 +2,7 @@ import CardMediaTop from "@/components/features/CardMediaTop";
 import Input from "@/components/ui/input";
 import { ReactComponent as SearchIcon } from "@/assets/icons/Search.svg";
 import { useNavigate } from "react-router-dom";
-import TopNav from "@/components/layout/Header";
+import Header from "@/components/layout/Header";
 import BottomNav from "@/components/layout/BottomNav";
 
 // 더미 데이터
@@ -105,7 +105,7 @@ export default function Characters() {
 
   return (
     <>
-      <TopNav />
+      <Header />
 
       <div className="pt-14 pb-20">
         <div className="bg-gray-900 p-4 h-44">

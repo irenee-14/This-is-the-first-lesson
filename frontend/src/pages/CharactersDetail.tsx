@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import DetailHeader from "@/components/layout/DetailHeader";
 import BottomNav from "@/components/layout/BottomNav";
+import Header from "@/components/layout/Header";
 
 const CharacterDetail: React.FC = () => {
   const navigate = useNavigate();
@@ -16,7 +17,7 @@ const CharacterDetail: React.FC = () => {
 
   return (
     <>
-      <DetailHeader title="캐릭터 상세" />
+      <Header variant="withText" title="캐릭터 상세" />
 
       <div className="pt-14 pb-20">
         <div className="bg-gray-900 p-4 h-44 mb-6">
