@@ -2,17 +2,17 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 import Characters from "./pages/Characters";
 import NotFound from "./pages/NotFound";
-import CharacterDetail from "./pages/CharactersDetail";
 import Backgrounds from "./pages/Backgrounds";
 import BackgroundDetail from "./pages/BackgroundDetail";
 import Personas from "./pages/Personas";
 import ComponentDemo from "./pages/ComponentDemo";
+import CharacterDetailPage from "./pages/CharacterDetailPage";
 
 const router = createBrowserRouter([
   // { path: "/", element: <Home /> },
   { path: "/", element: <Characters /> },
   { path: "/characters", element: <Characters /> },
-  { path: "/characters/:charId", element: <CharacterDetail /> },
+  { path: "/characters/:charId", element: <CharacterDetailPage /> },
   { path: "/backgrounds/:writerId", element: <Backgrounds /> },
   { path: "/backgrounds/:bgId", element: <BackgroundDetail /> },
   { path: "/personas", element: <Personas /> },
