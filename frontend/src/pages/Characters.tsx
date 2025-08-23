@@ -2,6 +2,8 @@ import CardMediaTop from "@/components/features/CardMediaTop";
 import Input from "@/components/ui/input";
 import { ReactComponent as SearchIcon } from "@/assets/icons/Search.svg";
 import { useNavigate } from "react-router-dom";
+import TopNav from "@/components/layout/Header";
+import BottomNav from "@/components/layout/BottomNav";
 
 // 더미 데이터
 const popularCharacters = [
@@ -103,54 +105,60 @@ export default function Characters() {
 
   return (
     <>
-      <div className="bg-gray-900 p-4 h-44">
-        <h2 className="h-40 text-2xl font-bold ">배너</h2>
-      </div>
+      <TopNav />
 
-      <div className="p-3">
-        <div className="mb-8 gap-3 flex flex-col">
-          <h2 className="text-lg font-semibold">위프 추천 🔑 인기 캐릭터</h2>
-          <div className="overflow-x-auto flex gap-4 scrollbar-hide">
-            {popularCharacters.map((character) => (
-              <CardMediaTop
-                key={character.id}
-                imageUrl={character.imageUrl}
-                name={character.name}
-                description={character.description}
-                chips={character.chips}
-                onClick={() => handleCharacterClick(character.id)}
-                variant="horizontal"
-              />
-            ))}
+      <div className="pt-14 pb-20">
+        <div className="bg-gray-900 p-4 h-44">
+          <h2 className="h-40 text-2xl font-bold">배너</h2>
+        </div>
+
+        <div className="p-3">
+          <div className="mb-8 gap-3 flex flex-col">
+            <h2 className="text-lg font-semibold">위프 추천 🔑 인기 캐릭터</h2>
+            <div className="overflow-x-auto flex gap-4 scrollbar-hide">
+              {popularCharacters.map((character) => (
+                <CardMediaTop
+                  key={character.id}
+                  imageUrl={character.imageUrl}
+                  name={character.name}
+                  description={character.description}
+                  chips={character.chips}
+                  onClick={() => handleCharacterClick(character.id)}
+                  variant="horizontal"
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Search Section */}
+          <div className="mb-4">
+            <Input
+              placeholder="작품 이름이나 캐릭터, 설명으로 검색"
+              leftIcon={<SearchIcon />}
+              variant="outlinedGray500"
+            />
+          </div>
+
+          {/* All Characters Section */}
+          <div>
+            <div className="grid grid-cols-2 gap-4">
+              {allCharacters.map((character) => (
+                <CardMediaTop
+                  key={character.id}
+                  imageUrl={character.imageUrl}
+                  name={character.name}
+                  description={character.description}
+                  chips={character.chips}
+                  onClick={() => handleCharacterClick(character.id)}
+                  variant="grid"
+                />
+              ))}
+            </div>
           </div>
         </div>
-
-        {/* Search Section */}
-        <div className="mb-4">
-          <Input
-            placeholder="작품 이름이나 캐릭터, 설명으로 검색"
-            leftIcon={<SearchIcon />}
-            variant="outlinedGray500"
-          />
-        </div>
-
-        {/* All Characters Section */}
-        <div>
-          <div className="grid grid-cols-2 gap-4">
-            {allCharacters.map((character) => (
-              <CardMediaTop
-                key={character.id}
-                imageUrl={character.imageUrl}
-                name={character.name}
-                description={character.description}
-                chips={character.chips}
-                onClick={() => handleCharacterClick(character.id)}
-                variant="grid"
-              />
-            ))}
-          </div>
-        </div>
       </div>
+
+      <BottomNav />
     </>
   );
 }

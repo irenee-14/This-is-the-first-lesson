@@ -42,7 +42,7 @@ export default function BottomNav() {
                   "h-full w-auto transition-colors duration-200 ",
                   isActive ? "text-purple-500" : "text-indigoGray-400"
                 )}
-                stroke-width={isActive ? 2 : 1.5}
+                strokeWidth={isActive ? 2 : 1.5}
               />
             </div>
 

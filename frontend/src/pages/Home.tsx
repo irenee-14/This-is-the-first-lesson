@@ -51,7 +51,7 @@ const Home: React.FC = () => {
   ];
 
   return (
-    <div className="home-page p-6 min-h-screen">
+    <div className="p-6 min-h-screen">
       {/* Header Section */}
 
       {/* Button Component Tests */}
