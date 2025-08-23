@@ -2,13 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer components {
-}
-
 @layer base {
   * {
     font-family: "Pretendard Variable", "Pretendard", -apple-system,
       BlinkMacSystemFont, system-ui, sans-serif;
+    @apply border-border;
   }
 
   html {
@@ -19,8 +17,10 @@
   body {
     font-family: "Pretendard Variable", "Pretendard", -apple-system,
       BlinkMacSystemFont, system-ui, sans-serif;
+    @apply bg-indigoGray-black text-white;
     font-weight: 400;
   }
+
   :root {
     --background: 0 0% 100%;
     --foreground: 0 0% 3.9%;
@@ -48,6 +48,7 @@
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
   }
+
   .dark {
     --background: 0 0% 3.9%;
     --foreground: 0 0% 98%;
@@ -76,11 +77,5 @@
   }
 }
 
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-indigoGray-black text-foreground;
-  }
+@layer components {
 }
