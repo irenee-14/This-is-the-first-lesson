@@ -1,7 +1,7 @@
-import React from "react";
 import CardMediaTop from "@/components/features/CardMediaTop";
 import Input from "@/components/ui/input";
 import { ReactComponent as SearchIcon } from "@/assets/icons/Search.svg";
+import { useNavigate } from "react-router-dom";
 
 // 더미 데이터
 const popularCharacters = [
@@ -95,9 +95,10 @@ const allCharacters = [
 ];
 
 export default function Characters() {
+  const navigate = useNavigate();
+
   const handleCharacterClick = (characterId: number) => {
-    console.log("캐릭터 클릭:", characterId);
-    // 여기에 캐릭터 상세 페이지로 이동하는 로직 추가
+    navigate(`/characters/${characterId}`);
   };
 
   return (
