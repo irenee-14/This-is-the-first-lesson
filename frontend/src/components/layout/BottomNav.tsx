@@ -20,7 +20,7 @@ export default function BottomNav() {
     // <nav className="w-full h-[3.5rem] fixed bottom-0 left-1/2 -translate-x-1/2 px-4 pt-2 bg-gray-950 border-t-[1.5px] border-primary inline-flex justify-center items-start gap-6 overflow-hidden z-50">
     <nav
       className="fixed bottom-0 left-1/2 -translate-x-1/2
-                 w-full max-w-sm md:max-w-md lg:max-w-lg h-[3.5rem] px-4 pt-2
+                 w-full max-w-sm md:max-w-md lg:max-w-lg h-14 px-4 pt-2
                  bg-phone border-t border-primary
                  inline-flex justify-between items-start gap-5
                  overflow-hidden z-50"

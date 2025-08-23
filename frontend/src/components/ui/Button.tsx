@@ -16,10 +16,16 @@ const buttonVariants = cva("btn-base", {
       m: "btn-m",
       l: "btn-l",
     },
+    width: {
+      auto: "btn-width-auto",
+      full: "btn-width-full",
+      fit: "btn-width-fit",
+    },
   },
   defaultVariants: {
     variant: "primary",
     size: "m",
+    width: "auto",
   },
 });
 
@@ -37,6 +43,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       className,
       variant,
       size,
+      width,
       asChild = false,
       leftIcon,
       rightIcon,
@@ -48,13 +55,15 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const Comp = (asChild ? Slot : "button") as React.ElementType;
     return (
       <Comp
-        className={cn(buttonVariants({ variant, size }), className)}
+        className={cn(buttonVariants({ variant, size, width }), className)}
         ref={ref}
         {...props}
       >
-        {leftIcon && <span className="flex items-center">{leftIcon}</span>}
-        {children}
-        {rightIcon && <span className="flex items-center">{rightIcon}</span>}
+        {leftIcon && <span className="btn-icon btn-icon-left">{leftIcon}</span>}
+        <span className="btn-content">{children}</span>
+        {rightIcon && (
+          <span className="btn-icon btn-icon-right">{rightIcon}</span>
+        )}
       </Comp>
     );
   }

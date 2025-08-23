@@ -16,7 +16,7 @@
 
 /* Text color */
 .input-text-gray {
-  @apply text-gray-500 placeholder:text-gray-400;
+  @apply text-gray-200 placeholder:text-gray-500;
 }
 .input-text-white {
   @apply text-white placeholder:text-gray-200;
@@ -28,4 +28,12 @@
 }
 .input-square {
   @apply rounded-lg;
+}
+
+/* Icon colors - match placeholder color */
+.input-icon {
+  @apply text-gray-500;
+}
+.input-text-white .input-icon {
+  @apply text-gray-200;
 }

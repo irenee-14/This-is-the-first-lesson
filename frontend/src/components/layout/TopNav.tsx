@@ -4,7 +4,7 @@ export default function TopNav() {
   return (
     <nav
       className="fixed top-0 left-1/2 -translate-x-1/2
-                 w-full max-w-sm md:max-w-md lg:max-w-lg h-[3.375rem]
+                 w-full max-w-sm md:max-w-md lg:max-w-lg h-14
                  flex items-center justify-between px-4
                  bg-phone text-White-Font shadow-md z-50"
     >

@@ -43,7 +43,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         className={cn(inputVariants({ variant, textColor, shape, className }))}
       >
         {leftIcon && (
-          <div className="w-5 h-5 flex items-center">{leftIcon}</div>
+          <div className="w-5 h-5 flex items-center input-icon">{leftIcon}</div>
         )}
         <input
           ref={ref}
@@ -51,7 +51,9 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           className="flex-1 bg-transparent focus:outline-none"
         />
         {rightIcon && (
-          <div className="w-5 h-5 flex items-center">{rightIcon}</div>
+          <div className="w-5 h-5 flex items-center input-icon">
+            {rightIcon}
+          </div>
         )}
       </div>
     );
