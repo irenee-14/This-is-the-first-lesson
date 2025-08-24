@@ -14,6 +14,8 @@ datasource db {
 // 사용자 모델
 model User {
   id         String   @id @default(cuid()) @map("userId")
+  email      String   @unique // 이메일 필드 추가
+  password   String   // 비밀번호 필드 추가
   name       String?
   bio        String?
   following  Int      @default(0)
