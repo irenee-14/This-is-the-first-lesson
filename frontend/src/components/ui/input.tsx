@@ -18,29 +18,38 @@ const inputVariants = cva("input-base", {
       rounded: "input-rounded",
       square: "input-square",
     },
+    inputHeight: {
+      md: "",
+      lg: "input-textarea",
+    },
   },
   defaultVariants: {
     variant: "filled",
     textColor: "gray",
     shape: "rounded",
+    inputHeight: "md",
   },
 });
 
 export interface InputProps
-  extends React.InputHTMLAttributes<HTMLInputElement>,
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "size">,
     VariantProps<typeof inputVariants> {
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
   onRightIconClick?: () => void;
 }
 
-const Input = React.forwardRef<HTMLInputElement, InputProps>(
+const Input = React.forwardRef<
+  HTMLInputElement | HTMLTextAreaElement,
+  InputProps
+>(
   (
     {
       className,
       variant,
       textColor,
       shape,
+      inputHeight,
       leftIcon,
       rightIcon,
       onRightIconClick,
@@ -48,22 +57,36 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     },
     ref
   ) => {
+    const isTextarea = inputHeight === "lg";
+
     return (
       <div
-        className={cn(inputVariants({ variant, textColor, shape, className }))}
-      >
-        {leftIcon && (
-          <div className="w-5 h-5 flex items-center input-icon">{leftIcon}</div>
+        className={cn(
+          inputVariants({ variant, textColor, shape, inputHeight }),
+          className
         )}
-        <input
-          ref={ref}
-          {...props}
-          className="flex-1 bg-transparent focus:outline-none"
-        />
+      >
+        {leftIcon && <div className="input-icon">{leftIcon}</div>}
+
+        {isTextarea ? (
+          <textarea
+            ref={ref as React.Ref<HTMLTextAreaElement>}
+            {...(props as React.TextareaHTMLAttributes<HTMLTextAreaElement>)}
+            className="input-field input-field-textarea"
+          />
+        ) : (
+          <input
+            ref={ref as React.Ref<HTMLInputElement>}
+            {...(props as React.InputHTMLAttributes<HTMLInputElement>)}
+            className="input-field"
+          />
+        )}
+
         {rightIcon && (
           <button
+            type="button"
             onClick={onRightIconClick}
-            className="w-5 h-5 flex items-center input-icon"
+            className="input-icon input-icon-button"
           >
             {rightIcon}
           </button>

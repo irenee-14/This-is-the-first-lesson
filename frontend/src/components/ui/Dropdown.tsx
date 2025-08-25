@@ -55,7 +55,7 @@ const Dropdown: React.FC<DropdownProps> = ({
             <div
               ref={buttonRef}
               onClick={() => setIsOpen((prev) => !prev)}
-              className="self-stretch px-4 h-10 bg-indigoGray-black rounded-lg border border-gray-500 inline-flex justify-center items-center gap-2.5 cursor-pointer w-full"
+              className="self-stretch pl-4 pr-2  h-10 bg-indigoGray-black rounded-lg border border-gray-500 inline-flex justify-center items-center gap-2.5 cursor-pointer w-full"
             >
               <div
                 className={`flex-1 justify-start text-sm font-normal leading-tight ${

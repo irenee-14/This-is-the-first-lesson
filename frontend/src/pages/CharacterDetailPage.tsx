@@ -256,7 +256,11 @@ export default function CharacterDetailPage() {
       </div>
 
       {/* Floating Button */}
-      <FloatingButton variant="chat" onChatClick={handleChatClick} />
+      <FloatingButton
+        variant="chat"
+        like={true}
+        onChatClick={handleChatClick}
+      />
 
       {/* Bottom Navigation */}
       <BottomNav />

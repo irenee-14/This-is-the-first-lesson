@@ -49,7 +49,7 @@ function DebugFlow() {
 function App() {
   return (
     <main className="min-h-screen w-full max-w-sm md:max-w-md lg:max-w-lg mx-auto flex-1">
-      <DebugFlow />;
+      <DebugFlow />
       <RouterProvider router={router} />
     </main>
   );

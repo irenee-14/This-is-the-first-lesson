@@ -9,8 +9,8 @@ export interface TextFieldProps extends Omit<InputProps, "className"> {
   helperText?: string;
   errorText?: string;
   maxLength?: number;
+  inputHeight?: "md" | "lg";
   className?: string;
-  isLength?: boolean;
 }
 
 const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
@@ -21,8 +21,8 @@ const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
       helperText,
       errorText,
       maxLength,
+      inputHeight,
       className,
-      isLength = false,
       value = "",
       ...props
     },
@@ -44,23 +44,22 @@ const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
             value={value}
             variant="outlinedGray500"
             shape="square"
+            inputHeight={inputHeight}
             textColor="white"
             maxLength={maxLength}
             {...props}
           />
 
-          {isLength && (
-            <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center">
+            <span className="text-gray-500 text-xs">
+              {errorText || helperText || ""}
+            </span>
+            {maxLength && (
               <span className="text-gray-500 text-xs">
-                {errorText || helperText || ""}
+                {currentLength}/{maxLength}
               </span>
-              {maxLength && (
-                <span className="text-gray-500 text-xs">
-                  {currentLength}/{maxLength}
-                </span>
-              )}
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
     );
