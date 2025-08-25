@@ -214,7 +214,7 @@ const Home: React.FC = () => {
         <div className="space-y-4">
           <Dropdown
             label="장르 선택"
-            buttonLabel="장르를 선택하세요"
+            buttonlabel="장르를 선택하세요"
             items={dropdownItems}
           />
         </div>

@@ -88,7 +88,7 @@ const Personas: React.FC = () => {
       <FloatingButton
         onChatClick={() => console.log("Chat button clicked")}
         onInputSubmit={(value) => console.log("Input submitted:", value)}
-        buttonLabel="선택 완료"
+        buttonlabel="선택 완료"
         disabled={!selectedPersona || !name || !gender || !personaDescription}
       />
       {/* Bottom Navigation */}

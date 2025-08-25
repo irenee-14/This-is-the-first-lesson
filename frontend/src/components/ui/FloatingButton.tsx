@@ -28,7 +28,7 @@ export interface FloatingButtonProps
   onChatClick?: () => void;
   onInputSubmit?: (value: string) => void;
   placeholder?: string;
-  buttonLabel?: string;
+  buttonlabel?: string;
   disabled?: boolean;
 }
 
@@ -87,7 +87,7 @@ const FloatingButton = React.forwardRef<HTMLDivElement, FloatingButtonProps>(
               width="full"
               className="h-12 rounded-full font-semibold text-base"
             >
-              {props.buttonLabel || "채팅하기"}
+              {props.buttonlabel || "채팅하기"}
             </Button>
           </div>
         </div>
