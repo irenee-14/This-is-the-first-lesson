@@ -5,7 +5,7 @@ import Dropdown from "@/components/ui/Dropdown";
 import TextField from "@/components/ui/TextField";
 import RadioGroup from "@/components/ui/RadioGroup";
 import type { RadioGroupOption } from "@/components/ui/RadioGroup";
-import FloatingButton from "@/components/ui/FloatingButton";
+import FloatingButton from "@/components/features/FloatingButton";
 import { useFlowStore } from "@/stores/useFlowStore";
 
 interface PersonaOption {

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Header from "@/components/layout/Header";
 import BottomNav from "@/components/layout/BottomNav";
-import FloatingButton from "@/components/ui/FloatingButton";
+import FloatingButton from "@/components/features/FloatingButton";
 import Chip from "@/components/ui/Chip";
 import { ReactComponent as LikeIcon } from "@/assets/icons/Like.svg";
 import { ReactComponent as ChatIcon } from "@/assets/icons/Chat.svg";

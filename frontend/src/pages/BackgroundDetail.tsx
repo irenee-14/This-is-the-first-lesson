@@ -1,7 +1,7 @@
 import BottomNav from "@/components/layout/BottomNav";
 import Header from "@/components/layout/Header";
 import Chip from "@/components/ui/Chip";
-import FloatingButton from "@/components/ui/FloatingButton";
+import FloatingButton from "@/components/features/FloatingButton";
 import { useFlowStore } from "@/stores/useFlowStore";
 import React from "react";
 import { useNavigate } from "react-router-dom";
