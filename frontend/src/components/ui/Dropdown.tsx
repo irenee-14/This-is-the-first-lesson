@@ -1,18 +1,22 @@
 import { useState, useRef, useEffect } from "react";
-
-interface CustomDropdownProps {
+import { ReactComponent as DownIcon } from "@/assets/icons/Arrow-Down.svg";
+interface DropdownProps {
   label: string; // 상단 Label
-  buttonLabel: string; // 버튼 초기 텍스트
+  buttonlabel: string; // 버튼 초기 텍스트
   items: string[]; // Dropdown 항목들
+  value?: string;
+  onChange?: (value: string) => void;
 }
 
-const CustomDropdown: React.FC<CustomDropdownProps> = ({
+const Dropdown: React.FC<DropdownProps> = ({
   label,
-  buttonLabel,
+  buttonlabel,
   items,
+  value,
+  onChange,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selected, setSelected] = useState(buttonLabel);
+  const [selected, setSelected] = useState(value ?? buttonlabel);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLDivElement>(null);
 
@@ -34,70 +38,65 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
     };
   }, []);
 
+  useEffect(() => {
+    if (value !== undefined) setSelected(value);
+  }, [value]);
+
   return (
     <div className="inline-flex flex-col justify-start items-start gap-1">
       {/* Label + Button */}
-      <div className="w-80 flex flex-col justify-start items-start gap-3">
-        <div className="self-stretch justify-start text-white text-sm font-medium">
+      <div className="w-full flex flex-col justify-start items-start gap-3">
+        <div className="self-stretch justify-start text-sm font-medium">
           {label}
         </div>
 
         <div className="self-stretch flex flex-col justify-start items-start gap-1">
-          <div
-            ref={buttonRef}
-            onClick={() => setIsOpen((prev) => !prev)}
-            className="self-stretch p-2 bg-indigoGray-black rounded-lg  border border-gray-500 inline-flex justify-center items-center gap-2.5 cursor-pointer"
-          >
+          <div className="relative w-full">
             <div
-              className={`flex-1 justify-start text-sm font-normal leading-tight ${
-                selected === buttonLabel ? "text-gray-500" : "text-white"
-              }`}
+              ref={buttonRef}
+              onClick={() => setIsOpen((prev) => !prev)}
+              className="self-stretch px-4 h-10 bg-indigoGray-black rounded-lg border border-gray-500 inline-flex justify-center items-center gap-2.5 cursor-pointer w-full"
             >
-              {selected}
-            </div>
-            <div className="flex items-center justify-center text-gray-400">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                fill="currentColor"
-                className="bi bi-chevron-down"
-                viewBox=" 0 16 16"
+              <div
+                className={`flex-1 justify-start text-sm font-normal leading-tight ${
+                  !selected || selected === buttonlabel
+                    ? "text-gray-500"
+                    : "text-white"
+                }`}
               >
-                <path
-                  fillRule="evenodd"
-                  d="M1.646 5.354a.5.5 0 0 1 .708 0L8 10.293l5.646-4.939a.5.5 0 1 1 .708.708l-6 5.5a.5.5 0 0 1-.708 0l-6-5.5a.5.5 0 0 1 0-.708z"
-                />
-              </svg>
+                {selected && selected !== "" ? selected : buttonlabel}
+              </div>
+              <DownIcon className="h-5 w-5 text-white" />
             </div>
+
+            {/* Dropdown Menu */}
+            {isOpen && (
+              <div
+                ref={dropdownRef}
+                className="w-full p-2 bg-indigoGray-black rounded-lg outline outline-1 outline-offset-[-0.50px] outline-gray-500 inline-flex flex-col justify-start items-start gap-1 z-[100] absolute left-0 top-12"
+              >
+                {items.map((item, index) => (
+                  <div
+                    key={index}
+                    onClick={() => {
+                      setSelected(item);
+                      setIsOpen(false);
+                      onChange?.(item);
+                    }}
+                    className="self-stretch p-2 bg-indigoGray-black rounded-lg inline-flex justify-center items-center gap-2.5 cursor-pointer hover:bg-gray-950"
+                  >
+                    <div className="flex-1 justify-start text-gray-500 text-sm font-normal font-[Pretendard] leading-tight">
+                      {item}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>
-
-      {/* Dropdown Menu */}
-      {isOpen && (
-        <div
-          ref={dropdownRef}
-          className="w-80 p-2 bg-indigoGray-black rounded-lg outline outline-1 outline-offset-[-0.50px] outline-gray-500 inline-flex flex-col justify-start items-start gap-1"
-        >
-          {items.map((item, index) => (
-            <div
-              key={index}
-              onClick={() => {
-                setSelected(item);
-                setIsOpen(false);
-              }}
-              className="self-stretch p-2 bg-indigoGray-black rounded-lg inline-flex justify-center items-center gap-2.5 cursor-pointer hover:bg-gray-950"
-            >
-              <div className="flex-1 justify-start text-gray-500 text-sm font-normal font-[Pretendard] leading-tight">
-                {item}
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
     </div>
   );
 };
 
-export default CustomDropdown;
+export default Dropdown;
