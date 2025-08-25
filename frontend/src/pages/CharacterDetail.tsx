@@ -89,7 +89,7 @@ export default function CharacterDetailPage() {
   const handleChatClick = () => {
     console.log("Chat with character clicked!");
     setCharacter(mockCharacter.id);
-    navigate(`/backgrounds/${mockCharacter.id}`);
+    navigate(`/backgrounds`);
   };
 
   const handleInputSubmit = (value: string) => {
