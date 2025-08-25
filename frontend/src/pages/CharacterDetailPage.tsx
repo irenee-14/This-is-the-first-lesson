@@ -91,9 +91,9 @@ export default function CharacterDetailPage() {
   };
 
   return (
-    <div className="min-h-screen bg-indigoGray-black text-white">
+    <div className="min-h-screen">
       {/* Header */}
-      <Header variant="withText" title="반지호" />
+      <Header variant="withText" title={mockCharacter.name} />
 
       {/* Main Content */}
       <div className="pt-14 pb-20">
