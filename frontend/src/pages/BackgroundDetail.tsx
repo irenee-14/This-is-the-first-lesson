@@ -2,7 +2,9 @@ import BottomNav from "@/components/layout/BottomNav";
 import Header from "@/components/layout/Header";
 import Chip from "@/components/ui/Chip";
 import FloatingButton from "@/components/ui/FloatingButton";
+import { useFlowStore } from "@/stores/useFlowStore";
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const mockBackground = {
   id: "1",
@@ -15,8 +17,13 @@ const mockBackground = {
 };
 
 const BackgroundDetail: React.FC = () => {
+  const navigate = useNavigate();
+  const { setBackground } = useFlowStore();
+
   const handleChatClick = () => {
     console.log("Chat with character clicked!");
+    setBackground(mockBackground.id);
+    navigate(`/personas`);
   };
 
   const handleInputSubmit = (value: string) => {

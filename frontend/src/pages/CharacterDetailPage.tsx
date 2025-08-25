@@ -8,6 +8,8 @@ import { ReactComponent as ChatIcon } from "@/assets/icons/Chat.svg";
 import { ReactComponent as LockIcon } from "@/assets/icons/Lock.svg";
 import { ReactComponent as PenIcon } from "@/assets/icons/Pen.svg";
 import CardMediaTop from "@/components/features/CardMediaTop";
+import { useFlowStore } from "@/stores/useFlowStore";
+import { useNavigate } from "react-router-dom";
 
 interface BackgroundCard {
   id: string;
@@ -81,9 +83,13 @@ export default function CharacterDetailPage() {
   const [activeTab, setActiveTab] = useState<"description" | "chat">(
     "description"
   );
+  const { setCharacter } = useFlowStore();
+  const navigate = useNavigate();
 
   const handleChatClick = () => {
     console.log("Chat with character clicked!");
+    setCharacter(mockCharacter.id);
+    navigate(`/backgrounds/${mockCharacter.id}`);
   };
 
   const handleInputSubmit = (value: string) => {
@@ -250,11 +256,7 @@ export default function CharacterDetailPage() {
       </div>
 
       {/* Floating Button */}
-      <FloatingButton
-        variant="chat"
-        onChatClick={handleChatClick}
-        onInputSubmit={handleInputSubmit}
-      />
+      <FloatingButton variant="chat" onChatClick={handleChatClick} />
 
       {/* Bottom Navigation */}
       <BottomNav />
