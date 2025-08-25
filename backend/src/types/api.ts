@@ -14,13 +14,13 @@ export interface Character {
   writerName: string
   name: string
   characterImg?: string
-  traits?: string
-  personality?: string
-  dialogueStyle?: string
-  gender?: string
-  description?: string
+  traits: string
+  personality: string
+  dialogueStyle: string
+  gender: string
+  description: string
   writerNote?: string
-  tags: string[]
+  tags: string[] 
   createdAt: string
   updatedAt: string
 }
@@ -28,25 +28,23 @@ export interface Character {
 export interface CreateCharacterRequest {
   name: string
   characterImg?: string
-  traits?: string
-  personality?: string
-  dialogueStyle?: string
-  gender?: string
-  description?: string
+  traits: string
+  personality: string
+  dialogueStyle: string
+  gender: string
+  description: string
   writerNote?: string
-  tags?: string[]
 }
 
 export interface UpdateCharacterRequest {
   name?: string
   characterImg?: string
-  traits?: string
-  personality?: string
-  dialogueStyle?: string
-  gender?: string
-  description?: string
+  traits: string
+  personality: string
+  dialogueStyle: string
+  gender: string
+  description: string
   writerNote?: string
-  tags?: string[]
 }
 
 // Background Types
