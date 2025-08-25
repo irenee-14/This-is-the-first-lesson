@@ -12,6 +12,7 @@ interface MessageActionsProps {
   onDelete?: () => void;
   onShare?: () => void;
   onBookmark?: () => void;
+  isLastMessage?: boolean; // 마지막 메시지인지 여부
   className?: string;
 }
 
@@ -21,31 +22,36 @@ const MessageActions: React.FC<MessageActionsProps> = ({
   onDelete,
   onShare,
   onBookmark,
+  isLastMessage = false,
   className = "",
 }) => {
   return (
     <div className={`inline-flex items-center gap-1 ${className}`}>
-      <IconButton
-        icon={<ResetIcon className="w-4 h-4" />}
-        onClick={onReset}
-        size="sm"
-        variant="unfilled"
-        ariaLabel="메시지 재생성"
-      />
-      <IconButton
-        icon={<PenIcon className="w-4 h-4" />}
-        onClick={onEdit}
-        size="sm"
-        variant="unfilled"
-        ariaLabel="메시지 편집"
-      />
-      <IconButton
-        icon={<DeleteIcon className="w-4 h-4" />}
-        onClick={onDelete}
-        size="sm"
-        variant="unfilled"
-        ariaLabel="메시지 삭제"
-      />
+      {isLastMessage && (
+        <>
+          <IconButton
+            icon={<ResetIcon className="w-4 h-4" />}
+            onClick={onReset}
+            size="sm"
+            variant="unfilled"
+            ariaLabel="메시지 재생성"
+          />
+          <IconButton
+            icon={<PenIcon className="w-4 h-4" />}
+            onClick={onEdit}
+            size="sm"
+            variant="unfilled"
+            ariaLabel="메시지 편집"
+          />
+          <IconButton
+            icon={<DeleteIcon className="w-4 h-4" />}
+            onClick={onDelete}
+            size="sm"
+            variant="unfilled"
+            ariaLabel="메시지 삭제"
+          />
+        </>
+      )}
       <IconButton
         icon={<ShareIcon className="w-4 h-4" />}
         onClick={onShare}

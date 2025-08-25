@@ -6,6 +6,7 @@ interface OtherMessageProps {
   content: string[];
   characterName?: string;
   profileImage?: string;
+  isLastMessage?: boolean; // 마지막 메시지인지 여부
   onReset?: () => void;
   onEdit?: () => void;
   onDelete?: () => void;
@@ -17,6 +18,7 @@ const OtherMessage: React.FC<OtherMessageProps> = ({
   content,
   characterName = "캐릭터명",
   profileImage,
+  isLastMessage = false,
   onReset,
   onEdit,
   onDelete,
@@ -27,27 +29,34 @@ const OtherMessage: React.FC<OtherMessageProps> = ({
     segment: ParsedTextSegment,
     segmentIndex: number
   ) => {
+    const textContent = segment.hasLineBreaks
+      ? segment.text.split("\n").map((line, lineIndex) => (
+          <React.Fragment key={lineIndex}>
+            {line}
+            {lineIndex < segment.text.split("\n").length - 1 && <br />}
+          </React.Fragment>
+        ))
+      : segment.text;
+
     if (segment.isQuoted) {
       return (
-        <span key={segmentIndex} className="inline-block mr-1 mb-1">
-          <span
-            className="bg-gray-900 rounded-lg px-3 py-2 inline-block
-          rounded-tl-[var(--Radius-s,0.5rem)] rounded-tr-[var(--Radius-s,0.5rem)] rounded-br-[var(--Radius-s,0.5rem)] rounded-bl-none"
-          >
-            <span className="text-white text-sm leading-5 font-normal tracking-[-0.28px]">
-              {segment.text}
-            </span>
-          </span>
-        </span>
+        <div key={segmentIndex} className="mb-2 flex justify-start">
+          <div className="inline-block max-w-xs">
+            <div className="bg-gray-900 rounded-lg px-3 py-2 rounded-tl-[var(--Radius-s,0.5rem)] rounded-tr-[var(--Radius-s,0.5rem)] rounded-br-[var(--Radius-s,0.5rem)] rounded-bl-none">
+              <span className="text-white text-sm leading-5 font-normal tracking-[-0.28px]">
+                {textContent}
+              </span>
+            </div>
+          </div>
+        </div>
       );
     } else {
       return (
-        <span
-          key={segmentIndex}
-          className="text-gray-300 text-sm leading-5 font-normal tracking-[-0.28px] mr-1"
-        >
-          {segment.text}
-        </span>
+        <div key={segmentIndex} className="mb-2">
+          <span className="text-gray-300 text-sm leading-5 font-normal tracking-[-0.28px]">
+            {textContent}
+          </span>
+        </div>
       );
     }
   };
@@ -92,7 +101,7 @@ const OtherMessage: React.FC<OtherMessageProps> = ({
         onDelete={onDelete}
         onShare={onShare}
         onBookmark={onBookmark}
-        className="mt-2"
+        isLastMessage={isLastMessage}
       />
     </div>
   );

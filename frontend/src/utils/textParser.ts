@@ -1,6 +1,7 @@
 export interface ParsedTextSegment {
   text: string;
   isQuoted: boolean;
+  hasLineBreaks?: boolean; // 개행 문자 포함 여부
 }
 
 /**
@@ -23,6 +24,7 @@ export function parseTextWithQuotes(text: string): ParsedTextSegment[] {
         segments.push({
           text: remainingText,
           isQuoted: false,
+          hasLineBreaks: remainingText.includes("\n"),
         });
       }
       break;
@@ -35,6 +37,7 @@ export function parseTextWithQuotes(text: string): ParsedTextSegment[] {
         segments.push({
           text: beforeQuote,
           isQuoted: false,
+          hasLineBreaks: beforeQuote.includes("\n"),
         });
       }
     }
@@ -49,6 +52,7 @@ export function parseTextWithQuotes(text: string): ParsedTextSegment[] {
         segments.push({
           text: remainingText,
           isQuoted: false,
+          hasLineBreaks: remainingText.includes("\n"),
         });
       }
       break;
@@ -60,6 +64,7 @@ export function parseTextWithQuotes(text: string): ParsedTextSegment[] {
       segments.push({
         text: quotedText,
         isQuoted: true,
+        hasLineBreaks: quotedText.includes("\n"),
       });
     }
 

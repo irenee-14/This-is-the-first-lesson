@@ -10,27 +10,34 @@ const MyMessage: React.FC<MyMessageProps> = ({ content }) => {
     segment: ParsedTextSegment,
     segmentIndex: number
   ) => {
+    const textContent = segment.hasLineBreaks
+      ? segment.text.split("\n").map((line, lineIndex) => (
+          <React.Fragment key={lineIndex}>
+            {line}
+            {lineIndex < segment.text.split("\n").length - 1 && <br />}
+          </React.Fragment>
+        ))
+      : segment.text;
+
     if (segment.isQuoted) {
       return (
-        <span key={segmentIndex} className="inline-block ml-1 mb-1">
-          <span
-            className="bg-purple-900 rounded-lg px-3 py-2 inline-block
-            rounded-tl-[var(--Radius-s,0.5rem)] rounded-tr-[var(--Radius-s,0.5rem)] rounded-bl-[var(--Radius-s,0.5rem)] rounded-br-none"
-          >
-            <span className="text-white text-sm leading-5 font-normal tracking-[-0.28px]">
-              {segment.text}
-            </span>
-          </span>
-        </span>
+        <div key={segmentIndex} className="mb-2 flex justify-end">
+          <div className="inline-block max-w-xs">
+            <div className="bg-purple-900 rounded-lg px-3 py-2 rounded-tl-[var(--Radius-s,0.5rem)] rounded-tr-[var(--Radius-s,0.5rem)] rounded-bl-[var(--Radius-s,0.5rem)] rounded-br-none">
+              <span className="text-white text-sm leading-5 font-normal tracking-[-0.28px]">
+                {textContent}
+              </span>
+            </div>
+          </div>
+        </div>
       );
     } else {
       return (
-        <span
-          key={segmentIndex}
-          className="text-gray-300 text-sm leading-5 font-normal tracking-[-0.28px] ml-1"
-        >
-          {segment.text}
-        </span>
+        <div key={segmentIndex} className="mb-2 text-right">
+          <span className="text-gray-300 text-sm leading-5 font-normal tracking-[-0.28px]">
+            {textContent}
+          </span>
+        </div>
       );
     }
   };
@@ -39,12 +46,9 @@ const MyMessage: React.FC<MyMessageProps> = ({ content }) => {
     const parsedLines = parseMultipleLines(contentArray);
 
     return parsedLines.map((lineSegments, lineIndex) => (
-      <div
-        key={lineIndex}
-        className="mb-2 flex flex-wrap items-center justify-end"
-      >
+      <div key={lineIndex}>
         {lineSegments.map((segment, segmentIndex) =>
-          renderTextSegment(segment, segmentIndex)
+          renderTextSegment(segment, lineIndex * 1000 + segmentIndex)
         )}
       </div>
     ));
