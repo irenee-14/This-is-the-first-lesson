@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useApi } from "@/hooks/useApi";
+import { useParams, useNavigate } from "react-router-dom";
 import Header from "@/components/layout/Header";
 import BottomNav from "@/components/layout/BottomNav";
 import FloatingButton from "@/components/features/FloatingButton";
@@ -9,7 +11,6 @@ import { ReactComponent as LockIcon } from "@/assets/icons/Lock.svg";
 import { ReactComponent as PenIcon } from "@/assets/icons/Pen.svg";
 import CardMediaTop from "@/components/features/CardMediaTop";
 import { useFlowStore } from "@/stores/useFlowStore";
-import { useNavigate } from "react-router-dom";
 
 interface BackgroundCard {
   id: string;
@@ -23,7 +24,7 @@ const mockCharacter = {
   id: "1",
   name: "반지호",
   image: "/image/icon.png", // No image for now, will use gradient background
-  personality: ["다정", "능글", "고수위"],
+  tags: ["다정", "능글", "고수위"],
   likeCount: 24,
   chatCount: 24,
   description: {
@@ -85,38 +86,72 @@ export default function CharacterDetailPage() {
   );
   const { setCharacter } = useFlowStore();
   const navigate = useNavigate();
+  const { charId } = useParams();
+  const { data, loading, error, get } = useApi<{
+    success: boolean;
+    data: import("@/types/character").Character;
+  }>();
+
+  useEffect(() => {
+    if (charId) {
+      get(`/characters/${charId}`);
+    }
+  }, [charId, get]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Header />
+        <div>로딩 중...</div>
+        <BottomNav />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Header />
+        <div>오류가 발생했습니다: {error}</div>
+        <BottomNav />
+      </div>
+    );
+  }
+
+  const character = data?.data;
+
+  if (!character) {
+    return <div>캐릭터 정보를 불러올 수 없습니다.</div>;
+  }
+
+  // 임시 배경 데이터 그대로 사용
+  const backgrounds = mockBackgrounds;
 
   const handleChatClick = () => {
-    console.log("Chat with character clicked!");
-    setCharacter(mockCharacter.id);
+    setCharacter(character.charId);
     navigate(`/backgrounds`);
   };
 
   const handleBackgroundClick = (backgroundId: string) => {
-    console.log("Background clicked:", backgroundId);
     navigate(`/backgrounds/${backgroundId}`);
   };
 
   return (
     <div className="min-h-screen">
-      {/* Header */}
-      <Header variant="withText" title={mockCharacter.name} />
-
-      {/* Main Content */}
+      <Header variant="withText" title={character.name} />
       <div className="pt-14 pb-20">
-        {/* Character Section */}
         <div className="relative">
-          {/* Character Image */}
           <div className="relative w-full h-90">
             <div className="w-full h-90 bg-gradient-to-b from-purple-600 via-purple-500 to-indigoGray-black" />
-            {/* Gradient Overlay */}
             <div className="absolute inset-0 w-full h-90 bg-gradient-to-t from-indigoGray-black via-transparent to-transparent" />
             <img
-              src={mockCharacter.image}
+              src={character.characterImg || "/image/icon.png"}
               alt="Character Image"
               className="w-full h-90 object-cover"
+              onError={(e) => {
+                (e.currentTarget as HTMLImageElement).src = "/image/icon.png";
+              }}
             />
-            {/* Stats Chips */}
             <div className="absolute bottom-4 left-4 flex gap-1">
               <Chip size="l" leftIcon={<LikeIcon />}>
                 {mockCharacter.likeCount}
@@ -130,12 +165,12 @@ export default function CharacterDetailPage() {
           {/* Character Info */}
           <div className="px-4 py-4">
             <h1 className="text-2xl font-bold text-White-Font mb-3">
-              {mockCharacter.name}
+              {character.name}
             </h1>
             <div className="flex gap-1 flex-wrap">
-              {mockCharacter.personality.map((trait, index) => (
-                <Chip key={index} size="m">
-                  {trait}
+              {mockCharacter.tags.map((tag) => (
+                <Chip key={tag} size="m">
+                  {tag}
                 </Chip>
               ))}
             </div>
@@ -172,7 +207,6 @@ export default function CharacterDetailPage() {
         <div className="px-4 py-4 mb-16">
           {activeTab === "description" ? (
             <div className="space-y-6">
-              {/* -------------------------- */}
               <div className="space-y-4">
                 {/* 외모 및 성격 */}
                 <div className="space-y-2">
@@ -181,31 +215,27 @@ export default function CharacterDetailPage() {
                   </h3>
                   <div className="bg-gray-900 rounded-lg p-4">
                     <p className="text-sm font-normal text-White-Font leading-tight">
-                      {mockCharacter.description.appearance}
+                      {character.description}
                     </p>
                   </div>
                 </div>
-
-                {/* 특징 */}
                 <div>
                   <h3 className="text-base font-medium text-White-Font mb-3">
                     특징
                   </h3>
                   <div className="bg-gray-900 rounded-lg p-4">
                     <p className="text-sm font-normal text-White-Font leading-tight">
-                      {mockCharacter.description.characteristics}
+                      {character.traits}
                     </p>
                   </div>
                 </div>
-
-                {/* 말투 */}
                 <div>
                   <h3 className="text-base font-medium text-White-Font mb-3">
                     말투
                   </h3>
                   <div className="bg-gray-900 rounded-lg p-4">
                     <p className="text-sm font-normal text-White-Font leading-tight">
-                      {mockCharacter.description.speech}
+                      {character.dialogueStyle}
                     </p>
                   </div>
                 </div>
@@ -239,7 +269,7 @@ export default function CharacterDetailPage() {
                         <LockIcon className="w-10 h-10 text-gray-400" />
                       </div>
                     )} */}
-                  {mockBackgrounds.map((background) => (
+                  {backgrounds.map((background) => (
                     <CardMediaTop
                       key={background.id}
                       imageUrl={background.image}
@@ -255,23 +285,17 @@ export default function CharacterDetailPage() {
           ) : (
             <div className="text-center py-10">
               <p className="text-gray-400">
-                아직 {mockCharacter.name}와 채팅하지 않았어요.
+                아직 {character.name}와 채팅하지 않았어요.
               </p>
             </div>
           )}
         </div>
-
-        {/* Backgrounds Section */}
       </div>
-
-      {/* Floating Button */}
       <FloatingButton
         variant="chat"
         like={true}
         onChatClick={handleChatClick}
       />
-
-      {/* Bottom Navigation */}
       <BottomNav />
     </div>
   );
