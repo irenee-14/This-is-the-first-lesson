@@ -10,6 +10,7 @@ import user from './routes/user.js'
 import personas from './routes/personas.js'
 import tags from './routes/tags.js'
 import auth from './routes/auth.js'
+import backgroundFlow from './routes/backgroundFlow.js'
 
 export async function createServer() {
   const fastify = Fastify({ logger: true })
@@ -31,6 +32,7 @@ export async function createServer() {
   // await fastify.register(personas)
   // await fastify.register(tags)
   await fastify.register(auth)
+  await fastify.register(backgroundFlow)
 
   // Graceful shutdown
   fastify.addHook('onClose', async () => {
