@@ -14,13 +14,13 @@ export interface Character {
   writerName: string
   name: string
   characterImg?: string
-  traits?: string
-  personality?: string
-  dialogueStyle?: string
-  gender?: string
-  description?: string
+  traits: string
+  personality: string
+  dialogueStyle: string
+  gender: string
+  description: string
   writerNote?: string
-  tags: string[]
+  tags: string[] 
   createdAt: string
   updatedAt: string
 }
@@ -28,11 +28,11 @@ export interface Character {
 export interface CreateCharacterRequest {
   name: string
   characterImg?: string
-  traits?: string
-  personality?: string
-  dialogueStyle?: string
-  gender?: string
-  description?: string
+  traits: string
+  personality: string
+  dialogueStyle: string
+  gender: string
+  description: string
   writerNote?: string
   tags?: string[]
 }
@@ -40,13 +40,12 @@ export interface CreateCharacterRequest {
 export interface UpdateCharacterRequest {
   name?: string
   characterImg?: string
-  traits?: string
-  personality?: string
-  dialogueStyle?: string
-  gender?: string
-  description?: string
+  traits: string
+  personality: string
+  dialogueStyle: string
+  gender: string
+  description: string
   writerNote?: string
-  tags?: string[]
 }
 
 // Background Types
@@ -55,24 +54,24 @@ export interface Background {
   backgroundName: string
   writerId: string
   writerName: string
-  description?: string
+  description: string
   tags: string[]
-  introTitle?: string
-  introDescription?: string
+  introTitle: string
+  introDescription: string
   unlockChatCount?: number
-  avatarUrl?: string
+  backgroundImg?: string
   createdAt: string
   updatedAt: string
 }
 
 export interface CreateBackgroundRequest {
   backgroundName: string
-  description?: string
-  prompt?: string
+  description: string
+  prompt: string
   tags?: string[]
-  introTitle?: string
-  introDescription?: string
-  unlockChatCount?: number
+  introTitle: string
+  introDescription: string
+  unlockChatCount: number
 }
 
 export interface UpdateBackgroundRequest {
@@ -186,7 +185,7 @@ export interface CreateTagRequest {
 export interface BackgroundFlow {
   flowId: string
   writerId: string
-  version: string
+  version: number
   createdAt: string
   steps: BackgroundStep[]
 }
