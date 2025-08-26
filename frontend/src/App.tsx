@@ -2,13 +2,21 @@ import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
 
 import Characters from "@/pages/Characters";
 import NotFound from "@/pages/NotFound";
-import Backgrounds from "@/pages/Backgrounds";
 import BackgroundDetail from "@/pages/BackgroundDetail";
 import Personas from "@/pages/Personas";
-import CharacterDetailPage from "@/pages/CharacterDetailPage";
+import CharacterDetail from "@/pages/CharacterDetail";
 import { useFlowReset } from "@/hooks/useFlowReset";
 import { useFlowStore } from "./stores/useFlowStore";
 import { useEffect } from "react";
+import Home from "@/pages/Home";
+import ComponentDemo from "@/pages/ComponentDemo";
+import Chat from "@/pages/Chat";
+import {
+  RequireBackgroundDetail,
+  RequirePersona,
+  RequireChat,
+} from "./utils/RequireFlow";
+import Backgrounds from "./pages/Backgrounds";
 
 function FlowResetWrapper({ children }: { children: React.ReactNode }) {
   useFlowReset();
@@ -23,14 +31,29 @@ const router = createBrowserRouter([
       </FlowResetWrapper>
     ),
     children: [
-      { path: "/", element: <Characters /> },
+      { path: "/", element: <Home /> },
+      { path: "/demo", element: <ComponentDemo /> },
       { path: "/characters", element: <Characters /> },
-      { path: "/characters/:charId", element: <CharacterDetailPage /> },
+      { path: "/characters/:charId", element: <CharacterDetail /> },
       { path: "/backgrounds", element: <Backgrounds /> },
-      { path: "/backgrounds/:bgId", element: <BackgroundDetail /> },
-      { path: "/personas", element: <Personas /> }, // flow 진입
-      // { path: "/chat", element: <Chat /> }, // flow 진행
-      // { path: "/chat/:chatId", element: <ChatRoom /> }, // 특정 채팅방
+      {
+        element: <RequireBackgroundDetail />,
+        children: [
+          { path: "/backgrounds/:bgId", element: <BackgroundDetail /> },
+        ],
+      },
+      {
+        element: <RequirePersona />,
+        children: [{ path: "/personas", element: <Personas /> }],
+      },
+      {
+        element: <RequireChat />,
+        children: [
+          { path: "/chat", element: <Chat /> },
+          // { path: "/chat/:chatId", element: <ChatRoom /> },
+        ],
+      },
+      { path: "/component-demo", element: <ComponentDemo /> },
       { path: "*", element: <NotFound /> },
     ],
   },

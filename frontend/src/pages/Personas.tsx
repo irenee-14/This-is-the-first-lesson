@@ -7,6 +7,7 @@ import RadioGroup from "@/components/ui/RadioGroup";
 import type { RadioGroupOption } from "@/components/ui/RadioGroup";
 import FloatingButton from "@/components/features/FloatingButton";
 import { useFlowStore } from "@/stores/useFlowStore";
+import { useNavigate } from "react-router-dom";
 
 interface PersonaOption {
   id: string;
@@ -22,6 +23,7 @@ const Personas: React.FC = () => {
   const [name, setName] = useState("");
   const [gender, setGender] = useState("");
   const [personaDescription, setPersonaDescription] = useState("");
+  const navigate = useNavigate();
 
   const personaData: PersonaOption[] = [
     {
@@ -94,6 +96,7 @@ const Personas: React.FC = () => {
 
       setPersonaData(personaInfo);
       console.log("Selection completed:", personaInfo);
+      navigate(`/chat`);
     }
   };
 
@@ -152,7 +155,6 @@ const Personas: React.FC = () => {
       {/* Floating Button */}
       <FloatingButton
         onChatClick={handleComplete}
-        onInputSubmit={(value) => console.log("Input submitted:", value)}
         buttonlabel="선택 완료"
         disabled={!name || !gender || !personaDescription}
       />
