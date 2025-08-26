@@ -355,7 +355,7 @@ export default async function backgroundsRoutes(fastify: FastifyInstance) {
           error: '권한이 없는 요청입니다.'
         } as ApiResponse)
       }
-      
+
       await fastify.prisma.background.delete({
         where: { id: backgroundId }
       })
@@ -402,7 +402,7 @@ export default async function backgroundsRoutes(fastify: FastifyInstance) {
       const response: BackgroundFlow[] = flows.map(flow => ({
         flowId: flow.id,
         writerId: flow.writerId,
-        version: flow.version || '',
+        version: flow.version,
         createdAt: flow.createdAt.toISOString(),
         steps: flow.backgroundSteps.map(step => ({
           stepId: step.id,

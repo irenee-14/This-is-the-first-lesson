@@ -185,7 +185,7 @@ export interface CreateTagRequest {
 export interface BackgroundFlow {
   flowId: string
   writerId: string
-  version: string
+  version: number
   createdAt: string
   steps: BackgroundStep[]
 }
