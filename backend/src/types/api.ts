@@ -66,12 +66,12 @@ export interface Background {
 
 export interface CreateBackgroundRequest {
   backgroundName: string
-  description?: string
-  prompt?: string
+  description: string
+  prompt: string
   tags?: string[]
-  introTitle?: string
-  introDescription?: string
-  unlockChatCount?: number
+  introTitle: string
+  introDescription: string
+  unlockChatCount: number
 }
 
 export interface UpdateBackgroundRequest {
