@@ -55,7 +55,7 @@ const MyMessage: React.FC<MyMessageProps> = ({ content }) => {
   };
 
   return (
-    <div className="flex flex-col gap-2 p-4 max-w-[360px] ml-auto">
+    <div className="flex flex-col gap-2 p-4 w-full ml-auto">
       {/* 메시지 내용 */}
       <div>{parseContent(content)}</div>
     </div>

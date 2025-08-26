@@ -74,7 +74,7 @@ const OtherMessage: React.FC<OtherMessageProps> = ({
   };
 
   return (
-    <div className="flex flex-col gap-2 max-w-[360px] p-4">
+    <div className="flex flex-col gap-2 w-full p-4">
       {/* 프로필 섹션 */}
       <div className="flex items-center gap-2">
         <div className="w-9 h-9 rounded-full bg-gray-700 flex-shrink-0">

@@ -126,7 +126,7 @@ const ChatPage: React.FC = () => {
                 case "notification":
                   return (
                     <div key={message.id} className="flex justify-center">
-                      <div className="max-w-[328px] w-full">
+                      <div className="w-full p-4">
                         <Notification content={message.content[0]} />
                       </div>
                     </div>
