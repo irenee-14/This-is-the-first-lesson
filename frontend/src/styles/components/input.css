@@ -1,0 +1,39 @@
+.input-base {
+  @apply w-full h-10 px-4 py-2.5 inline-flex items-center gap-1 text-sm font-normal leading-tight
+         focus:outline-none disabled:cursor-not-allowed disabled:opacity-50;
+}
+
+/* Variant */
+.input-filled {
+  @apply bg-gray-950;
+}
+.input-outlined-gray500 {
+  @apply outline outline-1 outline-offset-[-0.5px] outline-gray-500 bg-transparent;
+}
+.input-outlined-gray200 {
+  @apply outline outline-1 outline-offset-[-0.5px] outline-gray-200 bg-transparent;
+}
+
+/* Text color */
+.input-text-gray {
+  @apply text-gray-200 placeholder:text-gray-500;
+}
+.input-text-white {
+  @apply text-white placeholder:text-gray-200;
+}
+
+/* Shape */
+.input-rounded {
+  @apply rounded-[999px];
+}
+.input-square {
+  @apply rounded-lg;
+}
+
+/* Icon colors - match placeholder color */
+.input-icon {
+  @apply text-gray-500;
+}
+.input-text-white .input-icon {
+  @apply text-gray-200;
+}
