@@ -40,7 +40,7 @@ const OtherMessage: React.FC<OtherMessageProps> = ({
 
     if (segment.isQuoted) {
       return (
-        <div key={segmentIndex} className="mb-2 flex justify-start">
+        <div key={segmentIndex} className="flex justify-start">
           <div className="inline-block max-w-xs">
             <div className="bg-gray-900 rounded-lg px-3 py-2 rounded-tl-[var(--Radius-s,0.5rem)] rounded-tr-[var(--Radius-s,0.5rem)] rounded-br-[var(--Radius-s,0.5rem)] rounded-bl-none">
               <span className="text-white text-sm leading-5 font-normal tracking-[-0.28px]">
@@ -52,7 +52,7 @@ const OtherMessage: React.FC<OtherMessageProps> = ({
       );
     } else {
       return (
-        <div key={segmentIndex} className="mb-2">
+        <div key={segmentIndex}>
           <span className="text-gray-300 text-sm leading-5 font-normal tracking-[-0.28px]">
             {textContent}
           </span>
@@ -65,16 +65,16 @@ const OtherMessage: React.FC<OtherMessageProps> = ({
     const parsedLines = parseMultipleLines(contentArray);
 
     return parsedLines.map((lineSegments, lineIndex) => (
-      <div key={lineIndex} className="mb-2 flex flex-wrap items-center gap-3">
+      <div key={lineIndex} className="flex flex-col items-start gap-3">
         {lineSegments.map((segment, segmentIndex) =>
-          renderTextSegment(segment, segmentIndex)
+          renderTextSegment(segment, lineIndex * 1000 + segmentIndex)
         )}
       </div>
     ));
   };
 
   return (
-    <div className="flex flex-col gap-3 max-w-[360px]">
+    <div className="flex flex-col gap-2 max-w-[360px] p-4">
       {/* 프로필 섹션 */}
       <div className="flex items-center gap-2">
         <div className="w-9 h-9 rounded-full bg-gray-700 flex-shrink-0">
@@ -86,13 +86,13 @@ const OtherMessage: React.FC<OtherMessageProps> = ({
             />
           )}
         </div>
-        <span className="text-white text-xs leading-[14.32px] font-medium tracking-[-0.24px]">
+        <span className="text-white text-sm leading-[14.32px] font-medium tracking-[-0.24px]">
           {characterName}
         </span>
       </div>
 
       {/* 메시지 내용 */}
-      <div className="flex flex-col">{parseContent(content)}</div>
+      <div>{parseContent(content)}</div>
 
       {/* 메시지 액션 */}
       <MessageActions

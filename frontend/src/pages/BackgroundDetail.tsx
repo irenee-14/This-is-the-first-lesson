@@ -37,9 +37,9 @@ const BackgroundDetail: React.FC = () => {
 
       {/* Main Content */}
       <div className="pt-14 pb-36">
-        {/* Character Section */}
-        <div className="relative">
-          {/* Character Image */}
+        {/* Background Section */}
+        <div className="relative flex flex-col p-4 gap-3">
+          {/* Background Image */}
           <div className="relative w-full h-90">
             <div className="w-full h-90 bg-gradient-to-b from-purple-600 via-purple-500 to-indigoGray-black" />
             {/* Gradient Overlay */}
@@ -51,12 +51,12 @@ const BackgroundDetail: React.FC = () => {
             />
           </div>
 
-          {/* Character Info */}
-          <div className="px-4 py-4">
-            <h1 className="text-2xl font-bold text-White-Font mb-3">
+          {/* Background Info */}
+          <div className="flex flex-col gap-2">
+            <h1 className="text-2xl font-bold text-White-Font ">
               {mockBackground.title}
             </h1>
-            <div className="flex gap-2 flex-wrap">
+            <div className="flex gap-1 flex-wrap">
               {mockBackground.tags.map((tag, index) => (
                 <Chip key={index} size="m">
                   {tag}
@@ -64,13 +64,14 @@ const BackgroundDetail: React.FC = () => {
               ))}
             </div>
           </div>
-          {/* Character Description */}
-          <div className="px-4 py-4">
-            <p className="text-sm font-normal ">{mockBackground.description}</p>
+          {/* Background Description */}
+          <div>
+            <p className="text-sm font-normal leading-tight">
+              {mockBackground.description}
+            </p>
           </div>
         </div>
       </div>
-
       {/* Floating Button */}
       <FloatingButton
         variant="chat"

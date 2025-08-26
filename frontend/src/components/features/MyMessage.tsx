@@ -21,7 +21,7 @@ const MyMessage: React.FC<MyMessageProps> = ({ content }) => {
 
     if (segment.isQuoted) {
       return (
-        <div key={segmentIndex} className="mb-2 flex justify-end">
+        <div key={segmentIndex} className="flex justify-end">
           <div className="inline-block max-w-xs">
             <div className="bg-purple-900 rounded-lg px-3 py-2 rounded-tl-[var(--Radius-s,0.5rem)] rounded-tr-[var(--Radius-s,0.5rem)] rounded-bl-[var(--Radius-s,0.5rem)] rounded-br-none">
               <span className="text-white text-sm leading-5 font-normal tracking-[-0.28px]">
@@ -33,7 +33,7 @@ const MyMessage: React.FC<MyMessageProps> = ({ content }) => {
       );
     } else {
       return (
-        <div key={segmentIndex} className="mb-2 text-right">
+        <div key={segmentIndex} className="text-left">
           <span className="text-gray-300 text-sm leading-5 font-normal tracking-[-0.28px]">
             {textContent}
           </span>
@@ -46,7 +46,7 @@ const MyMessage: React.FC<MyMessageProps> = ({ content }) => {
     const parsedLines = parseMultipleLines(contentArray);
 
     return parsedLines.map((lineSegments, lineIndex) => (
-      <div key={lineIndex}>
+      <div key={lineIndex} className="flex flex-col items-end gap-3">
         {lineSegments.map((segment, segmentIndex) =>
           renderTextSegment(segment, lineIndex * 1000 + segmentIndex)
         )}
@@ -55,9 +55,9 @@ const MyMessage: React.FC<MyMessageProps> = ({ content }) => {
   };
 
   return (
-    <div className="flex flex-col gap-2 max-w-[360px] ml-auto">
+    <div className="flex flex-col gap-2 p-4 max-w-[360px] ml-auto">
       {/* 메시지 내용 */}
-      <div className="flex flex-col">{parseContent(content)}</div>
+      <div>{parseContent(content)}</div>
     </div>
   );
 };

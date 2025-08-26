@@ -116,7 +116,7 @@ export default function CharacterDetailPage() {
               className="w-full h-90 object-cover"
             />
             {/* Stats Chips */}
-            <div className="absolute bottom-4 left-4 flex gap-2">
+            <div className="absolute bottom-4 left-4 flex gap-1">
               <Chip size="l" leftIcon={<LikeIcon />}>
                 {mockCharacter.likeCount}
               </Chip>
@@ -131,7 +131,7 @@ export default function CharacterDetailPage() {
             <h1 className="text-2xl font-bold text-White-Font mb-3">
               {mockCharacter.name}
             </h1>
-            <div className="flex gap-2 flex-wrap">
+            <div className="flex gap-1 flex-wrap">
               {mockCharacter.personality.map((trait, index) => (
                 <Chip key={index} size="m">
                   {trait}
@@ -143,7 +143,7 @@ export default function CharacterDetailPage() {
 
         {/* Tabs */}
         <div className="px-4">
-          <div className="flex border-b border-gray-800">
+          <div className="flex">
             <button
               onClick={() => setActiveTab("description")}
               className={`flex-1 py-3 text-sm font-medium transition-colors ${
@@ -156,7 +156,7 @@ export default function CharacterDetailPage() {
             </button>
             <button
               onClick={() => setActiveTab("chat")}
-              className={`flex-1 py-3 text-sm font-medium transition-colors ${
+              className={`flex-1 py-3 text-sm font-normal transition-colors ${
                 activeTab === "chat"
                   ? "text-White-Font border-b-2 border-primary"
                   : "text-gray-400"
@@ -168,88 +168,96 @@ export default function CharacterDetailPage() {
         </div>
 
         {/* Tab Content */}
-        <div className="px-4 py-4">
+        <div className="px-4 py-4 mb-16">
           {activeTab === "description" ? (
             <div className="space-y-6">
-              {/* 외모 및 성격 */}
-              <div>
-                <h3 className="text-base font-medium text-White-Font mb-3">
-                  외모 및 성격
-                </h3>
-                <div className="bg-gray-900 rounded-lg p-4">
-                  <p className="text-sm text-White-Font leading-relaxed">
-                    {mockCharacter.description.appearance}
-                  </p>
+              {/* -------------------------- */}
+              <div className="space-y-4">
+                {/* 외모 및 성격 */}
+                <div className="space-y-2">
+                  <h3 className="text-base font-medium text-White-Font">
+                    외모 및 성격
+                  </h3>
+                  <div className="bg-gray-900 rounded-lg p-4">
+                    <p className="text-sm font-normal text-White-Font leading-tight">
+                      {mockCharacter.description.appearance}
+                    </p>
+                  </div>
                 </div>
-              </div>
 
-              {/* 특징 */}
-              <div>
-                <h3 className="text-base font-medium text-White-Font mb-3">
-                  특징
-                </h3>
-                <div className="bg-gray-900 rounded-lg p-4">
-                  <p className="text-sm text-White-Font leading-relaxed">
-                    {mockCharacter.description.characteristics}
-                  </p>
+                {/* 특징 */}
+                <div>
+                  <h3 className="text-base font-medium text-White-Font mb-3">
+                    특징
+                  </h3>
+                  <div className="bg-gray-900 rounded-lg p-4">
+                    <p className="text-sm font-normal text-White-Font leading-tight">
+                      {mockCharacter.description.characteristics}
+                    </p>
+                  </div>
                 </div>
-              </div>
 
-              {/* 말투 */}
-              <div>
-                <h3 className="text-base font-medium text-White-Font mb-3">
-                  말투
-                </h3>
-                <div className="bg-gray-900 rounded-lg p-4">
-                  <p className="text-sm text-White-Font leading-relaxed">
-                    {mockCharacter.description.speech}
-                  </p>
+                {/* 말투 */}
+                <div>
+                  <h3 className="text-base font-medium text-White-Font mb-3">
+                    말투
+                  </h3>
+                  <div className="bg-gray-900 rounded-lg p-4">
+                    <p className="text-sm font-normal text-White-Font leading-tight">
+                      {mockCharacter.description.speech}
+                    </p>
+                  </div>
                 </div>
               </div>
+              {/* -------------------------- */}
 
               {/* Comment Area */}
               <div>
-                <div className="flex items-center gap-2 mb-2">
+                <div className="flex items-center gap-1 mb-2">
                   <Chip
                     size="l"
                     variantStyle="outlined"
                     shape="square"
-                    rightIcon={<PenIcon />}
+                    rightIcon={<PenIcon className="text-safe" />}
+                    className="bg-gray-900"
                   >
                     {mockCharacter.comment.author}
                   </Chip>
                 </div>
-                <p className="text-sm text-White-Font whitespace-pre-line">
+                <p className="text-sm text-normal text-White-Font whitespace-pre-line">
                   {mockCharacter.comment.content}
                 </p>
               </div>
-            </div>
-          ) : (
-            <div className="text-center py-8">
-              <p className="text-gray-400">이전 채팅 내역이 없습니다.</p>
-            </div>
-          )}
-        </div>
 
-        <div className="px-4 py-6 mb-10 gap-3 flex flex-col">
-          <h2 className="text-lg font-semibold">볼 수 있는 배경</h2>
-          <div className="overflow-x-auto flex gap-4 scrollbar-hide">
-            {/* {background.isLocked && (
+              {/* Background Area */}
+              <div className="gap-3 flex flex-col">
+                <h2 className="text-lg font-semibold">볼 수 있는 배경</h2>
+                <div className="overflow-x-auto flex gap-4 scrollbar-hide">
+                  {/* {background.isLocked && (
                       <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
                         <LockIcon className="w-10 h-10 text-gray-400" />
                       </div>
                     )} */}
-            {mockBackgrounds.map((background) => (
-              <CardMediaTop
-                key={background.id}
-                imageUrl={background.image}
-                name={background.title}
-                chips={background.tags}
-                onClick={() => handleBackgroundClick(background.id)}
-                variant="horizontal"
-              />
-            ))}
-          </div>
+                  {mockBackgrounds.map((background) => (
+                    <CardMediaTop
+                      key={background.id}
+                      imageUrl={background.image}
+                      name={background.title}
+                      chips={background.tags}
+                      onClick={() => handleBackgroundClick(background.id)}
+                      variant="horizontal"
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="text-center py-10">
+              <p className="text-gray-400">
+                아직 {mockCharacter.name}와 채팅하지 않았어요.
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Backgrounds Section */}

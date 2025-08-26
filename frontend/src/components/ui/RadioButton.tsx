@@ -30,16 +30,12 @@ const RadioButton = React.forwardRef<HTMLInputElement, RadioButtonProps>(
           />
           <div
             className={cn(
-              "w-5 h-5 rounded-full border-2 transition-colors",
+              "w-5 h-5 rounded-full border-4 border-safe transition-colors",
               checked
-                ? "border-primary bg-indigoGray-light"
-                : "border-gray-500 bg-indigoGray-medium"
+                ? "border-primary bg-indigoGray-100"
+                : "border-indigoGray-200 bg-white"
             )}
-          >
-            {checked && (
-              <div className="w-2 h-2 rounded-full bg-primary absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
-            )}
-          </div>
+          ></div>
         </div>
         <span className="text-White-Font text-sm">{label}</span>
       </label>
@@ -50,4 +46,3 @@ const RadioButton = React.forwardRef<HTMLInputElement, RadioButtonProps>(
 RadioButton.displayName = "RadioButton";
 
 export default RadioButton;
-

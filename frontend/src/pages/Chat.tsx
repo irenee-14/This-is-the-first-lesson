@@ -25,7 +25,7 @@ const ChatPage: React.FC = () => {
     {
       id: "2",
       type: "other",
-      content: ['"사랑해, 사랑한다고"', "어쩌고저쩌고외쳤다."],
+      content: ['"사랑해, 사랑한다고" 어쩌고저쩌고외쳤다.'],
       characterName: "반지호",
       profileImage: "",
       timestamp: "[2025.08.13 (수) 11:59]",
@@ -43,8 +43,7 @@ const ChatPage: React.FC = () => {
       id: "4",
       type: "other",
       content: [
-        "그것은 흡사 부활절날",
-        '여러 종류에서 일제히 울려오는 조악과도 같이 즐겁고 경쾌한 소리였습니다. 우리 아가씨가 노새 등에 실린 버들고리 사이에 의젓이 올라타고 몸소 나타난 것입니다. 맑은 산 정기와, 소나기 뒤에 싸늘하게 씻긴 공기를 씌어 얼굴이 온통 발갛게 상기되어 있었습니다. 꼬마는 앓아 누워 있고, 노라드 아주머니는 휴가를 얻어 자기 아이들을 보러 갔다는 것이었습니다."text"',
+        '그것은 흡사 부활절날 여러 종류에서 일제히 울려오는 조악과도 같이 즐겁고 경쾌한 소리였습니다. 우리 아가씨가 노새 등에 실린 버들고리 사이에 의젓이 올라타고 몸소 나타난 것입니다. 맑은 산 정기와, 소나기 뒤에 싸늘하게 씻긴 공기를 씌어 얼굴이 온통 발갛게 상기되어 있었습니다. 꼬마는 앓아 누워 있고, 노라드 아주머니는 휴가를 얻어 자기 아이들을 보러 갔다는 것이었습니다. "text" ',
       ],
       characterName: "반지호",
       profileImage: "",
@@ -68,8 +67,7 @@ const ChatPage: React.FC = () => {
       id: "7",
       type: "my",
       content: [
-        '"언제까지 그럴래?"',
-        "맑은 산 정기와, 소나기 뒤에 싸늘하게 씻긴 공기를 씌어 얼굴이 온통 발갛게 상기되어 있었습니다. 꼬마는 앓아 누워 있고, 노라드 아주머니는 휴가를 얻어 자기 아이들을 보러 갔다는 것이었습니다.",
+        '맑은 산 정기와, 소나기 뒤에 싸늘하게 씻긴 공기를 느꼈다. "언제까지 그럴래?" 맑은 산 정기와, 소나기 뒤에 싸늘하게 씻긴 공기를 씌어 얼굴이 온통 발갛게 상기되어 있었습니다. 꼬마는 앓아 누워 있고, 노라드 아주머니는 휴가를 얻어 자기 아이들을 보러 갔다는 것이었습니다.',
       ],
     },
   ]);
@@ -121,8 +119,8 @@ const ChatPage: React.FC = () => {
 
       {/* 채팅 컨텐츠 */}
       <div className="pt-14 pb-14">
-        <div className="flex-1 overflow-y-auto px-4 py-4 pb-24">
-          <div className="max-w-full space-y-4">
+        <div className="flex-1 overflow-y-auto py-4 pb-24">
+          <div className="max-w-full">
             {messages.map((message, index) => {
               switch (message.type) {
                 case "notification":
