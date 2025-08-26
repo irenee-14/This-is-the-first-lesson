@@ -8,6 +8,7 @@ interface CardMediaTopProps {
   chips?: string[];
   className?: string;
   onClick?: () => void;
+  variant?: "horizontal" | "grid";
 }
 
 export default function CardMediaTop({
@@ -17,18 +18,25 @@ export default function CardMediaTop({
   chips = [],
   className,
   onClick,
+  variant = "grid",
 }: CardMediaTopProps) {
+  const isHorizontal = variant === "horizontal";
+
   return (
     <div
       className={cn(
-        "w-[9.75rem] inline-flex flex-col justify-start items-start gap-2",
+        "inline-flex flex-col justify-start items-start gap-2",
+        isHorizontal ? "w-40 flex-shrink-0" : "w-full",
         onClick && "cursor-pointer",
         className
       )}
       onClick={onClick}
     >
       <div
-        className="w-[9.75rem] h-[9.75rem] relative bg-indigo-900 rounded"
+        className={cn(
+          "relative bg-indigo-900 rounded",
+          isHorizontal ? "w-40 h-40" : "w-full aspect-square"
+        )}
         style={{
           backgroundImage: imageUrl ? `url(${imageUrl})` : undefined,
           backgroundSize: "cover",

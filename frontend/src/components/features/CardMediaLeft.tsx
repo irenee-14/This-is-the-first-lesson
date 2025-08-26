@@ -6,7 +6,7 @@ interface CardMediaLeftProps {
   imageUrl?: string;
   name?: string;
   description?: string;
-  chips?: string[];
+  tags?: string[];
   className?: string;
   onClick?: () => void;
 }
@@ -15,13 +15,13 @@ export default function CardMediaLeft({
   imageUrl,
   name = "캐릭터명",
   description,
-  chips = [],
+  tags = [],
   className,
   onClick,
 }: CardMediaLeftProps) {
-  const hasChips = chips.length > 0;
+  const hasTags = tags.length > 0;
   const hasDescription = description && description.trim().length > 0;
-  const showArrowRight = hasDescription && !hasChips; // 설명이 있고 칩이 없을 때만 화살표 표시
+  const showArrowRight = hasDescription && !hasTags; // 설명이 있고 태그가 없을 때만 화살표 표시
 
   return (
     <div
@@ -51,17 +51,17 @@ export default function CardMediaLeft({
         </div>
 
         {/* 칩 또는 설명 */}
-        {hasChips && (
+        {hasTags && (
           <div className="flex flex-wrap gap-1">
-            {chips.slice(0, 2).map((chip, index) => (
+            {tags.slice(0, 2).map((tag, index) => (
               <Chip key={index} size="m" shape="rounded" variantStyle="filled">
-                {chip}
+                {tag}
               </Chip>
             ))}
           </div>
         )}
 
-        {hasDescription && !hasChips && (
+        {hasDescription && !hasTags && (
           <div className="self-stretch text-white text-sm font-normal leading-tight line-clamp-2">
             {description}
           </div>

@@ -1,5 +1,5 @@
 .input-base {
-  @apply w-full h-10 px-4 py-2.5 inline-flex items-center gap-1 text-sm font-normal leading-tight
+  @apply w-full h-10 px-4 py-3 inline-flex items-center gap-1 text-sm font-normal leading-tight
          focus:outline-none disabled:cursor-not-allowed disabled:opacity-50;
 }
 
@@ -30,10 +30,28 @@
   @apply rounded-lg;
 }
 
-/* Icon colors - match placeholder color */
-.input-icon {
-  @apply text-gray-500;
+/* Height variant for textarea */
+.input-textarea {
+  @apply h-40 items-start;
 }
+
+/* Input field  */
+.input-field {
+  @apply flex-1 text-sm bg-transparent focus:outline-none align-top;
+}
+.input-field-textarea {
+  @apply h-full resize-none;
+}
+
+/* Icon  */
+.input-icon {
+  @apply w-5 h-5 flex items-center text-gray-500;
+}
+.input-icon-button {
+  @apply cursor-pointer hover:opacity-80 transition-opacity;
+}
+
+/* Icon color inheritance from text color */
 .input-text-white .input-icon {
   @apply text-gray-200;
 }

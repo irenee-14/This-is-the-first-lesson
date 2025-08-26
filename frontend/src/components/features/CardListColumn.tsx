@@ -6,7 +6,7 @@ interface ProductItem {
   imageUrl?: string;
   name?: string;
   description?: string;
-  chips?: string[];
+  tags?: string[];
 }
 
 interface CardListColumnProps {
@@ -33,7 +33,7 @@ export default function CardListColumn({
           imageUrl={item.imageUrl}
           name={item.name}
           description={item.description}
-          chips={item.chips}
+          tags={item.tags}
           onClick={onCardClick ? () => onCardClick(item, index) : undefined}
         />
       ))}

@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "@components/ui/Button";
 import Chip from "@components/ui/Chip";
-import Input from "@/components/ui/input";
+import Input from "@/components/ui/Input";
 import Dropdown from "@/components/ui/Dropdown";
 import Switch from "@/components/ui/Switch";
 import SwitchSafe from "@/components/ui/SwitchSafe";
@@ -10,7 +10,10 @@ import CardMediaTop from "@/components/features/CardMediaTop";
 import CardListRow from "@/components/features/CardListRow";
 import CardMediaLeft from "@/components/features/CardMediaLeft";
 import CardListColumn from "@/components/features/CardListColumn";
+import Notification from "@/components/features/Notification";
 import { ReactComponent as Search } from "@/assets/icons/Search.svg";
+import OtherMessage from "@/components/features/OtherMessage";
+import MyMessage from "@/components/features/MyMessage";
 const Home: React.FC = () => {
   const navigate = useNavigate();
 
@@ -51,9 +54,19 @@ const Home: React.FC = () => {
   ];
 
   return (
-    <div className="home-page p-6 min-h-screen">
-      {/* Header Section */}
+    <div className="p-6 min-h-screen">
+      <Notification content="반지호가 기억을 불러왔어요 반지호가 기억을 불러왔어요 반지호가 기억을 불러왔어요" />
 
+      <OtherMessage
+        content={["안녕하세요!", '"반갑습니다!"', "어떤 도움이 필요한가요?"]}
+        characterName="AI 어시스턴트"
+        profileImage="/public/image/icon.png"
+      />
+
+      <MyMessage
+        content={["네, 안녕하세요!", '"도움이 필요해요."', "감사합니다."]}
+      />
+      {/* Header Section */}
       {/* Button Component Tests */}
       <section className="mb-12">
         <div className="space-y-6">
@@ -133,7 +146,6 @@ const Home: React.FC = () => {
           </div>
         </div>
       </section>
-
       {/* Chip Component Tests */}
       <section className="mb-12">
         <div className="space-y-4">
@@ -169,7 +181,6 @@ const Home: React.FC = () => {
           </div>
         </div>
       </section>
-
       {/* Input Component Tests */}
       <section className="mb-12">
         <div className="space-y-6 max-w-2xl">
@@ -208,18 +219,16 @@ const Home: React.FC = () => {
           </div>
         </div>
       </section>
-
       {/* Dropdown Component Tests */}
       <section className="mb-12">
         <div className="space-y-4">
           <Dropdown
             label="장르 선택"
-            buttonLabel="장르를 선택하세요"
+            buttonlabel="장르를 선택하세요"
             items={dropdownItems}
           />
         </div>
       </section>
-
       {/* Switch Component Tests */}
       <section className="mb-12">
         <div className="flex gap-8 items-center">
@@ -231,7 +240,6 @@ const Home: React.FC = () => {
           </div>
         </div>
       </section>
-
       {/* Card Components Tests */}
       <section className="mb-12">
         <div className="space-y-8">
