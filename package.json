@@ -19,7 +19,8 @@
     "test": "npm run test:backend && npm run test:frontend",
     "test:backend": "cd backend && npm run test",
     "test:frontend": "cd frontend && npm run test",
-    "install:all": "npm install && cd backend && npm install && cd ../frontend && npm install"
+    "install:all": "npm install && cd backend && npm install && cd ../frontend && npm install",
+    "docker:up": "cd backend/db && docker-compose up"
   },
   "devDependencies": {
     "@types/react": "^19.1.9",

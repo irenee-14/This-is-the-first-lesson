@@ -65,6 +65,7 @@ export default async function authRoutes(fastify: FastifyInstance) {
         }
       }
 
+      reply.header('x-user-id', user.id.toString())
       return reply.send({
         success: true,
         data: response
@@ -83,7 +84,7 @@ export default async function authRoutes(fastify: FastifyInstance) {
     schema: {
       body: {
         type: 'object',
-        required: ['email', 'password'],
+        required: ['email', 'password', 'name'],
         properties: {
           email: { type: 'string', format: 'email' },
           password: { type: 'string', minLength: 6 },
