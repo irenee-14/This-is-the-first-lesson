@@ -92,8 +92,9 @@ export default function CharacterDetailPage() {
     navigate(`/backgrounds`);
   };
 
-  const handleInputSubmit = (value: string) => {
-    console.log("Message submitted:", value);
+  const handleBackgroundClick = (backgroundId: string) => {
+    console.log("Background clicked:", backgroundId);
+    navigate(`/backgrounds/${backgroundId}`);
   };
 
   return (

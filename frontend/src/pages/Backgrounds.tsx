@@ -5,7 +5,6 @@ import Header from "@/components/layout/Header";
 
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import type { getNameOfDeclaration } from "typescript";
 
 const mockBackgrounds = [
   {
@@ -24,16 +23,6 @@ const mockBackgrounds = [
 
 const Backgrounds: React.FC = () => {
   const navigate = useNavigate();
-
-  const handleChatClick = () => {
-    console.log("Chat with character clicked!");
-
-    navigate(`/personas`);
-  };
-
-  const handleInputSubmit = (value: string) => {
-    console.log("Message submitted:", value);
-  };
 
   return (
     <div className="min-h-screen">
