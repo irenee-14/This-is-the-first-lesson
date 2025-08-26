@@ -2,7 +2,7 @@ import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 import SwitchSafe from "@/components/ui/SwitchSafe";
-import { ReactComponent as ArrowLeftIcon } from "@/assets/icons/Arrow-left.svg";
+import { ReactComponent as ArrowLeftIcon } from "@/assets/icons/Arrow-Left.svg";
 import { ReactComponent as DotIcon } from "@/assets/icons/Dot.svg";
 import { useNavigate } from "react-router-dom";
 
