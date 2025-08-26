@@ -3,38 +3,82 @@ import Header from "@/components/layout/Header";
 import Chip from "@/components/ui/Chip";
 import FloatingButton from "@/components/features/FloatingButton";
 import { useFlowStore } from "@/stores/useFlowStore";
-import React from "react";
-import { useNavigate } from "react-router-dom";
-
-const mockBackground = {
-  id: "1",
-  title: "동탄고등학교",
-  image: "/image/icon.png",
-  tags: ["첫사랑", "짝궁"],
-  isLocked: false,
-  description:
-    "푸른 산 한나절 구름은 가고 고을 너머 뻐꾸기는 우는데 눈에 어려 흘러가는 물결 같은 사람 속 아우성쳐 흘러가는 물결 같은 사람 속에 난 그리노라. 달 가고 밤 가고 눈물도 가고 틔어 올 밝은 하늘 빛난 아침 이르면 향기로운 이슬밭 푸른 언덕을 총총총 달려도 와 줄 볼이 고운 나의 사람. 네 가슴 향기로운 풀밭에 엎드리면 나는 가슴이 울어라.푸른 산 한나절 구름은 가고 고을 너머 뻐꾸기는 우는데 눈에 어려 흘러가는 물결 같은 사람 속 아우성쳐 흘러가는 물결 같은 사람 속에 난 그리노라. 달 가고 밤 가고 눈물도 가고 틔어 올 밝은 하늘 빛난 아침 이르면 향기로운 이슬밭 푸른 언덕을 총총총 달려도 와 줄 볼이 고운 나의 사람. 네 가슴 향기로운 풀밭에 엎드리면 나는 가슴이 울어라.",
-};
+import { useApi } from "@/hooks/useApi";
+import type { BackgroundDetailResponse } from "@/types/background";
+import React, { useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 const BackgroundDetail: React.FC = () => {
   const navigate = useNavigate();
+  const { bgId } = useParams();
   const { setBackground } = useFlowStore();
+  const {
+    data: backgroundData,
+    loading,
+    error,
+    get,
+  } = useApi<BackgroundDetailResponse>();
+
+  useEffect(() => {
+    if (bgId) {
+      get(`/backgrounds/${bgId}`);
+    }
+  }, [bgId, get]);
+
+  const background = backgroundData?.data;
 
   const handleChatClick = () => {
     console.log("Chat with character clicked!");
-    setBackground(mockBackground.id);
-    navigate(`/personas`);
+    if (background) {
+      setBackground(background.backgroundId);
+      navigate(`/personas`);
+    }
   };
 
   const handleInputSubmit = (value: string) => {
     console.log("Message submitted:", value);
   };
 
+  // 로딩 중이거나 에러가 있을 때 처리
+  if (loading) {
+    return (
+      <div className="min-h-screen">
+        <Header variant="withText" title="배경 정보" />
+        <div className="pt-14 pb-36 flex items-center justify-center">
+          <div>로딩 중...</div>
+        </div>
+        <BottomNav />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen">
+        <Header variant="withText" title="배경 정보" />
+        <div className="pt-14 pb-36 flex items-center justify-center">
+          <div>오류가 발생했습니다: {error}</div>
+        </div>
+        <BottomNav />
+      </div>
+    );
+  }
+
+  if (!background) {
+    return (
+      <div className="min-h-screen">
+        <Header variant="withText" title="배경 정보" />
+        <div className="pt-14 pb-36 flex items-center justify-center">
+          <div>배경을 찾을 수 없습니다.</div>
+        </div>
+        <BottomNav />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen">
-      {/* Header */}
-      <Header variant="withText" title={mockBackground.title} />
-
+      <Header variant="withText" title={background.backgroundName} />
       {/* Main Content */}
       <div className="pt-14 pb-36">
         {/* Background Section */}
@@ -45,29 +89,36 @@ const BackgroundDetail: React.FC = () => {
             {/* Gradient Overlay */}
             <div className="absolute inset-0 w-full h-90 bg-gradient-to-t from-indigoGray-black via-transparent to-transparent" />
             <img
-              src={mockBackground.image}
+              src={background.backgroundImg || "/image/icon.png"}
               alt="Background Image"
               className="w-full h-90 object-cover"
+              onError={(e) => {
+                (e.currentTarget as HTMLImageElement).src = "/image/icon.png";
+              }}
             />
           </div>
 
           {/* Background Info */}
           <div className="flex flex-col gap-2">
             <h1 className="text-2xl font-bold text-White-Font ">
-              {mockBackground.title}
+              {background.backgroundName}
             </h1>
             <div className="flex gap-1 flex-wrap">
-              {mockBackground.tags.map((tag, index) => (
-                <Chip key={index} size="m">
-                  {tag}
-                </Chip>
-              ))}
+              {background.tags.length > 0 ? (
+                background.tags.map((tag, index) => (
+                  <Chip key={index} size="m">
+                    {tag}
+                  </Chip>
+                ))
+              ) : (
+                <Chip size="m">배경</Chip>
+              )}
             </div>
           </div>
           {/* Background Description */}
           <div>
             <p className="text-sm font-normal leading-tight">
-              {mockBackground.description}
+              {background.description}
             </p>
           </div>
         </div>
@@ -78,7 +129,6 @@ const BackgroundDetail: React.FC = () => {
         onChatClick={handleChatClick}
         onInputSubmit={handleInputSubmit}
       />
-
       {/* Bottom Navigation */}
       <BottomNav />
     </div>

@@ -1,28 +1,62 @@
 import CardListColumn from "@/components/features/CardListColumn";
-import FloatingButton from "@/components/features/FloatingButton";
 import BottomNav from "@/components/layout/BottomNav";
 import Header from "@/components/layout/Header";
+import { useApi } from "@/hooks/useApi";
+import type { BackgroundListResponse, Background } from "@/types/background";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-
-const mockBackgrounds = [
-  {
-    id: "1",
-    name: "동탄고등학교",
-    imageurl: "/image/icon.png",
-    tags: ["첫사랑", "짝궁"],
-  },
-  {
-    id: "2",
-    getNameOfDeclaration: "동탄고등학교",
-    imageurl: "/image/icon.png",
-    tags: ["첫사랑", "짝궁"],
-  },
-];
 
 const Backgrounds: React.FC = () => {
   const navigate = useNavigate();
+  const {
+    data: backgroundsData,
+    loading,
+    error,
+    get,
+  } = useApi<BackgroundListResponse>();
+
+  useEffect(() => {
+    get("/backgrounds");
+  }, [get]);
+
+  // API에서 받아온 배경 데이터를 CardListColumn에 맞는 형태로 변환
+  const transformBackgroundData = (background: Background) => ({
+    id: background.backgroundId,
+    name: background.backgroundName,
+    imageUrl: background.backgroundImg || "/image/icon.png",
+    description: background.description,
+    tags:
+      background.tags && background.tags.length > 0
+        ? background.tags
+        : ["배경"],
+  });
+
+  const backgrounds = backgroundsData?.data?.backgrounds || [];
+  // 로딩 중이거나 에러가 있을 때 처리
+  if (loading) {
+    return (
+      <div className="min-h-screen">
+        <Header variant="withText" title="배경 선택하기" />
+        <div className="pt-14 pb-36 flex items-center justify-center">
+          <div>로딩 중...</div>
+        </div>
+        <BottomNav />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen">
+        <Header variant="withText" title="배경 선택하기" />
+        <div className="pt-14 pb-36 flex items-center justify-center">
+          <div>오류가 발생했습니다: {error}</div>
+        </div>
+        <BottomNav />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen">
@@ -44,9 +78,9 @@ const Backgrounds: React.FC = () => {
           </div>
 
           {/* Background List */}
-          {mockBackgrounds && (
+          {backgrounds.length > 0 ? (
             <CardListColumn
-              cards={mockBackgrounds}
+              cards={backgrounds.map(transformBackgroundData)}
               onCardClick={(card, index) => {
                 console.log(
                   `CardListRow clicked: ${card.name} at index ${index}`
@@ -54,6 +88,10 @@ const Backgrounds: React.FC = () => {
                 navigate(`/backgrounds/${card.id}`);
               }}
             />
+          ) : (
+            <div className="text-center py-8 text-gray-500">
+              배경이 없습니다.
+            </div>
           )}
         </div>
       </div>

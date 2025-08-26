@@ -128,7 +128,7 @@ export default function CharacterDetailPage() {
   const backgrounds = mockBackgrounds;
 
   const handleChatClick = () => {
-    setCharacter(character.charId);
+    setCharacter(character.characterId);
     navigate(`/backgrounds`);
   };
 
