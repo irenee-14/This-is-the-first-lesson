@@ -65,6 +65,7 @@ export default async function authRoutes(fastify: FastifyInstance) {
         }
       }
 
+      reply.header('x-user-id', user.id.toString())
       return reply.send({
         success: true,
         data: response
