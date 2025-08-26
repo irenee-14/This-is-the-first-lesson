@@ -34,6 +34,7 @@ export interface CreateCharacterRequest {
   gender: string
   description: string
   writerNote?: string
+  tags?: string[]
 }
 
 export interface UpdateCharacterRequest {
@@ -53,12 +54,12 @@ export interface Background {
   backgroundName: string
   writerId: string
   writerName: string
-  description?: string
+  description: string
   tags: string[]
-  introTitle?: string
-  introDescription?: string
+  introTitle: string
+  introDescription: string
   unlockChatCount?: number
-  avatarUrl?: string
+  backgroundImg?: string
   createdAt: string
   updatedAt: string
 }

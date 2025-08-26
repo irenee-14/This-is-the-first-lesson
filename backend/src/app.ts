@@ -23,7 +23,7 @@ export async function createServer() {
   fastify.decorate('prisma', prisma)
 
   // Routes (동적 import 안 써도 됨)
-  // await fastify.register(characters)
+  await fastify.register(characters)
   // await fastify.register(backgrounds)
   // await fastify.register(stories)
   // await fastify.register(chats)

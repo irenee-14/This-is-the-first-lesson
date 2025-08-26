@@ -217,27 +217,32 @@ export default async function charactersRoutes(fastify: FastifyInstance) {
         }
       })
 
-      const tag = await fastify.prisma.tag.findUnique({
-        where: {
-          name: '원하는태그이름',  // 여기에 찾고 싶은 태그 이름 넣기
-        },
-        select: {
-          id: true, // tagId만 가져오도록 선택
-        },
-      })
-      if (!tag) {
-        return reply.status(400).send({
-          success: false,
-          error: '올바른 태그가 아닙니다.'
-        } as ApiResponse)
-      }
-
-      await fastify.prisma.characterTag.create({
-        data: {
-          tagId: tag.id,
-          characterId: character.id
-        }
-      })
+      const tags = body.tags ?? [] 
+      await Promise.all(
+        tags.map(async (tagName) => {
+          const tag = await fastify.prisma.tag.findUnique({
+            where: { name: tagName },
+            select: { id: true },
+          })
+      
+          if (!tag) {
+            // 특정 태그 못 찾으면 전체 요청 실패
+            throw reply.status(400).send({
+              success: false,
+              error: `올바르지 않은 태그: ${tagName}`,
+            } as ApiResponse)
+          }
+      
+          await fastify.prisma.characterTag.create({
+            data: {
+              tagId: tag.id,
+              characterId: character.id
+            }
+          })
+          
+          return tag.id
+        })
+      )
 
       return reply.status(201).send({
         success: true,
