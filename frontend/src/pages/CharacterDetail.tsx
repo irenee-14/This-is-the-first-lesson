@@ -96,7 +96,6 @@ export default function CharacterDetailPage() {
 
   const character = characterData?.data;
   const backgrounds = backgroundsData?.data?.backgrounds || [];
-  console.log("backgrounds", backgrounds);
 
   if (!character) {
     return <div>캐릭터 정보를 불러올 수 없습니다.</div>;

@@ -83,7 +83,6 @@ const Story: React.FC = () => {
   }
 
   const character = characterData?.data;
-  console.log(character?.characterImg);
   const background = backgroundData?.data;
 
   return (

@@ -84,10 +84,7 @@ const Backgrounds: React.FC = () => {
                 ...transformBackgroundData(bg),
                 isOpen: idx < 2,
               }))}
-              onCardClick={(card, index) => {
-                console.log(
-                  `CardListRow clicked: ${card.name} at index ${index}`
-                );
+              onCardClick={(card) => {
                 navigate(`/backgrounds/${card.id}`);
               }}
             />

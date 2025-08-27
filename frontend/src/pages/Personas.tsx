@@ -95,7 +95,6 @@ const Personas: React.FC = () => {
       };
 
       setPersonaData(personaInfo);
-      console.log("Selection completed:", personaInfo);
       navigate(`/story`);
     }
   };

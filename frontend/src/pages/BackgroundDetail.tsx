@@ -28,7 +28,6 @@ const BackgroundDetail: React.FC = () => {
   const background = backgroundData?.data;
 
   const handleChatClick = () => {
-    console.log("Chat with character clicked!");
     if (background) {
       setBackground(background.backgroundId);
       navigate(`/personas`);
@@ -36,7 +35,7 @@ const BackgroundDetail: React.FC = () => {
   };
 
   const handleInputSubmit = (value: string) => {
-    console.log("Message submitted:", value);
+    // console.log("Message submitted:", value);
   };
 
   // 로딩 중이거나 에러가 있을 때 처리
