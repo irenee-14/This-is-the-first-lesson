@@ -7,10 +7,10 @@ import FloatingButton from "@/components/features/FloatingButton";
 import Chip from "@/components/ui/Chip";
 import { ReactComponent as LikeIcon } from "@/assets/icons/Like.svg";
 import { ReactComponent as ChatIcon } from "@/assets/icons/Chat.svg";
-import { ReactComponent as LockIcon } from "@/assets/icons/Lock.svg";
 import { ReactComponent as PenIcon } from "@/assets/icons/Pen.svg";
 import CardMediaTop from "@/components/features/CardMediaTop";
 import { useFlowStore } from "@/stores/useFlowStore";
+import type { Background } from "@/types/background";
 
 interface BackgroundCard {
   id: string;
@@ -42,44 +42,6 @@ const mockCharacter = {
   },
 };
 
-const mockBackgrounds: BackgroundCard[] = [
-  {
-    id: "1",
-    title: "동탄고등학교",
-    image: "",
-    tags: ["첫사랑", "짝궁"],
-    isLocked: false,
-  },
-  {
-    id: "2",
-    title: "조선시대",
-    image: "",
-    tags: ["시대물", "임금", "로맨스"],
-    isLocked: true,
-  },
-  {
-    id: "3",
-    title: "하숙집",
-    image: "",
-    tags: ["현대물", "혐관"],
-    isLocked: true,
-  },
-  {
-    id: "4",
-    title: "GH컴퍼니",
-    image: "",
-    tags: ["회사", "상사", "짝사랑"],
-    isLocked: true,
-  },
-  {
-    id: "5",
-    title: "백스테이지",
-    image: "",
-    tags: ["배우", "집착"],
-    isLocked: true,
-  },
-];
-
 export default function CharacterDetailPage() {
   const [activeTab, setActiveTab] = useState<"description" | "chat">(
     "description"
@@ -87,18 +49,37 @@ export default function CharacterDetailPage() {
   const { setCharacter } = useFlowStore();
   const navigate = useNavigate();
   const { charId } = useParams();
-  const { data, loading, error, get } = useApi<{
+  const {
+    data: characterData,
+    loading: characterLoading,
+    error: characterError,
+    get: getCharacter,
+  } = useApi<{
     success: boolean;
     data: import("@/types/character").Character;
   }>();
 
+  const {
+    data: backgroundsData,
+    loading: backgroundLoading,
+    error: backgroundError,
+    get: getBackground,
+  } = useApi<{
+    success: boolean;
+    data: import("@/types/background").Background;
+  }>();
+
+  useEffect(() => {
+    getBackground("/backgrounds");
+  }, [getBackground]);
+
   useEffect(() => {
     if (charId) {
-      get(`/characters/${charId}`);
+      getCharacter(`/characters/${charId}`);
     }
-  }, [charId, get]);
+  }, [charId, getCharacter]);
 
-  if (loading) {
+  if (characterLoading || backgroundLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Header />
@@ -108,24 +89,29 @@ export default function CharacterDetailPage() {
     );
   }
 
-  if (error) {
+  if (characterError || backgroundError) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Header />
-        <div>오류가 발생했습니다: {error}</div>
+        <div>오류가 발생했습니다: {characterError || backgroundError}</div>
         <BottomNav />
       </div>
     );
   }
 
-  const character = data?.data;
+  const character = characterData?.data;
+  const backgrounds = backgroundsData?.data?.backgrounds || [];
+  console.log("backgrounds", backgrounds);
 
   if (!character) {
     return <div>캐릭터 정보를 불러올 수 없습니다.</div>;
   }
+  if (!backgrounds) {
+    return <div>배경 정보를 불러올 수 없습니다.</div>;
+  }
 
   // 임시 배경 데이터 그대로 사용
-  const backgrounds = mockBackgrounds;
+  // const backgrounds = mockBackgrounds;
 
   const handleChatClick = () => {
     setCharacter(character.characterId);
@@ -269,16 +255,21 @@ export default function CharacterDetailPage() {
                         <LockIcon className="w-10 h-10 text-gray-400" />
                       </div>
                     )} */}
-                  {backgrounds.map((background) => (
-                    <CardMediaTop
-                      key={background.id}
-                      imageUrl={background.image}
-                      name={background.title}
-                      chips={background.tags}
-                      onClick={() => handleBackgroundClick(background.id)}
-                      variant="horizontal"
-                    />
-                  ))}
+                  {/* cards={backgrounds.map(transformBackgroundData)} */}
+                  {backgrounds.map((background: Background) => {
+                    return (
+                      <CardMediaTop
+                        key={background.backgroundId}
+                        imageUrl={background.backgroundImg}
+                        name={background.backgroundName}
+                        chips={background.tags}
+                        onClick={() =>
+                          handleBackgroundClick(background.backgroundId)
+                        }
+                        variant="horizontal"
+                      />
+                    );
+                  })}
                 </div>
               </div>
             </div>
