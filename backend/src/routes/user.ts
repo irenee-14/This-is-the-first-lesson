@@ -133,7 +133,13 @@ export default async function usersRoutes(fastify: FastifyInstance) {
         } as ApiResponse)
       }
 
-      // TODO: Check if user has permission to update this user
+      const userIdFromHeader = request.headers['x-user-id']
+      if (userIdFromHeader !== userId) {
+        return reply.status(403).send({
+          success: false,
+          error: 'You can only update your own profile'
+        } as ApiResponse)
+      }
 
       const updatedUser = await fastify.prisma.user.update({
         where: { id: userId },
@@ -217,7 +223,7 @@ export default async function usersRoutes(fastify: FastifyInstance) {
           backgroundId: open.background.id,
           backgroundName: open.background.name,
           tags: open.background.tags,
-          avatarUrl: open.background.avatarUrl
+          backgroundImg: open.background.backgroundImg
         }
       }))
 
@@ -289,11 +295,22 @@ export default async function usersRoutes(fastify: FastifyInstance) {
           error: 'Background not found'
         } as ApiResponse)
       }
-
+      // 최신 flowId 찾기
+      const latestFlow = await fastify.prisma.backgroundFlow.findFirst({
+        where: { writerId: writerId || background.writerId },
+        orderBy: { createdAt: 'desc' }
+      });
+      if (!latestFlow) {
+        return reply.status(400).send({
+          success: false,
+          error: '해당 작가의 배경 플로우가 존재하지 않습니다.'
+        } as ApiResponse);
+      }
       const openBackground = await fastify.prisma.openBackground.create({
         data: {
           userId,
           backgroundId,
+          flowId: latestFlow.id,
           writerId: writerId || background.writerId
         }
       })
@@ -310,4 +327,74 @@ export default async function usersRoutes(fastify: FastifyInstance) {
       } as ApiResponse)
     }
   })
+
+    // GET /api/v1/users/:userId/background-flows-with-opened - 전체 배경 플로우 + 오픈 여부
+  fastify.get<{ Params: { userId: string }, Querystring: { writerId: string } }>(
+    '/api/v1/users/:userId/background-flows-with-opened',
+    {
+      schema: {
+        params: {
+          type: 'object',
+          required: ['userId'],
+          properties: { userId: { type: 'string' } }
+        },
+        querystring: {
+          type: 'object',
+          required: ['writerId'],
+          properties: { writerId: { type: 'string' } }
+        }
+      }
+    },
+    async (request, reply) => {
+      try {
+        const { userId } = request.params;
+        const { writerId } = request.query;
+
+        // 1. 전체 플로우 및 스텝, 배경 정보 조회
+        const flows = await fastify.prisma.backgroundFlow.findMany({
+          where: { writerId },
+          orderBy: { version: 'asc' },
+          include: {
+            backgroundSteps: {
+              include: {
+                background: true
+              },
+              orderBy: { orderKey: 'asc' }
+            }
+          }
+        });
+
+        // 2. 유저가 오픈한 배경 목록 조회
+        const openBackgrounds = await fastify.prisma.openBackground.findMany({
+          where: { userId, writerId },
+          select: { backgroundId: true }
+        });
+        const openedSet = new Set<string>(openBackgrounds.map((ob: { backgroundId: string }) => ob.backgroundId));
+
+        // 3. 응답 가공
+        const response = flows.map((flow: any) => ({
+          flowId: flow.id,
+          version: flow.version,
+          steps: flow.backgroundSteps.map((step: any) => ({
+            backgroundId: step.backgroundId,
+            backgroundName: step.background?.name,
+            tags: step.background?.tags,
+            backgroundImg: step.background?.backgroundImg,
+            isOpened: openedSet.has(step.backgroundId)
+          }))
+        }));
+
+        return reply.send({
+          success: true,
+          data: { flows: response }
+        } as ApiResponse);
+      } catch (error) {
+        fastify.log.error(error);
+        return reply.status(500).send({
+          success: false,
+          error: 'Internal server error'
+        } as ApiResponse);
+      }
+    }
+  );
 }
