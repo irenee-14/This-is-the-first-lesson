@@ -8,7 +8,6 @@ import { useApi } from "@/hooks/useApi";
 import type { CharacterListResponse, Character } from "@/types/character";
 import { useEffect } from "react";
 
-// 더미 데이터
 const popularCharacters = [
   {
     id: 1,

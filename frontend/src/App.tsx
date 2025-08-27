@@ -15,9 +15,11 @@ import {
   RequireBackgroundDetail,
   RequirePersona,
   RequireChat,
-} from "./utils/RequireFlow";
-import Backgrounds from "./pages/Backgrounds";
-import Story from "./pages/Story";
+} from "@/utils/RequireFlow";
+import Backgrounds from "@/pages/Backgrounds";
+import Story from "@/pages/Story";
+import Chats from "@/pages/Chats";
+import MyPage from "@/pages/MyPage";
 
 function FlowResetWrapper({ children }: { children: React.ReactNode }) {
   useFlowReset();
@@ -48,9 +50,11 @@ const router = createBrowserRouter([
         children: [{ path: "/personas", element: <Personas /> }],
       },
       {
-        // element: <RequirePersona />,
+        // element: <RequireStory />,
         children: [{ path: "/story", element: <Story /> }],
       },
+      { path: "/chats", element: <Chats /> },
+      { path: "/mypage", element: <MyPage /> },
       {
         element: <RequireChat />,
         children: [
