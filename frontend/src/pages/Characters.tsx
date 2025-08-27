@@ -122,7 +122,7 @@ export default function Characters() {
           <div className="mb-8 gap-3 flex flex-col">
             <h2 className="text-lg font-semibold">위프 추천 🔑 인기 캐릭터</h2>
             <div className="overflow-x-auto flex gap-4 scrollbar-hide">
-              {characters.map((character) => {
+              {[...characters].reverse().map((character) => {
                 const transformedCharacter = transformCharacterData(character);
 
                 return (
