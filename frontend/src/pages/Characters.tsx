@@ -53,6 +53,9 @@ const popularCharacters = [
   },
 ];
 
+const getImageUrl = (dbPath: string) =>
+  new URL(`../assets/images/${dbPath}`, import.meta.url).href;
+
 export default function Characters() {
   const navigate = useNavigate();
   const {
@@ -75,7 +78,9 @@ export default function Characters() {
     name: character.name,
     description: character.description,
     chips: character.tags.length > 0 ? character.tags : ["Chip", "Chip"],
-    imageUrl: character.characterImg || "/image/icon.png",
+    imageUrl: character.characterImg
+      ? getImageUrl(character.characterImg)
+      : "/image/icon.png",
   });
 
   if (loading) {
@@ -117,17 +122,23 @@ export default function Characters() {
           <div className="mb-8 gap-3 flex flex-col">
             <h2 className="text-lg font-semibold">위프 추천 🔑 인기 캐릭터</h2>
             <div className="overflow-x-auto flex gap-4 scrollbar-hide">
-              {popularCharacters.map((character) => (
-                <CardMediaTop
-                  key={character.id}
-                  imageUrl={character.imageUrl}
-                  name={character.name}
-                  description={character.description}
-                  chips={character.chips}
-                  onClick={() => handleCharacterClick(character.id)}
-                  variant="horizontal"
-                />
-              ))}
+              {characters.map((character) => {
+                const transformedCharacter = transformCharacterData(character);
+
+                return (
+                  <CardMediaTop
+                    key={transformedCharacter.id}
+                    imageUrl={transformedCharacter.imageUrl}
+                    name={transformedCharacter.name}
+                    description={transformedCharacter.description}
+                    chips={transformedCharacter.chips}
+                    onClick={() =>
+                      handleCharacterClick(transformedCharacter.id)
+                    }
+                    variant="horizontal"
+                  />
+                );
+              })}
             </div>
           </div>
 

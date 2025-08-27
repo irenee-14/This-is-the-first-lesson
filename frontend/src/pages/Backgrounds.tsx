@@ -80,7 +80,10 @@ const Backgrounds: React.FC = () => {
           {/* Background List */}
           {backgrounds.length > 0 ? (
             <CardListColumn
-              cards={backgrounds.map(transformBackgroundData)}
+              cards={backgrounds.map((bg, idx) => ({
+                ...transformBackgroundData(bg),
+                isOpen: idx < 2,
+              }))}
               onCardClick={(card, index) => {
                 console.log(
                   `CardListRow clicked: ${card.name} at index ${index}`

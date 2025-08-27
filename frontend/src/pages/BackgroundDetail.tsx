@@ -89,9 +89,10 @@ const BackgroundDetail: React.FC = () => {
             {/* Gradient Overlay */}
             <div className="absolute inset-0 w-full h-90 bg-gradient-to-t from-indigoGray-black via-transparent to-transparent" />
             <img
-              src={background.backgroundImg || "/image/icon.png"}
+              // src={background.backgroundImg || "/image/icon.png"}
+              src="/src/assets/images/backgrounds/library.png"
               alt="Background Image"
-              className="w-full h-90 object-cover"
+              className="w-90 h-90 object-cover"
               onError={(e) => {
                 (e.currentTarget as HTMLImageElement).src = "/image/icon.png";
               }}

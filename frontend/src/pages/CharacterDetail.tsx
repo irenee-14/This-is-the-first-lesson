@@ -12,14 +12,6 @@ import CardMediaTop from "@/components/features/CardMediaTop";
 import { useFlowStore } from "@/stores/useFlowStore";
 import type { Background } from "@/types/background";
 
-interface BackgroundCard {
-  id: string;
-  title: string;
-  image: string;
-  tags: string[];
-  isLocked: boolean;
-}
-
 const mockCharacter = {
   id: "1",
   name: "반지호",
@@ -41,6 +33,9 @@ const mockCharacter = {
       "우리 지호 많이 사랑해 주세요 흑흑\n보고 싶다 반지호 !!!!!!!!!!!!!!!!!!!1",
   },
 };
+
+const getImageUrl = (dbPath: string) =>
+  new URL(`../assets/images/${dbPath}`, import.meta.url).href;
 
 export default function CharacterDetailPage() {
   const [activeTab, setActiveTab] = useState<"description" | "chat">(
@@ -131,7 +126,7 @@ export default function CharacterDetailPage() {
             <div className="w-full h-90 bg-gradient-to-b from-purple-600 via-purple-500 to-indigoGray-black" />
             <div className="absolute inset-0 w-full h-90 bg-gradient-to-t from-indigoGray-black via-transparent to-transparent" />
             <img
-              src={character.characterImg || "/image/icon.png"}
+              src={getImageUrl(character.characterImg) || "/image/icon.png"}
               alt="Character Image"
               className="w-full h-90 object-cover"
               onError={(e) => {
@@ -154,7 +149,7 @@ export default function CharacterDetailPage() {
               {character.name}
             </h1>
             <div className="flex gap-1 flex-wrap">
-              {mockCharacter.tags.map((tag) => (
+              {character.tags.map((tag) => (
                 <Chip key={tag} size="m">
                   {tag}
                 </Chip>
@@ -201,7 +196,7 @@ export default function CharacterDetailPage() {
                   </h3>
                   <div className="bg-gray-900 rounded-lg p-4">
                     <p className="text-sm font-normal text-White-Font leading-tight">
-                      {character.description}
+                      {character.personality}
                     </p>
                   </div>
                 </div>
@@ -238,11 +233,11 @@ export default function CharacterDetailPage() {
                     rightIcon={<PenIcon className="text-safe" />}
                     className="bg-gray-900"
                   >
-                    {mockCharacter.comment.author}
+                    {character.writerName}
                   </Chip>
                 </div>
                 <p className="text-sm text-normal text-White-Font whitespace-pre-line">
-                  {mockCharacter.comment.content}
+                  {character.writerNote}
                 </p>
               </div>
 
@@ -256,13 +251,14 @@ export default function CharacterDetailPage() {
                       </div>
                     )} */}
                   {/* cards={backgrounds.map(transformBackgroundData)} */}
-                  {backgrounds.map((background: Background) => {
+                  {backgrounds.map((background: Background, idx: number) => {
                     return (
                       <CardMediaTop
                         key={background.backgroundId}
-                        imageUrl={background.backgroundImg}
+                        imageUrl="src/assets/images/backgrounds/library.png"
                         name={background.backgroundName}
                         chips={background.tags}
+                        isOpen={idx < 2}
                         onClick={() =>
                           handleBackgroundClick(background.backgroundId)
                         }

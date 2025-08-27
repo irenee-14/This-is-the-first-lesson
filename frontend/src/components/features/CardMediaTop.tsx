@@ -19,7 +19,7 @@ export default function CardMediaTop({
   imageUrl,
   name,
   description,
-  chips,
+  chips = [],
   className,
   onClick,
   variant = "grid",
@@ -53,7 +53,12 @@ export default function CardMediaTop({
             isHorizontal ? "w-40 h-40" : "w-full aspect-square"
           )}
           style={{
-            backgroundImage: imageUrl ? `url(${imageUrl})` : undefined,
+            // backgroundImage: `url(${getImageUrl(imageUrl)})`,
+            backgroundImage: imageUrl
+              ? imageUrl.startsWith("/assets/images/")
+                ? `url(${new URL(".." + imageUrl, import.meta.url).href})`
+                : `url(${imageUrl})`
+              : undefined,
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}

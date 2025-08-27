@@ -29,6 +29,8 @@ const mockStory = {
       "푸른 산 한나절 구름은 가고 고을 너머 뻐꾸기는 우는데 눈에 어려 흘러가는 물결 같은 사람 속 아우성쳐 흘러가는 물결 같은 사람 속에 난 그리노라. 달 가고 밤 가고 눈물도 가고 틔어 올 밝은 하늘 빛난 아침 이르면 향기로운 이슬밭 푸른 언덕을 총총총 달려도 와 줄 볼이 고운 나의 사람. 네 가슴 향기로운 풀밭에 엎드리면 나는 가슴이 울어라. 푸른 산 한나절 구름은 가고 고을 너머 뻐꾸기는 우는데 눈에 어려 흘러가는 물결 같은 사람 속 아우성쳐 흘러가는 물결 같은 사람 속에 난 그리노라.푸른 산 한나절 구름은 가고 고을 너머 뻐꾸기는 우는데 눈에 어려 흘러가는 물결 같은 사람 속 아우성쳐 흘러가는 물결 같은 사람 속에 난 그리노라. ",
   },
 };
+const getImageUrl = (dbPath: string) =>
+  new URL(`../assets/images/${dbPath}`, import.meta.url).href;
 
 const Story: React.FC = () => {
   const navigate = useNavigate();
@@ -81,6 +83,7 @@ const Story: React.FC = () => {
   }
 
   const character = characterData?.data;
+  console.log(character?.characterImg);
   const background = backgroundData?.data;
 
   return (
@@ -94,7 +97,7 @@ const Story: React.FC = () => {
           {character && (
             <CardMediaLeft
               key={character.characterId}
-              imageUrl={character.characterImg}
+              imageUrl={getImageUrl(character.characterImg)}
               name={character.name}
               tags={character.tags}
             />
@@ -102,7 +105,7 @@ const Story: React.FC = () => {
           {background && (
             <CardMediaLeft
               key={background.backgroundId}
-              imageUrl={background.backgroundImg}
+              imageUrl="src/assets/images/backgrounds/library.png"
               name={background.backgroundName}
               tags={background.tags}
             />
