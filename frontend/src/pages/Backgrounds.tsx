@@ -66,14 +66,14 @@ const Backgrounds: React.FC = () => {
       {/* Main Content */}
       <div className="pt-14 pb-36">
         {/* Character Section */}
-        <div className="relative p-4 flex flex-col gap-4">
+        <div className="relative p-4 flex flex-col gap-5">
           {/* notification */}
-          <div className="w-full bg-gray-900 self-stretch px-3 py-1.5 rounded inline-flex items-center gap-1">
-            <div className="w-6 h-6 flex items-center justify-center">
-              <span className="text-sm font-medium">🔒</span>
+          <div className="rounded inline-flex flex-col justify-center items-start gap-1">
+            <div className="justify-start text-Font-White-Font text-base font-semibold font-['Pretendard']">
+              보고싶은 배경을 선택해 주세요
             </div>
-            <div className="text-gray-200 text-sm font-normal leading-tight">
-              호감도를 쌓으면 새로운 배경을 볼 수 있어요
+            <div className="justify-start text-Gray-300 text-sm font-normal font-['Pretendard'] leading-tight">
+              캐릭터와 채팅이 쌓이면 잠금된 배경을 볼 수 있어요
             </div>
           </div>
 
