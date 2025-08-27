@@ -2,6 +2,8 @@ import { FastifyInstance } from 'fastify'
 import { PrismaClient } from '../../generated/prisma'
 import { 
   Background, 
+  BackgroundFlow,
+  BackgroundStep,
   CreateBackgroundRequest, 
   UpdateBackgroundRequest,
   BackgroundListQuery,
@@ -228,6 +230,28 @@ export default async function backgroundsRoutes(fastify: FastifyInstance) {
           })
           
           return tag.id
+        })
+      )
+
+      const flows = await fastify.prisma.backgroundFlow.findMany({
+        where: { writerId },
+        orderBy: { version: 'desc' },
+        include: {
+          backgroundSteps: {
+            include: { background: true }
+          }
+        }
+      })
+
+      await Promise.all(
+        flows.map(async (flow) => {
+          await fastify.prisma.backgroundStep.create({
+            data: {
+              backgroundId: background.id,
+              flowId: flow.id,
+              orderKey: flow.backgroundSteps.length
+            }
+          })
         })
       )
 
