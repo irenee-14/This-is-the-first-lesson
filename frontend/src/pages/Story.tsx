@@ -1,10 +1,10 @@
-import CardListColumn from "@/components/features/CardListColumn";
 import CardMediaLeft from "@/components/features/CardMediaLeft";
 import FloatingButton from "@/components/features/FloatingButton";
 import BottomNav from "@/components/layout/BottomNav";
 import Header from "@/components/layout/Header";
-
-import React from "react";
+import { useFlowStore } from "@/stores/useFlowStore";
+import { useApi } from "@/hooks/useApi";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const mockStory = {
@@ -30,67 +30,92 @@ const mockStory = {
   },
 };
 
-const Backgrounds: React.FC = () => {
+const Story: React.FC = () => {
   const navigate = useNavigate();
+  const { selectedCharacterId, selectedBackgroundId } = useFlowStore();
+  const {
+    data: characterData,
+    loading: characterLoading,
+    error: characterError,
+    get: getCharacter,
+  } = useApi<{
+    success: boolean;
+    data: import("@/types/character").Character;
+  }>();
+  const {
+    data: backgroundData,
+    loading: backgroundLoading,
+    error: backgroundError,
+    get: getBackground,
+  } = useApi<{
+    success: boolean;
+    data: import("@/types/background").Background;
+  }>();
+
+  useEffect(() => {
+    if (selectedCharacterId) {
+      getCharacter(`/characters/${selectedCharacterId}`);
+    }
+    if (selectedBackgroundId) {
+      getBackground(`/backgrounds/${selectedBackgroundId}`);
+    }
+  }, [selectedCharacterId, selectedBackgroundId, getCharacter, getBackground]);
 
   const handleChatClick = () => {
-    console.log("Chat with character clicked!");
-
-    navigate(`/chat`);
+    navigate(`/chat`, { state: { character } });
   };
 
-  const handleInputSubmit = (value: string) => {
-    console.log("Message submitted:", value);
-  };
-
-  function onCardClick(background: {
-    id: string;
-    name: string;
-    imageUrl: string;
-    tags: string[];
-  }): void {
-    throw new Error("Function not implemented.");
+  if (characterLoading || backgroundLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        로딩 중...
+      </div>
+    );
   }
+  if (characterError || backgroundError) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        오류가 발생했습니다.
+      </div>
+    );
+  }
+
+  const character = characterData?.data;
+  const background = backgroundData?.data;
 
   return (
     <div className="min-h-screen">
-      {/* Header */}
       <Header
         variant="withText"
-        title={`${mockStory.character.name}와 대화하기`}
+        title={character ? `${character.name}와 대화하기` : "캐릭터와 대화하기"}
       />
-
-      {/* Main Content */}
       <div className="pt-14 pb-36">
-        {/* Character Section */}
         <div className="relative p-4 flex flex-col gap-4">
-          <CardMediaLeft
-            key={mockStory.character.id}
-            imageUrl={mockStory.character.imageurl}
-            name={mockStory.character.name}
-            tags={mockStory.character.tags}
-          />
-
-          <CardMediaLeft
-            key={mockStory.background.id}
-            imageUrl={mockStory.background.imageUrl}
-            name={mockStory.background.name}
-            tags={mockStory.background.tags}
-            onClick={
-              onCardClick ? () => onCardClick(mockStory.background) : undefined
-            }
-          />
-          <div className="self-stretch justify-start text-sm font-normal">
+          {character && (
+            <CardMediaLeft
+              key={character.characterId}
+              imageUrl={character.characterImg}
+              name={character.name}
+              tags={character.tags}
+            />
+          )}
+          {background && (
+            <CardMediaLeft
+              key={background.backgroundId}
+              imageUrl={background.backgroundImg}
+              name={background.backgroundName}
+              tags={background.tags}
+            />
+          )}
+          <div className="self-stretch justify-start text-sm font-normal leading-tight">
             {mockStory.opening.description}
           </div>
         </div>
       </div>
-
       <FloatingButton buttonlabel="채팅 시작" onChatClick={handleChatClick} />
-      {/* Bottom Navigation */}
       <BottomNav />
     </div>
   );
 };
 
-export default Backgrounds;
+export default Story;

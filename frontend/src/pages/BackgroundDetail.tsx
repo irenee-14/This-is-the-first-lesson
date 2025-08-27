@@ -126,6 +126,7 @@ const BackgroundDetail: React.FC = () => {
       {/* Floating Button */}
       <FloatingButton
         variant="chat"
+        buttonlabel="다음"
         onChatClick={handleChatClick}
         onInputSubmit={handleInputSubmit}
       />
