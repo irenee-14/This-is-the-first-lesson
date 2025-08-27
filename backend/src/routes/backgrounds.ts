@@ -2,8 +2,6 @@ import { FastifyInstance } from 'fastify'
 import { PrismaClient } from '../../generated/prisma'
 import { 
   Background, 
-  BackgroundFlow,
-  BackgroundStep,
   CreateBackgroundRequest, 
   UpdateBackgroundRequest,
   BackgroundListQuery,
@@ -243,17 +241,34 @@ export default async function backgroundsRoutes(fastify: FastifyInstance) {
         }
       })
 
-      await Promise.all(
-        flows.map(async (flow) => {
-          await fastify.prisma.backgroundStep.create({
-            data: {
-              backgroundId: background.id,
-              flowId: flow.id,
-              orderKey: flow.backgroundSteps.length
-            }
-          })
+      if (flows.length === 0) {
+        // 플로우가 없으면 새 플로우 생성 (version 0), 그리고 step을 따로 생성
+        const newFlow = await fastify.prisma.backgroundFlow.create({
+          data: {
+            writerId,
+            version: 0
+          }
         })
-      )
+        await fastify.prisma.backgroundStep.create({
+          data: {
+            backgroundId: background.id,
+            flowId: newFlow.id,
+            orderKey: 1
+          }
+        })
+      } else {
+        await Promise.all(
+          flows.map(async (flow) => {
+            await fastify.prisma.backgroundStep.create({
+              data: {
+                backgroundId: background.id,
+                flowId: flow.id,
+                orderKey: flow.backgroundSteps.length
+              }
+            })
+          })
+        )
+      }
 
       return reply.status(201).send({
         success: true,

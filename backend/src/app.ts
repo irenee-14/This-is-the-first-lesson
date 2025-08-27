@@ -4,13 +4,13 @@ import sensible from '@fastify/sensible'
 import { PrismaClient } from '../generated/prisma' // 또는 '@prisma/client'
 import characters from './routes/characters.js'
 import backgrounds from './routes/backgrounds.js'
-import stories from './routes/stories.js'
-import chats from './routes/chats.js'
 import user from './routes/user.js'
-import personas from './routes/personas.js'
-import tags from './routes/tags.js'
 import auth from './routes/auth.js'
 import backgroundFlow from './routes/backgroundFlow.js'
+// import stories from './routes/stories.js'
+// import chats from './routes/chats.js'
+// import personas from './routes/personas.js'
+// import tags from './routes/tags.js'
 
 export async function createServer() {
   const fastify = Fastify({ logger: true })

@@ -2,7 +2,6 @@ import { FastifyInstance } from 'fastify'
 import { PrismaClient } from '../../generated/prisma'
 import { 
   BackgroundFlow,
-  BackgroundStep,
   CreateBackgroundFlowRequest,
   ApiResponse 
 } from '../types/api'

@@ -216,7 +216,7 @@ export default async function charactersRoutes(fastify: FastifyInstance) {
           writerNote: body.writerNote,
         }
       })
-
+      //TODO tag 못 찾으면 create 안되게
       const tags = body.tags ?? [] 
       await Promise.all(
         tags.map(async (tagName) => {
