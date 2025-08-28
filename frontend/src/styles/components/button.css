@@ -41,7 +41,7 @@
   @apply w-auto;
 }
 .btn-width-full {
-  @apply w-full;
+  @apply flex-1;
 }
 .btn-width-fit {
   @apply w-fit;
