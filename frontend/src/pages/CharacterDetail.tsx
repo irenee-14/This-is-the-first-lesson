@@ -9,29 +9,13 @@ import { ReactComponent as LikeIcon } from "@/assets/icons/Like.svg";
 import { ReactComponent as ChatIcon } from "@/assets/icons/Chat.svg";
 import { ReactComponent as PenIcon } from "@/assets/icons/Pen.svg";
 import CardMediaTop from "@/components/features/CardMediaTop";
+import CharacterInfoSection from "@/components/features/CharacterInfoSection";
 import { useFlowStore } from "@/stores/useFlowStore";
 import type { Background } from "@/types/background";
 
 const mockCharacter = {
-  id: "1",
-  name: "반지호",
-  image: "/image/icon.png", // No image for now, will use gradient background
-  tags: ["다정", "능글", "고수위"],
   likeCount: 24,
   chatCount: 24,
-  description: {
-    appearance:
-      "푸른 산 한나절 구름은 가고 고을 너머 뻐꾸기는 우는데 눈에 어려 흘러가는 물결 같은 사람 속 아우성쳐 흘러가는 물결 같은 사람 속에 난 그리노라. 달 가고 밤 가고 눈물도 가고 틔어 올 밝은 하늘 빛난 아침 이르면 향기로운 이슬밭 푸른 언덕을 총총총 달려도 와 줄 볼이 고운 나의 사람. 네 가슴 향기로운 풀밭에 엎드리면 나는 가슴이 울어라.",
-    characteristics:
-      "개울가에 다다르기 전에, 가을 하늘은 언제 그랬는가 싶게 구름 한 점 없이 쪽빛으로 개어 있었다. 개울가에 이르니, 며칠째 보이지 않던 소녀가 건너편 가에 앉아 물장난을 하고 있었다. 개울가에 다다르기 전에, 가을 하늘은 언제 그랬는가 싶게 구름 한 점 없이 쪽빛으로 개어 있었다. 여기서 소녀는 아래편으로 한 삼 마장쯤, 소년은 우대로 한 십 리 가까운 길을 가야 한다.",
-    speech:
-      "우리 아가씨가 노새 등에 실린 버들고리 사이에 의젓이 올라타고 몸소 나타난 것입니다. 갑자기 사립문이 삐꺽 열리면서 아름다운 스테파네트가 나타났습니다. 오, 고 귀여운 모습. 아무리 바라보아도 내 눈은 지칠 줄을 몰랐습니다. 흐르는 골짜기 스며드는 물소리에 내사 줄줄줄 가슴이 울어라. 달 가고 밤 가고 눈물도 가고 틔어 올 밝은 하늘 빛난 아침 이르면 향기로운 이슬밭 푸른 언덕을 총총총 달려도 와 줄 볼이 고운 나의 사람. 흐르는 골짜기 스며드는 물소리에 내사 줄줄줄 가슴이 울어라.",
-  },
-  comment: {
-    author: "Srrrrrr",
-    content:
-      "우리 지호 많이 사랑해 주세요 흑흑\n보고 싶다 반지호 !!!!!!!!!!!!!!!!!!!1",
-  },
 };
 
 const getImageUrl = (dbPath: string) =>
@@ -103,9 +87,6 @@ export default function CharacterDetailPage() {
   if (!backgrounds) {
     return <div>배경 정보를 불러올 수 없습니다.</div>;
   }
-
-  // 임시 배경 데이터 그대로 사용
-  // const backgrounds = mockBackgrounds;
 
   const handleChatClick = () => {
     setCharacter(character.characterId);
@@ -188,37 +169,15 @@ export default function CharacterDetailPage() {
           {activeTab === "description" ? (
             <div className="space-y-6">
               <div className="space-y-4">
-                {/* 외모 및 성격 */}
-                <div className="space-y-2">
-                  <h3 className="text-base font-medium text-White-Font">
-                    외모 및 성격
-                  </h3>
-                  <div className="bg-gray-900 rounded-lg p-4">
-                    <p className="text-sm font-normal text-White-Font leading-tight">
-                      {character.personality}
-                    </p>
-                  </div>
-                </div>
-                <div>
-                  <h3 className="text-base font-medium text-White-Font mb-3">
-                    특징
-                  </h3>
-                  <div className="bg-gray-900 rounded-lg p-4">
-                    <p className="text-sm font-normal text-White-Font leading-tight">
-                      {character.traits}
-                    </p>
-                  </div>
-                </div>
-                <div>
-                  <h3 className="text-base font-medium text-White-Font mb-3">
-                    말투
-                  </h3>
-                  <div className="bg-gray-900 rounded-lg p-4">
-                    <p className="text-sm font-normal text-White-Font leading-tight">
-                      {character.dialogueStyle}
-                    </p>
-                  </div>
-                </div>
+                <CharacterInfoSection
+                  title="외모 및 성격"
+                  content={character.personality}
+                />
+                <CharacterInfoSection title="특징" content={character.traits} />
+                <CharacterInfoSection
+                  title="말투"
+                  content={character.dialogueStyle}
+                />
               </div>
               {/* -------------------------- */}
 

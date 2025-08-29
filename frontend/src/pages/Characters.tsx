@@ -8,51 +8,6 @@ import { useApi } from "@/hooks/useApi";
 import type { CharacterListResponse, Character } from "@/types/character";
 import { useEffect } from "react";
 
-const popularCharacters = [
-  {
-    id: 1,
-    name: "캐릭터명",
-    description: "설명은\n두 줄입니다",
-    chips: ["짝사랑", "후회"],
-    imageUrl: "/image/icon.png",
-  },
-  {
-    id: 2,
-    name: "캐릭터명",
-    description: "설명은\n두 줄입니다",
-    chips: ["짝사랑", "후회"],
-    imageUrl: "/image/icon.png",
-  },
-  {
-    id: 3,
-    name: "캐릭터명",
-    description: "설명은\n두 줄입니다",
-    chips: ["짝사랑", "후회"],
-    imageUrl: "/image/icon.png",
-  },
-  {
-    id: 4,
-    name: "캐릭터명",
-    description: "설명은\n두 줄입니다",
-    chips: ["짝사랑", "후회"],
-    imageUrl: "/image/icon.png",
-  },
-  {
-    id: 5,
-    name: "캐릭터명",
-    description: "설명은\n두 줄입니다",
-    chips: ["짝사랑", "후회"],
-    imageUrl: "/image/icon.png",
-  },
-  {
-    id: 6,
-    name: "캐릭터명",
-    description: "설명은\n두 줄입니다",
-    chips: ["짝사랑", "후회"],
-    imageUrl: "/image/icon.png",
-  },
-];
-
 const getImageUrl = (dbPath: string) =>
   new URL(`../assets/images/${dbPath}`, import.meta.url).href;
 

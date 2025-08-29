@@ -38,7 +38,6 @@ const BackgroundDetail: React.FC = () => {
     // console.log("Message submitted:", value);
   };
 
-  // 로딩 중이거나 에러가 있을 때 처리
   if (loading) {
     return (
       <div className="min-h-screen">
@@ -78,7 +77,7 @@ const BackgroundDetail: React.FC = () => {
   return (
     <div className="min-h-screen">
       <Header variant="withText" title={background.backgroundName} />
-      {/* Main Content */}
+
       <div className="pt-14 pb-36">
         {/* Background Section */}
         <div className="relative flex flex-col p-4 gap-3">
@@ -123,14 +122,13 @@ const BackgroundDetail: React.FC = () => {
           </div>
         </div>
       </div>
-      {/* Floating Button */}
+
       <FloatingButton
         variant="chat"
         buttonlabel="다음"
         onChatClick={handleChatClick}
         onInputSubmit={handleInputSubmit}
       />
-      {/* Bottom Navigation */}
       <BottomNav />
     </div>
   );

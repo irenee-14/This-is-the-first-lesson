@@ -33,7 +33,7 @@ const Backgrounds: React.FC = () => {
   });
 
   const backgrounds = backgroundsData?.data?.backgrounds || [];
-  // 로딩 중이거나 에러가 있을 때 처리
+
   if (loading) {
     return (
       <div className="min-h-screen">
@@ -60,7 +60,6 @@ const Backgrounds: React.FC = () => {
 
   return (
     <div className="min-h-screen">
-      {/* Header */}
       <Header variant="withText" title="배경 선택하기" />
 
       {/* Main Content */}
@@ -96,7 +95,6 @@ const Backgrounds: React.FC = () => {
         </div>
       </div>
 
-      {/* Bottom Navigation */}
       <BottomNav />
     </div>
   );
