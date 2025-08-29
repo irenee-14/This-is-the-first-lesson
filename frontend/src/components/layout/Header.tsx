@@ -109,7 +109,7 @@ const Header = React.forwardRef<HTMLElement, HeaderProps>(
         </div>
 
         <div className="flex items-center">
-          <SwitchSafe isOn={isSwitchOn} />
+          <SwitchSafe isSwitchOn={isSwitchOn} />
         </div>
       </nav>
     );

@@ -7,6 +7,7 @@ interface ProductItem {
   name?: string;
   description?: string;
   tags?: string[];
+  isOpen?: boolean;
 }
 
 interface CardListColumnProps {
@@ -29,6 +30,7 @@ export default function CardListColumn({
     >
       {cards.map((item, index) => (
         <CardMediaLeft
+          isOpen={item.isOpen}
           key={item.id || index}
           imageUrl={item.imageUrl}
           name={item.name}

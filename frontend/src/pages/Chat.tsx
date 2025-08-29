@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import Header from "@/components/layout/Header";
 import BottomNav from "@/components/layout/BottomNav";
-import FloatingButton from "@/components/features/FloatingButton";
 import Notification from "@/components/features/Notification";
 import OtherMessage from "@/components/features/OtherMessage";
 import MyMessage from "@/components/features/MyMessage";
+import { useLocation } from "react-router-dom";
+import FloatingInputButton from "@/components/features/FloatingInputButton";
 
 interface ChatMessage {
   id: string;
@@ -16,12 +17,10 @@ interface ChatMessage {
 }
 
 const ChatPage: React.FC = () => {
+  const location = useLocation();
+  const { character } = location.state || {};
+
   const [messages] = useState<ChatMessage[]>([
-    {
-      id: "1",
-      type: "notification",
-      content: ["반지호가 기억을 불러왔어요"],
-    },
     {
       id: "2",
       type: "other",
@@ -93,11 +92,6 @@ const ChatPage: React.FC = () => {
     console.log("Bookmark message:", messageId);
   };
 
-  const handleChatClick = () => {
-    console.log("Chat button clicked");
-    // 클릭하면 input에 "" 입력하기
-  };
-
   const handleInputSubmit = (value: string) => {
     console.log("Input submitted:", value);
   };
@@ -114,12 +108,11 @@ const ChatPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#12121d] text-white flex flex-col">
-      {/* 헤더 */}
-      <Header variant="withText" title="반지호" />
+      <Header variant="withText" title={character.name} />
 
-      {/* 채팅 컨텐츠 */}
+      {/* chat content */}
       <div className="pt-14 pb-14">
-        <div className="flex-1 overflow-y-auto py-4 pb-24">
+        <div className="flex-1 overflow-y-auto pb-24">
           <div className="max-w-full">
             {messages.map((message, index) => {
               switch (message.type) {
@@ -137,7 +130,7 @@ const ChatPage: React.FC = () => {
                     <div key={message.id} className="flex justify-start">
                       <OtherMessage
                         content={message.content}
-                        characterName={message.characterName}
+                        characterName={character.name}
                         profileImage={message.profileImage}
                         isLastMessage={isLastOtherMessage(index)}
                         onReset={() => handleReset(message.id)}
@@ -163,15 +156,9 @@ const ChatPage: React.FC = () => {
           </div>
         </div>
       </div>
-      {/* 플로팅 버튼 */}
-      <FloatingButton
-        variant="input"
-        onChatClick={handleChatClick}
-        onInputSubmit={handleInputSubmit}
-        placeholder='"" 사이에 대사 지문을 넣어보세요.'
-      />
 
-      {/* 하단 네비게이션 */}
+      <FloatingInputButton onInputSubmit={handleInputSubmit} />
+
       <BottomNav />
     </div>
   );

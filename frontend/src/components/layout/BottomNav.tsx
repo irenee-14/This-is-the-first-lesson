@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
 import { ReactComponent as NavigationIcon } from "@/assets/icons/Navigation.svg";
@@ -15,9 +16,29 @@ const navItems = [
 
 export default function BottomNav() {
   const [selected, setSelected] = useState("characters");
+  const navigate = useNavigate();
+
+  const handleNavClick = (key: string) => {
+    setSelected(key);
+    switch (key) {
+      case "chat":
+        navigate("/chats");
+        break;
+      case "characters":
+        navigate("/characters");
+        break;
+      case "works":
+        navigate("/characters");
+        break;
+      case "mypage":
+        navigate("/mypage");
+        break;
+      default:
+        break;
+    }
+  };
 
   return (
-    // <nav className="w-full h-[3.5rem] fixed bottom-0 left-1/2 -translate-x-1/2 px-4 pt-2 bg-gray-950 border-t-[1.5px] border-primary inline-flex justify-center items-start gap-6 overflow-hidden z-50">
     <nav
       className="fixed bottom-0 left-1/2 -translate-x-1/2
                  w-full max-w-sm md:max-w-md lg:max-w-lg h-14 px-4 pt-2
@@ -32,7 +53,7 @@ export default function BottomNav() {
         return (
           <button
             key={item.key}
-            onClick={() => setSelected(item.key)}
+            onClick={() => handleNavClick(item.key)}
             className="inline-flex flex-col justify-start items-center gap-0.5"
           >
             {/* 아이콘 wrapper */}

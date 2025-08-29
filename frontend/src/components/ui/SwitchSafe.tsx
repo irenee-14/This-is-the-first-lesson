@@ -5,13 +5,13 @@ import Switch from "./Switch";
 import { ReactComponent as SafeIcon } from "@/assets/icons/Safe.svg";
 
 interface SwitchSafeProps {
-  initialMode?: "safe" | "unsafe";
+  isSwitchOn?: boolean;
 }
 
-export default function SwitchSafe({ initialMode = "safe" }: SwitchSafeProps) {
-  const [mode, setMode] = useState<"safe" | "unsafe">(initialMode);
+export default function SwitchSafe({ isSwitchOn = true }: SwitchSafeProps) {
+  const [mode, setMode] = useState<boolean>(isSwitchOn ? true : false);
 
-  const checked = mode === "safe";
+  const checked = mode === true;
 
   const textColor = checked ? "text-safe-font" : "text-unsafe";
   const bgColor = checked ? "bg-safe-opacity-25" : "bg-unsafe-opacity-25";
@@ -36,7 +36,7 @@ export default function SwitchSafe({ initialMode = "safe" }: SwitchSafeProps) {
 
       <Switch
         checked={checked}
-        onChange={() => setMode(checked ? "unsafe" : "safe")}
+        onChange={() => setMode(checked ? false : true)}
         trackColor="bg-unsafe-opacity-25"
         checkedColor="peer-checked:bg-safe"
       />

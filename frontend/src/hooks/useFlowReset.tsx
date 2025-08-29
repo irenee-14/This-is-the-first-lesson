@@ -3,7 +3,13 @@ import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { useFlowStore } from "@/stores/useFlowStore";
 
-const FLOW_PATHS = ["/characters", "/backgrounds", "/personas", "/chat"];
+const FLOW_PATHS = [
+  "/characters",
+  "/backgrounds",
+  "/personas",
+  "/chat",
+  "/story",
+];
 
 export function useFlowReset() {
   const location = useLocation();
