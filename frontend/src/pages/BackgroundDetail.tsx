@@ -82,7 +82,7 @@ const BackgroundDetail: React.FC = () => {
         {/* Background Section */}
         <div className="relative flex flex-col p-4 gap-3">
           {/* Background Image */}
-          <div className="relative w-full h-90">
+          <div className="relative w-full h-full aspect-square">
             <div className="w-full h-90 bg-gradient-to-b from-purple-600 via-purple-500 to-indigoGray-black" />
             {/* Gradient Overlay */}
             <div className="absolute inset-0 w-full h-90 bg-gradient-to-t from-indigoGray-black via-transparent to-transparent" />
@@ -90,7 +90,7 @@ const BackgroundDetail: React.FC = () => {
               // src={background.backgroundImg || "/image/icon.png"}
               src="/src/assets/images/backgrounds/library.png"
               alt="Background Image"
-              className="w-90 h-90 object-cover"
+              className="w-full h-90 object-cover aspect-square"
               onError={(e) => {
                 (e.currentTarget as HTMLImageElement).src = "/image/icon.png";
               }}

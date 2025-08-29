@@ -106,13 +106,13 @@ export default function CharacterDetailPage() {
       <Header variant="withText" title={character.name} />
       <div className="pt-14 pb-20">
         <div className="relative">
-          <div className="relative w-full h-90">
+          <div className="relative w-full h-90 aspect-square">
             <div className="w-full h-90 bg-gradient-to-b from-purple-600 via-purple-500 to-indigoGray-black" />
             <div className="absolute inset-0 w-full h-90 bg-gradient-to-t from-indigoGray-black via-transparent to-transparent" />
             <img
               src={getImageUrl(character.characterImg) || "/image/icon.png"}
               alt="Character Image"
-              className="w-full h-90 object-cover"
+              className="w-full h-90 object-cover aspect-square"
               onError={(e) => {
                 (e.currentTarget as HTMLImageElement).src = "/image/icon.png";
               }}
