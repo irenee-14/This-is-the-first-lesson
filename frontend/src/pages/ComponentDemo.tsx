@@ -23,8 +23,8 @@ export default function ComponentDemo() {
     console.log("Chat button clicked!");
   };
 
-  const handleInputSubmit = (value: string) => {
-    console.log("Input submitted:", value);
+  const handleInputSubmit = () => {
+    console.log("Input submitted:");
   };
 
   return (
@@ -337,9 +337,8 @@ export default function ComponentDemo() {
 
       {/* Floating Button */}
       <FloatingButton
-        variant={floatingButtonVariant}
-        onChatClick={handleChatClick}
-        onInputSubmit={handleInputSubmit}
+        onClick={handleChatClick}
+        onLikeClick={handleInputSubmit}
       />
 
       {/* Bottom Navigation */}

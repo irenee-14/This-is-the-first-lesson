@@ -114,7 +114,7 @@ const Story: React.FC = () => {
           </div>
         </div>
       </div>
-      <FloatingButton buttonlabel="채팅 시작" onChatClick={handleChatClick} />
+      <FloatingButton buttonlabel="채팅 시작" onClick={handleChatClick} />
       <BottomNav />
     </div>
   );

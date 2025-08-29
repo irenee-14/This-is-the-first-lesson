@@ -97,6 +97,10 @@ export default function CharacterDetailPage() {
     navigate(`/backgrounds/${backgroundId}`);
   };
 
+  function onLikeClick(): void {
+    console.log("Like button clicked!");
+  }
+
   return (
     <div className="min-h-screen">
       <Header variant="withText" title={character.name} />
@@ -237,9 +241,9 @@ export default function CharacterDetailPage() {
         </div>
       </div>
       <FloatingButton
-        variant="chat"
         like={true}
-        onChatClick={handleChatClick}
+        onLikeClick={onLikeClick}
+        onClick={handleChatClick}
       />
       <BottomNav />
     </div>

@@ -153,7 +153,7 @@ const Personas: React.FC = () => {
 
       {/* Floating Button */}
       <FloatingButton
-        onChatClick={handleComplete}
+        onClick={handleComplete}
         buttonlabel="선택 완료"
         disabled={!name || !gender || !personaDescription}
       />
