@@ -34,7 +34,7 @@ const getImageUrl = (dbPath: string) =>
 
 const Story: React.FC = () => {
   const navigate = useNavigate();
-  const { selectedCharacterId, selectedBackgroundId } = useFlowStore();
+  const { characterId, backgroundId } = useFlowStore();
   const {
     data: characterData,
     loading: characterLoading,
@@ -55,13 +55,13 @@ const Story: React.FC = () => {
   }>();
 
   useEffect(() => {
-    if (selectedCharacterId) {
-      getCharacter(`/characters/${selectedCharacterId}`);
+    if (characterId) {
+      getCharacter(`/characters/${characterId}`);
     }
-    if (selectedBackgroundId) {
-      getBackground(`/backgrounds/${selectedBackgroundId}`);
+    if (backgroundId) {
+      getBackground(`/backgrounds/${backgroundId}`);
     }
-  }, [selectedCharacterId, selectedBackgroundId, getCharacter, getBackground]);
+  }, [characterId, backgroundId, getCharacter, getBackground]);
 
   const handleChatClick = () => {
     navigate(`/chat`, { state: { character } });

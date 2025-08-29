@@ -25,9 +25,10 @@ export default function CharacterDetailPage() {
   const [activeTab, setActiveTab] = useState<"description" | "chat">(
     "description"
   );
-  const { setCharacter } = useFlowStore();
+  const { setCharacter, setWriter } = useFlowStore();
   const navigate = useNavigate();
   const { charId } = useParams();
+
   const {
     data: characterData,
     loading: characterLoading,
@@ -90,6 +91,7 @@ export default function CharacterDetailPage() {
 
   const handleChatClick = () => {
     setCharacter(character.characterId);
+    setWriter(character.writerId);
     navigate(`/backgrounds`);
   };
 

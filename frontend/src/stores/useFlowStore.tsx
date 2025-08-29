@@ -8,10 +8,12 @@ interface PersonaData {
 }
 
 interface FlowState {
-  selectedCharacterId: string | null;
-  selectedBackgroundId: string | null;
+  writerId: string | null;
+  characterId: string | null;
+  backgroundId: string | null;
   personaId: string | null;
   selectedPersonaData: PersonaData | null;
+  setWriter: (id: string) => void;
   setCharacter: (id: string) => void;
   setBackground: (id: string) => void;
   setPersona: (id: string) => void;
@@ -20,19 +22,21 @@ interface FlowState {
 }
 
 export const useFlowStore = create<FlowState>((set) => ({
-  selectedCharacterId: null,
-  selectedBackgroundId: null,
+  writerId: null,
+  characterId: null,
+  backgroundId: null,
   personaId: null,
   selectedPersonaData: null,
-  setCharacter: (id) => set({ selectedCharacterId: id }),
-  setBackground: (id) => set({ selectedBackgroundId: id }),
+  setWriter: (id) => set({ writerId: id }),
+  setCharacter: (id) => set({ characterId: id }),
+  setBackground: (id) => set({ backgroundId: id }),
   setPersona: (id) => set({ personaId: id }),
   setPersonaData: (persona) =>
     set({ selectedPersonaData: persona, personaId: persona.id }),
   resetFlow: () =>
     set({
-      selectedCharacterId: null,
-      selectedBackgroundId: null,
+      characterId: null,
+      backgroundId: null,
       personaId: null,
       selectedPersonaData: null,
     }),

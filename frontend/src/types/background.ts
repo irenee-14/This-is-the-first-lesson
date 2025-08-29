@@ -13,11 +13,26 @@ export interface Background {
   updatedAt: string;
 }
 
+export interface BackgroundStep {
+  backgroundId: string;
+  backgroundName: string;
+  tags: string[];
+  backgroundImg: string;
+  isOpened: boolean;
+}
+
+export interface BackgroundFlow {
+  flowId: string;
+  version: number;
+  steps: BackgroundStep[];
+}
+
 export interface BackgroundListResponse {
   success: boolean;
   data: {
-    backgrounds: Background[];
-    pagination: {
+    backgrounds?: Background[];
+    flows?: BackgroundFlow[];
+    pagination?: {
       page: number;
       limit: number;
       total: number;

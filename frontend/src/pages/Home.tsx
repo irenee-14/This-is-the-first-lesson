@@ -6,7 +6,7 @@ import { useUserStore } from "@/stores/useUserStore";
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
-  const { userId, setUserId } = useUserStore();
+  const { userId, setUserId, setUserName } = useUserStore();
   const [inputId, setInputId] = useState("");
   const [inputPassword, setInputPassword] = useState("");
 
@@ -35,8 +35,10 @@ const Home: React.FC = () => {
       alert("Login failed");
       return;
     }
+
     if (user) {
-      setUserId(user);
+      setUserId(user.data.user.userId);
+      setUserName(user.data.user.name);
     }
   };
 

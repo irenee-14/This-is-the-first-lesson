@@ -2,7 +2,9 @@ import CardListColumn from "@/components/features/CardListColumn";
 import BottomNav from "@/components/layout/BottomNav";
 import Header from "@/components/layout/Header";
 import { useApi } from "@/hooks/useApi";
-import type { BackgroundListResponse, Background } from "@/types/background";
+import { useFlowStore } from "@/stores/useFlowStore";
+import { useUserStore } from "@/stores/useUserStore";
+import type { BackgroundListResponse } from "@/types/background";
 
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -15,24 +17,17 @@ const Backgrounds: React.FC = () => {
     error,
     get,
   } = useApi<BackgroundListResponse>();
+  const { writerId } = useFlowStore();
+  const { userId } = useUserStore();
 
   useEffect(() => {
-    get("/backgrounds");
+    if (userId && writerId) {
+      get(`/users/${userId}/background-flows-with-opened?writerId=${writerId}`);
+    }
   }, [get]);
 
-  // API에서 받아온 배경 데이터를 CardListColumn에 맞는 형태로 변환
-  const transformBackgroundData = (background: Background) => ({
-    id: background.backgroundId,
-    name: background.backgroundName,
-    imageUrl: background.backgroundImg || "/image/icon.png",
-    description: background.description,
-    tags:
-      background.tags && background.tags.length > 0
-        ? background.tags
-        : ["배경"],
-  });
-
-  const backgrounds = backgroundsData?.data?.backgrounds || [];
+  const flows = backgroundsData?.data?.flows || [];
+  const steps = flows.length > 0 ? flows[0].steps : [];
 
   if (loading) {
     return (
@@ -77,11 +72,14 @@ const Backgrounds: React.FC = () => {
           </div>
 
           {/* Background List */}
-          {backgrounds.length > 0 ? (
+          {steps.length > 0 ? (
             <CardListColumn
-              cards={backgrounds.map((bg, idx) => ({
-                ...transformBackgroundData(bg),
-                isOpen: idx < 2,
+              cards={steps.map((step) => ({
+                id: step.backgroundId,
+                name: step.backgroundName,
+                imageUrl: step.backgroundImg || "/image/icon.png",
+                tags: step.tags && step.tags.length > 0 ? step.tags : ["배경"],
+                isOpen: step.isOpened,
               }))}
               onCardClick={(card) => {
                 navigate(`/backgrounds/${card.id}`);
