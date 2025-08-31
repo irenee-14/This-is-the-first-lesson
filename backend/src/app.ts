@@ -13,7 +13,18 @@ import backgroundFlow from './routes/backgroundFlow.js'
 // import tags from './routes/tags.js'
 
 export async function createServer() {
-  const fastify = Fastify({ logger: true })
+  const fastify = Fastify({ 
+    logger: {
+      transport: {
+        target: 'pino-pretty',
+        options: {
+          translateTime: true,
+          colorize: true,
+          ignore: 'pid,hostname' // 안 보고 싶은 필드 제거
+        }
+      }
+  } 
+})
 
   // Register plugins
   await fastify.register(cors, { origin: true })
