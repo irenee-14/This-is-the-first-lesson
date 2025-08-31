@@ -18,11 +18,12 @@ interface PersonaOption {
 }
 
 const Personas: React.FC = () => {
-  const { setPersonaData } = useFlowStore();
+  const { characterId, setPersonaData } = useFlowStore();
   const [selectedPersona, setSelectedPersona] = useState("");
   const [name, setName] = useState("");
   const [gender, setGender] = useState("");
   const [personaDescription, setPersonaDescription] = useState("");
+
   const navigate = useNavigate();
 
   const personaData: PersonaOption[] = [
@@ -95,7 +96,7 @@ const Personas: React.FC = () => {
       };
 
       setPersonaData(personaInfo);
-      navigate(`/story`);
+      navigate(`/chat`, { state: { characterId } }); // ***수정필***
     }
   };
 

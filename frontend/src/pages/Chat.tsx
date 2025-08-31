@@ -17,8 +17,11 @@ interface ChatMessage {
 }
 
 const ChatPage: React.FC = () => {
-  const location = useLocation();
-  const { character } = location.state || {};
+  // const location = useLocation();
+  // const { character } = location.state || {};
+  const character = {
+    name: "반지호",
+  };
 
   const [messages] = useState<ChatMessage[]>([
     {
