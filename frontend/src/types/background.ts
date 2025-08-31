@@ -14,6 +14,7 @@ export interface Background {
 }
 
 export interface BackgroundStep {
+  backgroundDescription: string;
   backgroundId: string;
   backgroundName: string;
   tags: string[];

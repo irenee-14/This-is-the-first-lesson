@@ -24,7 +24,7 @@ const Backgrounds: React.FC = () => {
     if (userId && writerId) {
       get(`/users/${userId}/background-flows-with-opened?writerId=${writerId}`);
     }
-  }, [get]);
+  }, [get, userId, writerId]);
 
   const flows = backgroundsData?.data?.flows || [];
   const steps = flows.length > 0 ? flows[0].steps : [];
@@ -78,6 +78,7 @@ const Backgrounds: React.FC = () => {
                 id: step.backgroundId,
                 name: step.backgroundName,
                 imageUrl: step.backgroundImg || "/image/icon.png",
+                description: step.backgroundDescription || "설명이 없습니다.",
                 tags: step.tags && step.tags.length > 0 ? step.tags : ["배경"],
                 isOpen: step.isOpened,
               }))}
