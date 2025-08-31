@@ -95,7 +95,6 @@ const Personas: React.FC = () => {
       };
 
       setPersonaData(personaInfo);
-      console.log("Selection completed:", personaInfo);
       navigate(`/story`);
     }
   };
@@ -154,7 +153,7 @@ const Personas: React.FC = () => {
 
       {/* Floating Button */}
       <FloatingButton
-        onChatClick={handleComplete}
+        onClick={handleComplete}
         buttonlabel="선택 완료"
         disabled={!name || !gender || !personaDescription}
       />
