@@ -3,8 +3,10 @@ import { PrismaClient } from '../../generated/prisma'
 import { 
   Story, 
   CreateStoryRequest,
-  ApiResponse 
+  ApiResponse, 
+  StoryListQuery
 } from '../types/api'
+import { buildGptStory } from 'src/gpt/storyPrompt'
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -12,11 +14,30 @@ declare module 'fastify' {
   }
 }
 
+//TODO 어떤 캐릭터의 basic 작품 조회, 어떤 배경의 basic 작품 조회하는 API 필요할까?
+
 export default async function storiesRoutes(fastify: FastifyInstance) {
   // GET /api/v1/stories - 작품 목록 조회
-  fastify.get('/api/v1/stories', async (request, reply) => {
+  fastify.get<{ Querystring: StoryListQuery}>('/api/v1/stories', {
+    schema: {
+      querystring: {
+        type: 'object',
+        properties: {
+          writerId: { type: 'string' },
+          basic: { type: 'boolean' }
+        }
+      }
+    }
+  }, async (request, reply) => {
     try {
+
+      const { writerId, basic } = request.query
+      const where: any = {}
+      if (writerId) where.userId = writerId
+      if (basic !== undefined) where.basic = basic
+
       const stories = await fastify.prisma.story.findMany({
+        where,
         include: {
           character: {
             select: {
@@ -47,11 +68,7 @@ export default async function storiesRoutes(fastify: FastifyInstance) {
         writerId: story.userId || '',
         basic: story.basic,
         characterPrompt: story.characterPrompt || undefined,
-        openings: story.opening ? [{
-          openingSceneId: story.id,
-          introId: story.id,
-          opening: story.opening
-        }] : undefined,
+        opening: story.opening,
         createdAt: story.createdAt.toISOString(),
         updatedAt: story.updatedAt.toISOString()
       }))
@@ -122,11 +139,7 @@ export default async function storiesRoutes(fastify: FastifyInstance) {
         writerId: story.userId || '',
         basic: story.basic,
         characterPrompt: story.characterPrompt || undefined,
-        openings: story.opening ? [{
-          openingSceneId: story.id,
-          introId: story.id,
-          opening: story.opening
-        }] : undefined,
+        opening: story.opening,
         createdAt: story.createdAt.toISOString(),
         updatedAt: story.updatedAt.toISOString()
       }
@@ -144,12 +157,12 @@ export default async function storiesRoutes(fastify: FastifyInstance) {
     }
   })
 
-  // POST /api/v1/stories - 작품 생성
+  // POST /api/v1/stories - 작품 생성 --> GPT API
   fastify.post<{ Body: CreateStoryRequest }>('/api/v1/stories', {
     schema: {
       body: {
         type: 'object',
-        required: ['characterId', 'backgroundId'],
+        required: ['characterId', 'backgroundId', 'characterPrompt', 'opening', 'basic'],
         properties: {
           characterId: { type: 'string' },
           backgroundId: { type: 'string' },
@@ -162,10 +175,8 @@ export default async function storiesRoutes(fastify: FastifyInstance) {
   }, async (request, reply) => {
     try {
       const body = request.body
-      // TODO: Get userId from authenticated user
-      const userId = 'temp-user-id' // This should come from auth middleware
+      const userId = request.headers['x-user-id'] as string
 
-      // Verify character exists
       const character = await fastify.prisma.character.findUnique({
         where: { id: body.characterId }
       })
@@ -177,7 +188,6 @@ export default async function storiesRoutes(fastify: FastifyInstance) {
         } as ApiResponse)
       }
 
-      // Verify background exists
       const background = await fastify.prisma.background.findUnique({
         where: { id: body.backgroundId }
       })
@@ -189,8 +199,12 @@ export default async function storiesRoutes(fastify: FastifyInstance) {
         } as ApiResponse)
       }
 
+      //GPT API 호출해서 작품 생성
+      const storyPrompt = buildGptStory(character, background)
+
       const story = await fastify.prisma.story.create({
         data: {
+          name: "dldirl",
           characterId: body.characterId,
           backgroundId: body.backgroundId,
           userId,
@@ -226,6 +240,7 @@ export default async function storiesRoutes(fastify: FastifyInstance) {
     }
   }, async (request, reply) => {
     try {
+
       const { storyId } = request.params
 
       const story = await fastify.prisma.story.findUnique({
@@ -239,7 +254,12 @@ export default async function storiesRoutes(fastify: FastifyInstance) {
         } as ApiResponse)
       }
 
-      // TODO: Check if user has permission to delete this story
+      if (story.userId != request.headers['x-user-id']) {
+        return reply.status(403).send({
+          success: false,
+          error: 'Permission denied'
+        } as ApiResponse)
+      }
 
       await fastify.prisma.story.delete({
         where: { id: storyId }
