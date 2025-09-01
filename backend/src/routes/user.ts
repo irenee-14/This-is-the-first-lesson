@@ -162,19 +162,11 @@ export default async function usersRoutes(fastify: FastifyInstance) {
     }
   })
 
-  // GET /api/v1/users/:userId/unlocked-backgrounds - 특정 유저의 오픈된 배경 조회
-  fastify.get<{ 
-    Params: { userId: string },
+  // GET /api/v1/users/unlocked-backgrounds - 특정 유저의 오픈된 배경 조회
+  fastify.get<{
     Querystring: { writerId?: string }
-  }>('/api/v1/users/:userId/unlocked-backgrounds', {
+  }>('/api/v1/users/unlocked-backgrounds', {
     schema: {
-      params: {
-        type: 'object',
-        required: ['userId'],
-        properties: {
-          userId: { type: 'string' }
-        }
-      },
       querystring: {
         type: 'object',
         properties: {
@@ -184,7 +176,7 @@ export default async function usersRoutes(fastify: FastifyInstance) {
     }
   }, async (request, reply) => {
     try {
-      const { userId } = request.params
+      const userId = request.headers['x-user-id'] as string
       const { writerId } = request.query
 
       const user = await fastify.prisma.user.findUnique({
@@ -240,20 +232,12 @@ export default async function usersRoutes(fastify: FastifyInstance) {
     }
   })
 
-  // PATCH /api/v1/users/:userId/unlocked-backgrounds - 특정 유저의 오픈 배경 추가
-  fastify.patch<{ 
-    Params: { userId: string },
+  // PATCH /api/v1/users/unlocked-backgrounds - 특정 유저의 오픈 배경 추가
+  fastify.patch<{
     Querystring: { writerId?: string },
     Body: { backgroundId: string }
-  }>('/api/v1/users/:userId/unlocked-backgrounds', {
+  }>('/api/v1/users/unlocked-backgrounds', {
     schema: {
-      params: {
-        type: 'object',
-        required: ['userId'],
-        properties: {
-          userId: { type: 'string' }
-        }
-      },
       querystring: {
         type: 'object',
         properties: {
@@ -270,7 +254,7 @@ export default async function usersRoutes(fastify: FastifyInstance) {
     }
   }, async (request, reply) => {
     try {
-      const { userId } = request.params
+      const userId = request.headers['x-user-id'] as string
       const { writerId } = request.query
       const { backgroundId } = request.body
 
@@ -328,26 +312,21 @@ export default async function usersRoutes(fastify: FastifyInstance) {
     }
   })
 
-    // GET /api/v1/users/:userId/background-flows-with-opened - 전체 배경 플로우 + 오픈 여부
-  fastify.get<{ Params: { userId: string }, Querystring: { writerId: string } }>(
-    '/api/v1/users/:userId/background-flows-with-opened',
+    // GET /api/v1/users/background-flows-with-opened - 전체 배경 플로우 + 오픈 여부
+  fastify.get<{ Querystring: { writerId: string, characterId?: string } }>(
+    '/api/v1/users/background-flows-with-opened',
     {
       schema: {
-        params: {
-          type: 'object',
-          required: ['userId'],
-          properties: { userId: { type: 'string' } }
-        },
         querystring: {
           type: 'object',
           required: ['writerId'],
-          properties: { writerId: { type: 'string' } }
+          properties: { writerId: { type: 'string' }, characterId: { type: 'string' } }
         }
       }
     },
     async (request, reply) => {
       try {
-        const { userId } = request.params;
+        const userId = request.headers['x-user-id'] as string
         const { writerId } = request.query;
 
         // 1. 전체 플로우 및 스텝, 배경 정보 조회
