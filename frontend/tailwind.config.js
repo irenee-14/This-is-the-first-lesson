@@ -142,6 +142,15 @@ export default {
         8: "2rem",
         1.5: "0.375rem",
       },
+      keyframes: {
+        slideUp: {
+          "0%": { transform: "translateY(100%)" },
+          "100%": { transform: "translateY(0)" },
+        },
+      },
+      animation: {
+        "slide-up": "slideUp 0.3s ease-out forwards",
+      },
     },
   },
   plugins: [require("tailwindcss-animate"), scrollbarHide],
