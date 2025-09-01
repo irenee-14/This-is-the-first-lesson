@@ -7,7 +7,7 @@ import backgrounds from './routes/backgrounds.js'
 import user from './routes/user.js'
 import auth from './routes/auth.js'
 import backgroundFlow from './routes/backgroundFlow.js'
-// import stories from './routes/stories.js'
+import stories from './routes/stories.js'
 // import chats from './routes/chats.js'
 // import personas from './routes/personas.js'
 // import tags from './routes/tags.js'
@@ -37,7 +37,7 @@ export async function createServer() {
   // Routes (동적 import 안 써도 됨)
   await fastify.register(characters)
   await fastify.register(backgrounds)
-  // await fastify.register(stories)
+  await fastify.register(stories)
   // await fastify.register(chats)
   await fastify.register(user)
   // await fastify.register(personas)

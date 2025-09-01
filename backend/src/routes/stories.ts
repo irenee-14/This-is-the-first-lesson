@@ -6,7 +6,7 @@ import {
   ApiResponse, 
   StoryListQuery
 } from '../types/api'
-import { buildGptStory } from 'src/gpt/storyPrompt'
+import { buildGptStory } from 'src/model/storyPrompt'
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -162,13 +162,11 @@ export default async function storiesRoutes(fastify: FastifyInstance) {
     schema: {
       body: {
         type: 'object',
-        required: ['characterId', 'backgroundId', 'characterPrompt', 'opening', 'basic'],
+        required: ['characterId', 'backgroundId', 'basic'],
         properties: {
           characterId: { type: 'string' },
           backgroundId: { type: 'string' },
-          characterPrompt: { type: 'string' },
-          basic: { type: 'boolean' },
-          opening: { type: 'string' }
+          basic: { type: 'boolean' }
         }
       }
     }
@@ -187,7 +185,7 @@ export default async function storiesRoutes(fastify: FastifyInstance) {
           error: 'Character not found'
         } as ApiResponse)
       }
-
+      //TODO 스토리 생성 배경과 캐릭터가 같은 작가인 것인지 확인,,,
       const background = await fastify.prisma.background.findUnique({
         where: { id: body.backgroundId }
       })
@@ -200,17 +198,19 @@ export default async function storiesRoutes(fastify: FastifyInstance) {
       }
 
       //GPT API 호출해서 작품 생성
-      const storyPrompt = buildGptStory(character, background)
+      const storyPrompt = await buildGptStory(character, background)
 
+      const {name, characterPrompt, opening} = JSON.parse(storyPrompt || '{}')
+      // const userId = request.headers['x-user-id'] as string
       const story = await fastify.prisma.story.create({
         data: {
-          name: "dldirl",
+          name: name,
           characterId: body.characterId,
           backgroundId: body.backgroundId,
           userId,
-          characterPrompt: body.characterPrompt,
+          characterPrompt: characterPrompt,
           basic: body.basic || false,
-          opening: body.opening
+          opening: opening
         }
       })
 
