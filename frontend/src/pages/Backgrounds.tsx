@@ -1,75 +1,98 @@
 import CardListColumn from "@/components/features/CardListColumn";
-import FloatingButton from "@/components/features/FloatingButton";
 import BottomNav from "@/components/layout/BottomNav";
 import Header from "@/components/layout/Header";
+import { useApi } from "@/hooks/useApi";
+import { useFlowStore } from "@/stores/useFlowStore";
+import { useUserStore } from "@/stores/useUserStore";
+import type { BackgroundListResponse } from "@/types/background";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import type { getNameOfDeclaration } from "typescript";
-
-const mockBackgrounds = [
-  {
-    id: "1",
-    name: "동탄고등학교",
-    imageurl: "/image/icon.png",
-    tags: ["첫사랑", "짝궁"],
-  },
-  {
-    id: "2",
-    getNameOfDeclaration: "동탄고등학교",
-    imageurl: "/image/icon.png",
-    tags: ["첫사랑", "짝궁"],
-  },
-];
 
 const Backgrounds: React.FC = () => {
   const navigate = useNavigate();
+  const {
+    data: backgroundsData,
+    loading,
+    error,
+    get,
+  } = useApi<BackgroundListResponse>();
+  const { writerId } = useFlowStore();
+  const { userId } = useUserStore();
 
-  const handleChatClick = () => {
-    console.log("Chat with character clicked!");
+  useEffect(() => {
+    if (userId && writerId) {
+      get(`/users/${userId}/background-flows-with-opened?writerId=${writerId}`);
+    }
+  }, [get]);
 
-    navigate(`/personas`);
-  };
+  const flows = backgroundsData?.data?.flows || [];
+  const steps = flows.length > 0 ? flows[0].steps : [];
 
-  const handleInputSubmit = (value: string) => {
-    console.log("Message submitted:", value);
-  };
+  if (loading) {
+    return (
+      <div className="min-h-screen">
+        <Header variant="withText" title="배경 선택하기" />
+        <div className="pt-14 pb-36 flex items-center justify-center">
+          <div>로딩 중...</div>
+        </div>
+        <BottomNav />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen">
+        <Header variant="withText" title="배경 선택하기" />
+        <div className="pt-14 pb-36 flex items-center justify-center">
+          <div>오류가 발생했습니다: {error}</div>
+        </div>
+        <BottomNav />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen">
-      {/* Header */}
       <Header variant="withText" title="배경 선택하기" />
 
       {/* Main Content */}
       <div className="pt-14 pb-36">
         {/* Character Section */}
-        <div className="relative p-4 flex flex-col gap-4">
+        <div className="relative p-4 flex flex-col gap-5">
           {/* notification */}
-          <div className="w-full bg-gray-900 self-stretch px-3 py-1.5 rounded inline-flex items-center gap-1">
-            <div className="w-6 h-6 flex items-center justify-center">
-              <span className="text-sm font-medium">🔒</span>
+          <div className="rounded inline-flex flex-col justify-center items-start gap-1">
+            <div className="justify-start text-Font-White-Font text-base font-semibold font-['Pretendard']">
+              보고싶은 배경을 선택해 주세요
             </div>
-            <div className="text-gray-200 text-sm font-normal leading-tight">
-              호감도를 쌓으면 새로운 배경을 볼 수 있어요
+            <div className="justify-start text-Gray-300 text-sm font-normal font-['Pretendard'] leading-tight">
+              캐릭터와 채팅이 쌓이면 잠금된 배경을 볼 수 있어요
             </div>
           </div>
 
           {/* Background List */}
-          {mockBackgrounds && (
+          {steps.length > 0 ? (
             <CardListColumn
-              cards={mockBackgrounds}
-              onCardClick={(card, index) => {
-                console.log(
-                  `CardListRow clicked: ${card.name} at index ${index}`
-                );
+              cards={steps.map((step) => ({
+                id: step.backgroundId,
+                name: step.backgroundName,
+                imageUrl: step.backgroundImg || "/image/icon.png",
+                tags: step.tags && step.tags.length > 0 ? step.tags : ["배경"],
+                isOpen: step.isOpened,
+              }))}
+              onCardClick={(card) => {
                 navigate(`/backgrounds/${card.id}`);
               }}
             />
+          ) : (
+            <div className="text-center py-8 text-gray-500">
+              배경이 없습니다.
+            </div>
           )}
         </div>
       </div>
 
-      {/* Bottom Navigation */}
       <BottomNav />
     </div>
   );

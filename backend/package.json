@@ -17,6 +17,7 @@
     "setup": "node setup.js",
     "test:api": "node test-api.js",
     "lint": "eslint src --ext .ts"
+
   },
   "keywords": [],
   "author": "",

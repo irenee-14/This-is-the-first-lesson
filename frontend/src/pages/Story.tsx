@@ -1,10 +1,10 @@
-import CardListColumn from "@/components/features/CardListColumn";
 import CardMediaLeft from "@/components/features/CardMediaLeft";
 import FloatingButton from "@/components/features/FloatingButton";
 import BottomNav from "@/components/layout/BottomNav";
 import Header from "@/components/layout/Header";
-
-import React from "react";
+import { useFlowStore } from "@/stores/useFlowStore";
+import { useApi } from "@/hooks/useApi";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const mockStory = {
@@ -29,68 +29,95 @@ const mockStory = {
       "푸른 산 한나절 구름은 가고 고을 너머 뻐꾸기는 우는데 눈에 어려 흘러가는 물결 같은 사람 속 아우성쳐 흘러가는 물결 같은 사람 속에 난 그리노라. 달 가고 밤 가고 눈물도 가고 틔어 올 밝은 하늘 빛난 아침 이르면 향기로운 이슬밭 푸른 언덕을 총총총 달려도 와 줄 볼이 고운 나의 사람. 네 가슴 향기로운 풀밭에 엎드리면 나는 가슴이 울어라. 푸른 산 한나절 구름은 가고 고을 너머 뻐꾸기는 우는데 눈에 어려 흘러가는 물결 같은 사람 속 아우성쳐 흘러가는 물결 같은 사람 속에 난 그리노라.푸른 산 한나절 구름은 가고 고을 너머 뻐꾸기는 우는데 눈에 어려 흘러가는 물결 같은 사람 속 아우성쳐 흘러가는 물결 같은 사람 속에 난 그리노라. ",
   },
 };
+const getImageUrl = (dbPath: string) =>
+  new URL(`../assets/images/${dbPath}`, import.meta.url).href;
 
-const Backgrounds: React.FC = () => {
+const Story: React.FC = () => {
   const navigate = useNavigate();
+  const { characterId, backgroundId } = useFlowStore();
+  const {
+    data: characterData,
+    loading: characterLoading,
+    error: characterError,
+    get: getCharacter,
+  } = useApi<{
+    success: boolean;
+    data: import("@/types/character").Character;
+  }>();
+  const {
+    data: backgroundData,
+    loading: backgroundLoading,
+    error: backgroundError,
+    get: getBackground,
+  } = useApi<{
+    success: boolean;
+    data: import("@/types/background").Background;
+  }>();
+
+  useEffect(() => {
+    if (characterId) {
+      getCharacter(`/characters/${characterId}`);
+    }
+    if (backgroundId) {
+      getBackground(`/backgrounds/${backgroundId}`);
+    }
+  }, [characterId, backgroundId, getCharacter, getBackground]);
 
   const handleChatClick = () => {
-    console.log("Chat with character clicked!");
-
-    navigate(`/chat`);
+    navigate(`/chat`, { state: { character } });
   };
 
-  const handleInputSubmit = (value: string) => {
-    console.log("Message submitted:", value);
-  };
-
-  function onCardClick(background: {
-    id: string;
-    name: string;
-    imageUrl: string;
-    tags: string[];
-  }): void {
-    throw new Error("Function not implemented.");
+  if (characterLoading || backgroundLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        로딩 중...
+      </div>
+    );
   }
+  if (characterError || backgroundError) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        오류가 발생했습니다.
+      </div>
+    );
+  }
+
+  const character = characterData?.data;
+  const background = backgroundData?.data;
 
   return (
     <div className="min-h-screen">
-      {/* Header */}
       <Header
         variant="withText"
-        title={`${mockStory.character.name}와 대화하기`}
+        title={character ? `${character.name}와 대화하기` : "캐릭터와 대화하기"}
       />
-
-      {/* Main Content */}
       <div className="pt-14 pb-36">
-        {/* Character Section */}
         <div className="relative p-4 flex flex-col gap-4">
-          <CardMediaLeft
-            key={mockStory.character.id}
-            imageUrl={mockStory.character.imageurl}
-            name={mockStory.character.name}
-            tags={mockStory.character.tags}
-          />
-
-          <CardMediaLeft
-            key={mockStory.background.id}
-            imageUrl={mockStory.background.imageUrl}
-            name={mockStory.background.name}
-            tags={mockStory.background.tags}
-            onClick={
-              onCardClick ? () => onCardClick(mockStory.background) : undefined
-            }
-          />
-          <div className="self-stretch justify-start text-sm font-normal">
+          {character && (
+            <CardMediaLeft
+              key={character.characterId}
+              imageUrl={getImageUrl(character.characterImg)}
+              name={character.name}
+              tags={character.tags}
+            />
+          )}
+          {background && (
+            <CardMediaLeft
+              key={background.backgroundId}
+              imageUrl="src/assets/images/backgrounds/library.png"
+              name={background.backgroundName}
+              tags={background.tags}
+            />
+          )}
+          <div className="self-stretch justify-start text-sm font-normal leading-tight">
             {mockStory.opening.description}
           </div>
         </div>
       </div>
-
-      <FloatingButton buttonlabel="채팅 시작" onChatClick={handleChatClick} />
-      {/* Bottom Navigation */}
+      <FloatingButton buttonlabel="채팅 시작" onClick={handleChatClick} />
       <BottomNav />
     </div>
   );
 };
 
-export default Backgrounds;
+export default Story;
