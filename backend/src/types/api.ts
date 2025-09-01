@@ -92,23 +92,17 @@ export interface Story {
   writerId: string
   basic: boolean
   characterPrompt?: string
-  openings?: Opening[]
+  opening: string
   createdAt: string
   updatedAt: string
-}
-
-export interface Opening {
-  openingSceneId: string
-  introId: string
-  opening: string
 }
 
 export interface CreateStoryRequest {
   characterId: string
   backgroundId: string
-  characterPrompt?: string
-  basic?: boolean
-  opening?: string
+  characterPrompt: string
+  basic: boolean
+  opening: string
 }
 
 // Chat Types
@@ -247,4 +241,13 @@ export interface BackgroundListQuery {
 
 export interface TagListQuery {
   type?: 'character' | 'background'
+}
+
+export interface StoryListQuery {
+  page?: number
+  limit?: number
+  characterId?: string
+  backgroundId?: string
+  writerId?: string
+  basic?: boolean
 }
