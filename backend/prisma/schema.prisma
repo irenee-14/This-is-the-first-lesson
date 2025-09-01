@@ -207,6 +207,7 @@ model Story {
   characterId      String   @map("character_id")
   userId           String   @map("user_id")
   basic            Boolean  @map("basic")
+  tags             String[] @map("tags")
   name             String   @db.VarChar(255) @map("name")
   characterPrompt  String   @map("character_prompt")
   opening          String   @map("opening")
