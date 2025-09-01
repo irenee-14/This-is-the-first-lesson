@@ -12,6 +12,7 @@ import CardMediaTop from "@/components/features/CardMediaTop";
 import CharacterInfoSection from "@/components/features/CharacterInfoSection";
 import { useFlowStore } from "@/stores/useFlowStore";
 import type { Background } from "@/types/background";
+import CardMediaLeft from "@/components/features/CardMediaLeft";
 
 const mockCharacter = {
   likeCount: 24,
@@ -89,6 +90,14 @@ export default function CharacterDetailPage() {
     return <div>배경 정보를 불러올 수 없습니다.</div>;
   }
 
+  // -------------------------------------------------------
+  // const hasChatHistory =
+  //   character.chatHistory && character.chatHistory.length > 0;
+  // chatHistory 연결 필요
+  // chat history가 없을 경우 배경 설명 추가, 채팅하기 누를 시 바로 페르소나로 이동
+  const hasChatHistory = true;
+
+  // -------------------------------------------------------
   const handleChatClick = () => {
     setCharacter(character.characterId);
     setWriter(character.writerId);
@@ -206,38 +215,71 @@ export default function CharacterDetailPage() {
               </div>
 
               {/* Background Area */}
-              <div className="gap-3 flex flex-col">
-                <h2 className="text-lg font-semibold">볼 수 있는 배경</h2>
-                <div className="overflow-x-auto flex gap-4 scrollbar-hide">
-                  {/* {background.isLocked && (
+              <div className="gap-6 flex flex-col">
+                {hasChatHistory ? (
+                  <CharacterInfoSection
+                    title="배경 설명"
+                    content={character.dialogueStyle}
+                  />
+                ) : (
+                  <></>
+                )}
+
+                <div className="flex flex-col gap-3">
+                  <div className="flex flex-col items-start">
+                    <h2 className="text-lg font-semibold">또 다른 배경 보기</h2>
+                    <p className="text-sm text-gray-500">
+                      🔒 캐릭터와 채팅이 쌓이면 잠금된 배경을 볼 수 있어요.
+                    </p>
+                  </div>
+                  <div className="overflow-x-auto flex gap-4 scrollbar-hide">
+                    {/* {background.isLocked && (
                       <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
                         <LockIcon className="w-10 h-10 text-gray-400" />
                       </div>
                     )} */}
-                  {/* cards={backgrounds.map(transformBackgroundData)} */}
-                  {backgrounds.map((background: Background, idx: number) => {
-                    return (
-                      <CardMediaTop
-                        key={background.backgroundId}
-                        imageUrl="src/assets/images/backgrounds/library.png"
-                        name={background.backgroundName}
-                        chips={background.tags}
-                        isOpen={idx < 2}
-                        onClick={() =>
-                          handleBackgroundClick(background.backgroundId)
-                        }
-                        variant="horizontal"
-                      />
-                    );
-                  })}
+                    {/* cards={backgrounds.map(transformBackgroundData)} */}
+                    {backgrounds.map((background: Background, idx: number) => {
+                      return (
+                        <CardMediaTop
+                          key={background.backgroundId}
+                          imageUrl="src/assets/images/backgrounds/library.png"
+                          name={background.backgroundName}
+                          chips={background.tags}
+                          onClick={() =>
+                            handleBackgroundClick(background.backgroundId)
+                          }
+                          variant="horizontal"
+                        />
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
             </div>
           ) : (
-            <div className="text-center py-10">
-              <p className="text-gray-400">
-                아직 {character.name}와 채팅하지 않았어요.
-              </p>
+            <div>
+              {hasChatHistory ? (
+                <div className="flex flex-col gap-4">
+                  {backgrounds.map((background: Background) => (
+                    <CardMediaLeft
+                      key={background.backgroundId}
+                      imageUrl="src/assets/images/characters/character_1.png"
+                      name={background.backgroundName}
+                      description={background.description}
+                      onClick={() =>
+                        handleBackgroundClick(background.backgroundId)
+                      }
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className="flex justify-center p-10">
+                  <p className="text-gray-400">
+                    아직 {character.name}와 채팅하지 않았어요.
+                  </p>
+                </div>
+              )}
             </div>
           )}
         </div>
