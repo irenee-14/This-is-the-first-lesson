@@ -2,13 +2,15 @@ import CardMediaLeft from "@/components/features/CardMediaLeft";
 import BottomNav from "@/components/layout/BottomNav";
 import Header from "@/components/layout/Header";
 import { BottomSheet } from "@/components/ui/BottomSheet";
+import Button from "@/components/ui/Button";
 import { useApi } from "@/hooks/useApi";
 import { useBackgroundClickHandler } from "@/hooks/useBackgroundClickHandler";
 import { useFlowStore } from "@/stores/useFlowStore";
 import { useUserStore } from "@/stores/useUserStore";
 import type { BackgroundListResponse } from "@/types/background";
-
+import keyIcon from "/src/assets/icons/key.png";
 import React, { useEffect } from "react";
+import IconButton from "@/components/ui/IconButton";
 
 const Backgrounds: React.FC = () => {
   const {
@@ -106,17 +108,41 @@ const Backgrounds: React.FC = () => {
       </div>
       {/* 공통 BottomSheet */}
       <BottomSheet open={!!lockedBackground} onClose={closeSheet}>
-        <h2 className="text-lg font-bold mb-2">잠긴 배경입니다</h2>
-        <p className="text-sm text-gray-600 mb-4">
-          {lockedBackground?.backgroundName}은(는) 아직 잠겨 있어 볼 수
-          없습니다.
-        </p>
-        <button
-          onClick={closeSheet}
-          className="w-full bg-primary text-white py-2 rounded-xl"
-        >
-          확인
-        </button>
+        <div className="flex flex-col gap-10">
+          {/* content */}
+          <div className="flex flex-col gap-4">
+            <h2 className="text-lg font-medium">
+              위프를 사용해서 [{lockedBackground?.backgroundName}]을(를)
+              오픈할까요?
+            </h2>
+
+            <div className="flex w-full rounded-md bg-gray-700 items-center gap-3 p-3 ">
+              <IconButton icon={keyIcon} />
+              <div>
+                <p className="text-md text-semibold text-white">
+                  1,024 위프 사용하기
+                </p>
+                <p className="text-xs text-medium text-gray-400">
+                  보유 위프 2,048
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-row gap-2">
+            <Button variant="tertiary" size="l" onClick={closeSheet}>
+              닫기
+            </Button>
+            <Button
+              variant="primary"
+              size="l"
+              width="full"
+              onClick={closeSheet}
+            >
+              오픈하기
+            </Button>
+          </div>
+        </div>
       </BottomSheet>
 
       <BottomNav />
