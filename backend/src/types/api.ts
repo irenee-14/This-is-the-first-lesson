@@ -225,6 +225,7 @@ export interface MessageListResponse {
   limit: number;
   hasNext: boolean;
   hasPrev: boolean;
+  nextBefore?: number;
 }
 
 // User Types
