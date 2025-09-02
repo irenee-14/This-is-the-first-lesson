@@ -29,14 +29,6 @@ export default function CardMediaLeft({
   const hasDescription = description && description.trim().length > 0;
   const showArrowRight = hasDescription && !hasTags; // 설명이 있고 태그가 없을 때만 화살표 표시
 
-  const handleClick = () => {
-    if (!isOpen) {
-      setShowModal(true);
-    } else if (onClick) {
-      onClick();
-    }
-  };
-
   const getImageUrl = (): string | undefined => {
     if (!imageUrl || imageError) return undefined;
     return imageUrl.startsWith("/assets/images/")
@@ -52,7 +44,7 @@ export default function CardMediaLeft({
           onClick && isOpen && "cursor-pointer",
           className
         )}
-        onClick={handleClick}
+        onClick={onClick}
       >
         {/* image */}
         <div className="w-20 h-20 relative bg-indigo-900 rounded overflow-hidden">
@@ -100,23 +92,6 @@ export default function CardMediaLeft({
               {tag}
             </Chip>
           ))}
-        </div>
-      )}
-
-      {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="bg-white rounded-lg shadow-lg p-6 min-w-[220px] flex flex-col items-center">
-            <div className="text-lg font-bold mb-2">잠긴 캐릭터입니다</div>
-            <div className="text-sm text-gray-700 mb-4">
-              해당 캐릭터는 잠겨 있어 선택할 수 없습니다.
-            </div>
-            <button
-              className="px-4 py-2 bg-primary text-white rounded"
-              onClick={() => setShowModal(false)}
-            >
-              확인
-            </button>
-          </div>
         </div>
       )}
     </div>

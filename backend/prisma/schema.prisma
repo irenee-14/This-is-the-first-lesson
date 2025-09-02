@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
   output   = "../generated/prisma"
@@ -11,26 +8,20 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// 태그 모델
 model Tag {
-  id   String @id @default(uuid()) @map("tag_id")
-  name String @unique @db.VarChar(30) @map("name")
-
-  // 관계
-  characterTags  CharacterTag[]
+  name           String          @unique @map("name") @db.VarChar(30)
+  id             String          @id @default(uuid()) @map("tag_id")
   backgroundTags BackgroundTag[]
+  characterTags  CharacterTag[]
 
   @@map("tags")
 }
 
-// 캐릭터 태그 조인 테이블
 model CharacterTag {
-  tagId       String @map("tag_id")
-  characterId String @map("character_id")
-
-  // 관계
-  tag       Tag       @relation(fields: [tagId], references: [id], onDelete: Cascade)
-  character Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  characterId String    @map("character_id")
+  tagId       String    @map("tag_id")
+  character   Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  tag         Tag       @relation(fields: [tagId], references: [id], onDelete: Cascade)
 
   @@id([tagId, characterId])
   @@index([tagId])
@@ -38,14 +29,11 @@ model CharacterTag {
   @@map("character_tags")
 }
 
-// 배경 태그 조인 테이블
 model BackgroundTag {
-  tagId        String @map("tag_id")
-  backgroundId String @map("background_id")
-
-  // 관계
-  tag        Tag        @relation(fields: [tagId], references: [id], onDelete: Cascade)
-  background Background @relation(fields: [backgroundId], references: [id], onDelete: Cascade)
+  backgroundId String     @map("background_id")
+  tagId        String     @map("tag_id")
+  background   Background @relation(fields: [backgroundId], references: [id], onDelete: Cascade)
+  tag          Tag        @relation(fields: [tagId], references: [id], onDelete: Cascade)
 
   @@id([tagId, backgroundId])
   @@index([tagId])
@@ -53,255 +41,221 @@ model BackgroundTag {
   @@map("background_tags")
 }
 
-// 캐릭터 모델
 model Character {
-  id             String   @id @default(uuid()) @map("character_id")
-  writerId       String   @map("writer_id")
-  name           String   @unique @db.VarChar(30) @map("name")
-  characterImg   String?  @default("IMAGE") @db.VarChar(255) @map("character_img")
-  traits         String   @map("traits")
-  personality    String   @map("personality")
-  dialogueStyle  String   @map("dialogueStyle")
-  gender         Gender   @map("gender")
-  description    String   @map("description")
-  writerNote     String?  @map("writerNote")
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-
-  // 관계
-  writer         User     @relation(fields: [writerId], references: [id], onDelete: Cascade)
-  characterTags  CharacterTag[]
-  stories        Story[]
-  chats          Chat[]
-  memories       Memory[]
-  memoryPieces   MemoryPiece[]
-  messages       Message[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  description   String         @map("description")
+  dialogueStyle String         @map("dialogueStyle")
+  gender        Gender         @map("gender")
+  name          String         @unique @map("name") @db.VarChar(30)
+  personality   String         @map("personality")
+  traits        String         @map("traits")
+  writerNote    String?        @map("writerNote")
+  id            String         @id @default(uuid()) @map("character_id")
+  characterImg  String?        @default("IMAGE") @map("character_img") @db.VarChar(255)
+  writerId      String         @map("writer_id")
+  characterTags CharacterTag[]
+  writer        User           @relation(fields: [writerId], references: [id], onDelete: Cascade)
+  chats         Chat[]
+  memories      Memory[]
+  memoryPieces  MemoryPiece[]
+  messages      Message[]
+  stories       Story[]
 
   @@index([writerId])
   @@map("characters")
 }
 
-// 배경 모델
 model Background {
-  id                String   @id @default(uuid()) @map("background_id")
-  writerId          String   @map("writer_id")
-  name              String   @db.VarChar(255) @map("name")
-  description       String   @map("description")
-  prompt            String   @map("prompt")
-  tags              String[] @map("tags")
-  introTitle        String   @db.VarChar(255) @map("intro_title")
-  introDescription  String   @map("intro_description")
-  unlockChatCount   Int      @default(100) @map("unlock_chat_count")
-  backgroundImg     String?  @default("IMAGE") @db.VarChar(255) @map("background_img")
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-
-  // 관계
-  writer            User     @relation(fields: [writerId], references: [id], onDelete: Cascade)
-  backgroundTags    BackgroundTag[]
-  backgroundSteps   BackgroundStep[]
-  openBackgrounds   OpenBackground[]
-  stories           Story[]
-  chats             Chat[]
-  messages          Message[]
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  description      String           @map("description")
+  name             String           @map("name") @db.VarChar(255)
+  prompt           String           @map("prompt")
+  tags             String[]         @map("tags")
+  id               String           @id @default(uuid()) @map("background_id")
+  backgroundImg    String?          @default("IMAGE") @map("background_img") @db.VarChar(255)
+  introDescription String           @map("intro_description")
+  introTitle       String           @map("intro_title") @db.VarChar(255)
+  unlockChatCount  Int              @default(100) @map("unlock_chat_count")
+  writerId         String           @map("writer_id")
+  backgroundSteps  BackgroundStep[]
+  backgroundTags   BackgroundTag[]
+  writer           User             @relation(fields: [writerId], references: [id], onDelete: Cascade)
+  chats            Chat[]
+  messages         Message[]
+  openBackgrounds  OpenBackground[]
+  stories          Story[]
 
   @@index([writerId])
   @@map("backgrounds")
 }
 
-// 오픈된 배경 모델
 model OpenBackground {
-  id           String   @id @default(uuid()) @map("open_id")
-  userId       String   @map("user_id")
-  backgroundId String   @map("background_id")
-  writerId     String   @map("writer_id")
-  flowId       String   @map("flow_id")
-  openedAt     DateTime @default(now()) @map("opened_at")
-
-  // 관계
-  user       User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  background Background     @relation(fields: [backgroundId], references: [id], onDelete: Cascade)
-  writer     User           @relation("WriterOpenBackgrounds", fields: [writerId], references: [id], onDelete: Cascade)
-  flow       BackgroundFlow @relation(fields: [flowId], references: [id], onDelete: Cascade)
+  backgroundId String         @map("background_id")
+  flowId       String         @map("flow_id")
+  id           String         @id @default(uuid()) @map("open_id")
+  openedAt     DateTime       @default(now()) @map("opened_at")
+  userId       String         @map("user_id")
+  writerId     String         @map("writer_id")
+  background   Background     @relation(fields: [backgroundId], references: [id], onDelete: Cascade)
+  flow         BackgroundFlow @relation(fields: [flowId], references: [id], onDelete: Cascade)
+  user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  writer       User           @relation("WriterOpenBackgrounds", fields: [writerId], references: [id], onDelete: Cascade)
 
   @@map("open_backgrounds")
 }
 
-// 배경 플로우 모델
 model BackgroundFlow {
-  id        String   @id @default(uuid()) @map("flow_id")
-  writerId  String   @map("writer_id")
-  version   Int      @map("version")
-  createdAt DateTime @default(now())
-
-  // 관계
-  writer         User            @relation(fields: [writerId], references: [id], onDelete: Cascade)
+  createdAt       DateTime         @default(now())
+  version         Int              @map("version")
+  id              String           @id @default(uuid()) @map("flow_id")
+  writerId        String           @map("writer_id")
+  writer          User             @relation(fields: [writerId], references: [id], onDelete: Cascade)
   backgroundSteps BackgroundStep[]
   openBackgrounds OpenBackground[]
 
   @@map("background_flows")
 }
 
-// 배경 플로우 단계 모델
 model BackgroundStep {
-  id           String @id @default(uuid()) @map("step_id")
-  flowId       String @map("flow_id")
-  backgroundId String @map("background_id")
-  orderKey     Int    @map("order_key")
-
-  // 관계
-  flow       BackgroundFlow @relation(fields: [flowId], references: [id], onDelete: Cascade)
-  background Background     @relation(fields: [backgroundId], references: [id], onDelete: Cascade)
+  backgroundId String         @map("background_id")
+  flowId       String         @map("flow_id")
+  orderKey     Int            @map("order_key")
+  id           String         @id @default(uuid()) @map("step_id")
+  background   Background     @relation(fields: [backgroundId], references: [id], onDelete: Cascade)
+  flow         BackgroundFlow @relation(fields: [flowId], references: [id], onDelete: Cascade)
 
   @@map("background_steps")
 }
 
-// 사용자 모델
 model User {
-  id         String   @id @default(uuid()) @map("user_id")
-  name       String   @unique @db.VarChar(30) @map("name")
-  bio        String?  @db.VarChar(255) @map("bio")
-  following  Int      @default(0) @map("following")
-  follower   Int      @default(0) @map("follower")
-  totalChat  Int      @default(0) @map("total_chat")
-  email      String   @unique @db.VarChar(255) @map("email")
-  password   String   @db.VarChar(255) @map("password")
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  // 관계
-  characters        Character[]
-  backgrounds       Background[]
-  backgroundFlows   BackgroundFlow[]
-  stories           Story[]
-  chats             Chat[]
-  memories          Memory[]
-  openBackgrounds   OpenBackground[]
+  createdAt             DateTime         @default(now())
+  updatedAt             DateTime         @updatedAt
+  bio                   String?          @map("bio") @db.VarChar(255)
+  email                 String           @unique @map("email") @db.VarChar(255)
+  follower              Int              @default(0) @map("follower")
+  following             Int              @default(0) @map("following")
+  name                  String           @unique @map("name") @db.VarChar(30)
+  password              String           @map("password") @db.VarChar(255)
+  totalChat             Int              @default(0) @map("total_chat")
+  id                    String           @id @default(uuid()) @map("user_id")
+  backgroundFlows       BackgroundFlow[]
+  backgrounds           Background[]
+  characters            Character[]
+  chats                 Chat[]
+  memories              Memory[]
+  openBackgrounds       OpenBackground[]
   writerOpenBackgrounds OpenBackground[] @relation("WriterOpenBackgrounds")
-  personas          Persona[]
+  personas              Persona[]
+  stories               Story[]
 
   @@map("users")
 }
 
-// 페르소나 모델
 model Persona {
-  id       String @id @default(uuid()) @map("persona_id")
-  userId   String @map("user_id")
-  name     String @db.VarChar(30) @map("name")
-  gender   Gender @map("gender")
-  prompt   String @map("prompt")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  // 관계
-  user  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  chats Chat[]
+  gender    Gender   @map("gender")
+  name      String   @map("name") @db.VarChar(30)
+  prompt    String   @map("prompt")
+  id        String   @id @default(uuid()) @map("persona_id")
+  userId    String   @map("user_id")
+  chats     Chat[]
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("personas")
 }
 
-// 스토리 모델
 model Story {
-  id               String   @id @default(uuid()) @map("story_id")
-  backgroundId     String   @map("background_id")
-  characterId      String   @map("character_id")
-  userId           String   @map("user_id")
-  basic            Boolean  @map("basic")
-  name             String   @db.VarChar(255) @map("name")
-  characterPrompt  String   @map("character_prompt")
-  opening          String   @map("opening")
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-
-  // 관계
-  background Background @relation(fields: [backgroundId], references: [id], onDelete: Cascade)
-  character  Character  @relation(fields: [characterId], references: [id], onDelete: Cascade)
-  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  chats      Chat[]
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  basic           Boolean    @map("basic")
+  name            String     @map("name") @db.VarChar(255)
+  opening         String     @map("opening")
+  backgroundId    String     @map("background_id")
+  characterId     String     @map("character_id")
+  characterPrompt String     @map("character_prompt")
+  id              String     @id @default(uuid()) @map("story_id")
+  userId          String     @map("user_id")
+  chats           Chat[]
+  background      Background @relation(fields: [backgroundId], references: [id], onDelete: Cascade)
+  character       Character  @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  user            User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("stories")
 }
 
-// 채팅 모델
 model Chat {
-  id           String   @id @default(uuid()) @map("chat_id")
-  backgroundId String   @map("background_id")
-  characterId  String   @map("character_id")
-  personaId    String   @map("persona_id")
-  storyId      String   @map("story_id")
-  ownerId      String   @map("owner_id")
-  createdAt    DateTime @default(now()) @map("created_at")
-  updatedAt    DateTime @updatedAt @map("updated_at")
-  chatCount    BigInt   @map("chat_count")
-
-  // 관계
-  background    Background     @relation(fields: [backgroundId], references: [id], onDelete: Cascade)
-  character     Character      @relation(fields: [characterId], references: [id], onDelete: Cascade)
-  persona       Persona        @relation(fields: [personaId], references: [id], onDelete: Cascade)
-  story         Story          @relation(fields: [storyId], references: [id], onDelete: Cascade)
-  owner         User           @relation(fields: [ownerId], references: [id], onDelete: Cascade)
-  messages      Message[]
+  backgroundId  String        @map("background_id")
+  characterId   String        @map("character_id")
+  chatCount     BigInt        @map("chat_count")
+  id            String        @id @default(uuid()) @map("chat_id")
+  createdAt     DateTime      @default(now()) @map("created_at")
+  ownerId       String        @map("owner_id")
+  personaId     String        @map("persona_id")
+  storyId       String        @map("story_id")
+  updatedAt     DateTime      @updatedAt @map("updated_at")
+  personaGender String        @map("persona_gender") @db.VarChar(50)
+  personaName   String        @map("persona_name") @db.VarChar(255)
+  personaTraits String        @map("persona_traits") @db.VarChar(1000)
+  background    Background    @relation(fields: [backgroundId], references: [id], onDelete: Cascade)
+  character     Character     @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  owner         User          @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  persona       Persona       @relation(fields: [personaId], references: [id], onDelete: Cascade)
+  story         Story         @relation(fields: [storyId], references: [id], onDelete: Cascade)
   memoryPieces  MemoryPiece[]
+  messages      Message[]
 
   @@map("chats")
 }
 
-// 기억 모델
 model Memory {
-  id            String @id @default(uuid()) @map("memory_id")
-  characterId   String @map("character_id")
-  userId        String? @map("user_id")
-  maxPieceCount Int    @default(30) @map("max_piece_count")
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  // 관계
-  character     Character      @relation(fields: [characterId], references: [id], onDelete: Cascade)
-  user          User?          @relation(fields: [userId], references: [id], onDelete: SetNull)
-  memoryPieces  MemoryPiece[]
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  characterId   String       @map("character_id")
+  maxPieceCount Int          @default(30) @map("max_piece_count")
+  id            String       @id @default(uuid()) @map("memory_id")
+  userId        String?      @map("user_id")
+  character     Character    @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  user          User?        @relation(fields: [userId], references: [id])
+  memoryPieces  MemoryPiece?
 
   @@map("memories")
 }
 
-// 기억 조각 모델
 model MemoryPiece {
-  id              String   @id @default(uuid()) @map("piece_id")
-  memoryId        String   @unique @map("memory_id")
-  characterId     String   @map("character_id")
-  startMessageId  String   @map("startMessage_id")
-  endMessageId    String   @map("endMessage_id")
-  chatId          String   @map("chat_id")
-  createdAt       DateTime @default(now()) @map("created_at")
-  summary         String?  @db.VarChar(1000) @map("summary")
-
-  // 관계
-  memory    Memory  @relation(fields: [memoryId], references: [id], onDelete: Cascade)
-  character Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
-  chat      Chat   @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  summary        String?   @map("summary") @db.VarChar(1000)
+  characterId    String    @map("character_id")
+  chatId         String    @map("chat_id")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  endMessageId   String    @map("endMessage_id")
+  memoryId       String    @unique @map("memory_id")
+  id             String    @id @default(uuid()) @map("piece_id")
+  startMessageId String    @map("startMessage_id")
+  character      Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  chat           Chat      @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  memory         Memory    @relation(fields: [memoryId], references: [id], onDelete: Cascade)
 
   @@map("memory_pieces")
 }
 
-// 메시지 모델
 model Message {
-  chatId       String   @map("chat_id")
-  seq          Int      @default(0) @map("seq")
-  backgroundId String   @map("background_id")
-  characterId  String   @map("character_id")
-  role         Role     @map("role")
-  contents     String   @map("contents")
-  createdAt    DateTime @default(now()) @map("created_at")
-
-  // 관계
-  background Background @relation(fields: [backgroundId], references: [id], onDelete: Cascade)
-  character  Character  @relation(fields: [characterId], references: [id], onDelete: Cascade)
-  chat       Chat       @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  contents     String     @map("contents")
+  role         Role       @map("role")
+  seq          Int        @default(0) @map("seq")
+  backgroundId String     @map("background_id")
+  characterId  String     @map("character_id")
+  chatId       String     @map("chat_id")
+  createdAt    DateTime   @default(now()) @map("created_at")
+  background   Background @relation(fields: [backgroundId], references: [id], onDelete: Cascade)
+  character    Character  @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  chat         Chat       @relation(fields: [chatId], references: [id], onDelete: Cascade)
 
   @@id([chatId, seq])
   @@map("messages")
 }
 
-// 열거형 정의
 enum Gender {
   male
   female

@@ -1,7 +1,8 @@
 import React from "react";
+import type { ReactNode } from "react";
 
 interface IconButtonProps {
-  icon: React.ReactNode;
+  icon: ReactNode | string;
   onClick?: () => void;
   variant?: "default" | "active" | "unfilled";
   size?: "sm" | "md" | "lg";
@@ -52,7 +53,15 @@ const IconButton: React.FC<IconButtonProps> = ({
       disabled={disabled}
       aria-label={ariaLabel}
     >
-      {icon}
+      {typeof icon === "string" ? (
+        <img
+          src={icon}
+          alt={ariaLabel || "icon"}
+          className="w-full h-full object-contain"
+        />
+      ) : (
+        icon
+      )}
     </button>
   );
 };
