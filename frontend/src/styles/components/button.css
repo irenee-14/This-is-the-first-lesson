@@ -20,8 +20,8 @@
 }
 
 .btn-tertiary {
-  @apply border border-gray-400 text-gray-800 hover:bg-gray-100 active:bg-gray-200
-         hover:border-gray-500 active:border-gray-600
+  @apply text-white border border-gray-400 hover:bg-gray-400 active:bg-gray-400
+         hover:border-gray-600 active:border-gray-500
          disabled:text-gray-400 disabled:border-gray-200 disabled:bg-transparent;
 }
 
