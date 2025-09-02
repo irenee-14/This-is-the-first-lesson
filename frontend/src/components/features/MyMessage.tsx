@@ -2,7 +2,7 @@ import React from "react";
 import { parseMultipleLines, type ParsedTextSegment } from "@/utils/textParser";
 
 interface MyMessageProps {
-  content: string[];
+  content: string;
 }
 
 const MyMessage: React.FC<MyMessageProps> = ({ content }) => {
@@ -42,8 +42,8 @@ const MyMessage: React.FC<MyMessageProps> = ({ content }) => {
     }
   };
 
-  const parseContent = (contentArray: string[]) => {
-    const parsedLines = parseMultipleLines(contentArray);
+  const parseContent = (contentArray: string) => {
+    const parsedLines = parseMultipleLines(contentArray.split("\n"));
 
     return parsedLines.map((lineSegments, lineIndex) => (
       <div key={lineIndex} className="flex flex-col items-end gap-3">

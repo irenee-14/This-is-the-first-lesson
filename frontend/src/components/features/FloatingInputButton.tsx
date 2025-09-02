@@ -8,17 +8,19 @@ interface FloatingInputButtonProps {
   onInputSubmit?: (value: string) => void;
   placeholder?: string;
   className?: string;
+  disabled?: boolean;
 }
 
 const FloatingInputButton: React.FC<FloatingInputButtonProps> = ({
   onInputSubmit,
   className,
+  disabled = false,
 }) => {
   const [inputValue, setInputValue] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleSubmit = () => {
-    if (inputValue.trim() && onInputSubmit) {
+    if (inputValue.trim() && onInputSubmit && !disabled) {
       onInputSubmit(inputValue);
       setInputValue("");
     }
@@ -81,9 +83,10 @@ const FloatingInputButton: React.FC<FloatingInputButtonProps> = ({
             value={inputValue}
             placeholder='"" 사이에 대사를 입력해보세요.'
             maxLength={350}
+            disabled={disabled}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={handleKeyDown}
-            className="w-full h-10 max-h-40  rounded-2xl bg-gray-900 text-white px-3 py-2.5 pr-12 resize-none overflow-hidden focus:outline-none"
+            className="w-full h-10 max-h-40 rounded-2xl bg-gray-900 text-white px-3 py-2.5 pr-12 resize-none overflow-hidden focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
             rows={1}
           />
 
@@ -91,14 +94,16 @@ const FloatingInputButton: React.FC<FloatingInputButtonProps> = ({
           {inputValue.trim() ? (
             <button
               onClick={handleSubmit}
-              className="absolute right-2 bottom-1.5 px-2 py-1 text-sm rounded-full bg-gray-600 text-white hover:bg-gray-500"
+              disabled={disabled}
+              className="absolute right-2 bottom-1.5 px-2 py-1 text-sm rounded-full bg-gray-600 text-white hover:bg-gray-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               →
             </button>
           ) : (
             <button
               onClick={handleSubmit}
-              className="absolute right-2 bottom-2 p-1 rounded-full"
+              disabled={disabled}
+              className="absolute right-2 bottom-2 p-1 rounded-full disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <PlayIcon className="w-4 h-4 text-white" />
             </button>
