@@ -7,7 +7,9 @@ import RadioGroup from "@/components/ui/RadioGroup";
 import type { RadioGroupOption } from "@/components/ui/RadioGroup";
 import FloatingButton from "@/components/features/FloatingButton";
 import { useFlowStore } from "@/stores/useFlowStore";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import type { ChatData } from "@/types/chat";
+import { useApi } from "@/hooks/useApi";
 
 interface PersonaOption {
   id: string;
@@ -18,13 +20,16 @@ interface PersonaOption {
 }
 
 const Personas: React.FC = () => {
-  const { characterId, setPersonaData } = useFlowStore();
+  const { storyId } = useParams();
+
+  const { setPersonaData } = useFlowStore();
   const [selectedPersona, setSelectedPersona] = useState("");
   const [name, setName] = useState("");
   const [gender, setGender] = useState("");
   const [personaDescription, setPersonaDescription] = useState("");
 
   const navigate = useNavigate();
+  const { data, loading, error, post } = useApi<ChatData>();
 
   const personaData: PersonaOption[] = [
     {
@@ -83,20 +88,36 @@ const Personas: React.FC = () => {
     }
   };
 
-  const handleComplete = () => {
+  const handleComplete = async () => {
+    if (!name || !gender || !personaDescription) return;
+
     const selectedPersonaData = personaData.find(
       (persona) => persona.label === selectedPersona
     );
     if (selectedPersonaData) {
-      const personaInfo = {
+      const persona = {
         id: selectedPersonaData.id,
         name,
         gender,
-        description: personaDescription,
+        prompt: personaDescription,
       };
 
-      setPersonaData(personaInfo);
-      navigate(`/chat`, { state: { characterId } }); // ***수정필***
+      setPersonaData(persona);
+      try {
+        console.log(storyId, persona);
+
+        const response = await post(`/chats`, {
+          storyId,
+          persona,
+        });
+
+        const chatId = response?.data?.chatId;
+        if (!chatId) throw new Error("chatId를 찾을 수 없습니다.");
+
+        navigate(`/chat/${chatId}`);
+      } catch (err) {
+        console.error("Error creating chat:", err);
+      }
     }
   };
 
@@ -105,6 +126,11 @@ const Personas: React.FC = () => {
       {/* Header */}
       <Header variant="withText" title="페르소나 설정" />
 
+      {loading && (
+        // <LoadingSpinner />
+        <div>로딩 중...</div>
+      )}
+      {error && <p className="text-red-500">{error}</p>}
       {/* Main Content */}
       <div className="pt-14 pb-36">
         <div className="flex flex-col p-4">
@@ -151,12 +177,11 @@ const Personas: React.FC = () => {
           </div>
         </div>
       </div>
-
       {/* Floating Button */}
       <FloatingButton
         onClick={handleComplete}
-        buttonlabel="선택 완료"
-        disabled={!name || !gender || !personaDescription}
+        buttonlabel={loading ? "생성 중..." : "선택 완료"}
+        disabled={loading || !name || !gender || !personaDescription}
       />
       {/* Bottom Navigation */}
       <BottomNav />

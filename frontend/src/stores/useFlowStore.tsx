@@ -4,7 +4,7 @@ interface PersonaData {
   id: string;
   name: string;
   gender: string;
-  description: string;
+  prompt: string;
 }
 
 interface FlowState {

@@ -40,14 +40,14 @@ const router = createBrowserRouter([
       { path: "/characters/:charId", element: <CharacterDetail /> },
       { path: "/backgrounds", element: <Backgrounds /> },
       {
-        element: <RequireBackgroundDetail />,
+        // element: <RequireBackgroundDetail />,
         children: [
           { path: "/backgrounds/:bgId", element: <BackgroundDetail /> },
         ],
       },
       {
-        element: <RequirePersona />,
-        children: [{ path: "/personas", element: <Personas /> }],
+        // element: <RequirePersona />,
+        children: [{ path: "/personas/:storyId", element: <Personas /> }],
       },
       {
         // element: <RequireStory />,
@@ -56,9 +56,9 @@ const router = createBrowserRouter([
       { path: "/chats", element: <Chats /> },
       { path: "/mypage", element: <MyPage /> },
       {
-        element: <RequireChat />,
+        // element: <RequireChat />,
         children: [
-          { path: "/chat", element: <Chat /> },
+          { path: "/chat/:chatId", element: <Chat /> },
           // { path: "/chat/:chatId", element: <ChatRoom /> },
         ],
       },
