@@ -8,23 +8,16 @@ export interface Background {
   introTitle?: string;
   introDescription?: string;
   unlockChatCount?: number;
-  backgroundImg?: string;
+  imageUrl?: string;
   createdAt: string;
   updatedAt: string;
-}
-
-export interface BackgroundStep {
-  backgroundId: string;
-  backgroundName: string;
-  tags: string[];
-  backgroundImg: string;
-  isOpened: boolean;
+  isOpened?: boolean;
 }
 
 export interface BackgroundFlow {
   flowId: string;
   version: number;
-  steps: BackgroundStep[];
+  steps: Background[];
 }
 
 export interface BackgroundListResponse {

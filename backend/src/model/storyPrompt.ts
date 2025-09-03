@@ -1,40 +1,37 @@
-import dotenv from 'dotenv'
-import { $Enums } from 'generated/prisma'
-import path from 'path'
-import { callGptApi } from './common'
-
-dotenv.config({ path: path.resolve(__dirname, '../../.env') })
+import dotenv from "dotenv";
+import { $Enums } from "generated/prisma";
+import path from "path";
+import { callGptApi, toMessageInputs } from "./common";
 
 type CharacterDTO = {
-    id: string
-    name: string
-    createdAt: Date
-    updatedAt: Date
-    writerId: string
-    description: string
-    characterImg: string | null
-    traits: string
-    personality: string
-    dialogueStyle: string
-    gender: $Enums.Gender
-    writerNote: string | null
-}
+  id: string;
+  name: string;
+  createdAt: Date;
+  updatedAt: Date;
+  writerId: string;
+  description: string;
+  characterImg: string | null;
+  traits: string;
+  personality: string;
+  dialogueStyle: string;
+  gender: $Enums.Gender;
+  writerNote: string | null;
+};
 
 type BackgroundDTO = {
-    id: string
-    name: string
-    createdAt: Date
-    updatedAt: Date
-    writerId: string
-    description: string
-    prompt: string
-    tags: string[]
-    introTitle: string
-    introDescription: string
-    unlockChatCount: number
-    backgroundImg: string | null
-}
-
+  id: string;
+  name: string;
+  createdAt: Date;
+  updatedAt: Date;
+  writerId: string;
+  description: string;
+  prompt: string;
+  tags: string[];
+  introTitle: string;
+  introDescription: string;
+  unlockChatCount: number;
+  backgroundImg: string | null;
+};
 
 const GPT_CREATE_STORY_SYSTEM = `당신은 한국어 스토리 프롬프트 엔지니어이자 콘셉트 라이터입니다.
 아래 요구사항을 정확히 만족하는 JSON만 출력하세요. 설명, 주석, 마크다운 금지.
@@ -63,51 +60,46 @@ const GPT_CREATE_STORY_SYSTEM = `당신은 한국어 스토리 프롬프트 엔�
   "opening": "string"
 }
 
-JSON 외 텍스트 금지.`
+JSON 외 텍스트 금지.`;
 
-const GPT_CREATE_STORY_USER = (character: CharacterDTO, background: BackgroundDTO) => `
+const GPT_CREATE_STORY_USER = (
+  character: CharacterDTO,
+  background: BackgroundDTO
+) => `
 [캐릭터 정보]
 이름: ${character.name}
-성격: ${character.personality || ''}
-특성: ${character.traits || ''}
-말투: ${character.dialogueStyle || ''}
-소개: ${character.description || ''}
-(참고) 작가 메모: ${character.writerNote || ''}
+성격: ${character.personality || ""}
+특성: ${character.traits || ""}
+말투: ${character.dialogueStyle || ""}
+소개: ${character.description || ""}
+(참고) 작가 메모: ${character.writerNote || ""}
 
 [배경 정보]
 이름: ${background.name}
-설명: ${background.description || ''}
-프롬프트/설정: ${background.prompt || ''}
-태그: ${(background.tags || []).join(', ')}
-도입부 제목: ${background.introTitle || ''}
-도입부 설명: ${background.introDescription || ''}
-해금 조건(참고): ${background.unlockChatCount ?? ''}
+설명: ${background.description || ""}
+프롬프트/설정: ${background.prompt || ""}
+태그: ${(background.tags || []).join(", ")}
+도입부 제목: ${background.introTitle || ""}
+도입부 설명: ${background.introDescription || ""}
+해금 조건(참고): ${background.unlockChatCount ?? ""}
 
 [요청]
 위 정보를 바탕으로 본 작품에 한정된 characterPrompt, opening, name을 생성하세요.
 출력은 지정된 JSON 형식만.
-  `
+  `;
 
-function toMessageInputs(system: string, user: string): string {
-  const input = [
-    {
-      role: "system",
-      content: [{ type: "text", text: system }]
-    },
-    {
-      role: "user",
-      content: [{ type: "text", text: user }]
-    }
-  ];
-  return JSON.stringify(input);
-}
-
-export function buildGptStory(character: CharacterDTO, background: BackgroundDTO) {
-  const system = (GPT_CREATE_STORY_SYSTEM || '').trim()
-
-  const user = (GPT_CREATE_STORY_USER(character, background) || '').trim()
+export function buildGptStory(
+  character: CharacterDTO,
+  background: BackgroundDTO
+) {
+  const system = (GPT_CREATE_STORY_SYSTEM || "").trim();
+  const user = (GPT_CREATE_STORY_USER(character, background) || "").trim();
 
   const input = toMessageInputs(system, user);
 
-  return callGptApi(input);
+  // 스토리 생성은 JSON 응답을 받아야 하므로 더 높은 max_tokens 사용
+  return callGptApi(input, {
+    maxTokens: 800,
+    temperature: 0.7,
+  });
 }

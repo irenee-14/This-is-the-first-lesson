@@ -76,43 +76,35 @@ const BackgroundDetail: React.FC = () => {
 
   return (
     <div className="min-h-screen">
-      <Header variant="withText" title={background.backgroundName} />
+      <Header variant="withText" title="작품 확인" />
 
       <div className="pt-14 pb-36">
         {/* Background Section */}
         <div className="relative flex flex-col p-4 gap-3">
           {/* Background Image */}
-          <div className="relative w-full h-full aspect-square">
-            <div className="w-full h-90 bg-gradient-to-b from-purple-600 via-purple-500 to-indigoGray-black" />
-            {/* Gradient Overlay */}
-            <div className="absolute inset-0 w-full h-90 bg-gradient-to-t from-indigoGray-black via-transparent to-transparent" />
+          <div className="relative w-full aspect-square">
+            {/* Fallback gradient background */}
+            <div className="absolute inset-0 w-full h-full bg-gradient-to-b from-purple-600 via-purple-500 to-indigoGray-black" />
+
+            {/* Background Image */}
             <img
-              // src={background.backgroundImg || "/image/icon.png"}
               src="/src/assets/images/backgrounds/library.png"
               alt="Background Image"
-              className="w-full h-90 object-cover aspect-square"
+              className="absolute inset-0 w-full h-full object-cover"
               onError={(e) => {
                 (e.currentTarget as HTMLImageElement).src = "/image/icon.png";
               }}
             />
-          </div>
 
+            {/* Gradient Overlay */}
+            <div className="absolute inset-0 w-full h-full bg-gradient-to-t from-indigoGray-black via-transparent to-transparent" />
+          </div>
           {/* Background Info */}
           <div className="flex flex-col gap-2">
             <h1 className="text-2xl font-bold text-White-Font ">
-              {background.backgroundName}
+              {background.backgroundName}와 {background.backgroundName}에서
+              대화하기
             </h1>
-            <div className="flex gap-1 flex-wrap">
-              {background.tags.length > 0 ? (
-                background.tags.map((tag, index) => (
-                  <Chip key={index} size="m">
-                    {tag}
-                  </Chip>
-                ))
-              ) : (
-                <Chip size="m">배경</Chip>
-              )}
-            </div>
           </div>
           {/* Background Description */}
           <div>
@@ -123,7 +115,7 @@ const BackgroundDetail: React.FC = () => {
         </div>
       </div>
 
-      <FloatingButton buttonlabel="다음" onClick={handleChatClick} />
+      <FloatingButton buttonlabel="채팅 시작" onClick={handleChatClick} />
       <BottomNav />
     </div>
   );

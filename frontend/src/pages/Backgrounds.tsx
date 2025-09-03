@@ -1,16 +1,16 @@
-import CardListColumn from "@/components/features/CardListColumn";
+import CardMediaLeft from "@/components/features/CardMediaLeft";
 import BottomNav from "@/components/layout/BottomNav";
 import Header from "@/components/layout/Header";
+import { BottomSheet } from "@/components/ui/BottomSheet";
 import { useApi } from "@/hooks/useApi";
+import { useBackgroundClickHandler } from "@/hooks/useBackgroundClickHandler";
 import { useFlowStore } from "@/stores/useFlowStore";
 import { useUserStore } from "@/stores/useUserStore";
 import type { BackgroundListResponse } from "@/types/background";
-
 import React, { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { BackgroundUnlockSheet } from "@/components/features/BackgroundUnlockSheet";
 
 const Backgrounds: React.FC = () => {
-  const navigate = useNavigate();
   const {
     data: backgroundsData,
     loading,
@@ -19,12 +19,14 @@ const Backgrounds: React.FC = () => {
   } = useApi<BackgroundListResponse>();
   const { writerId } = useFlowStore();
   const { userId } = useUserStore();
+  const { handleClick, lockedBackground, closeSheet } =
+    useBackgroundClickHandler();
 
   useEffect(() => {
     if (userId && writerId) {
       get(`/users/${userId}/background-flows-with-opened?writerId=${writerId}`);
     }
-  }, [get]);
+  }, [get, userId, writerId]);
 
   const flows = backgroundsData?.data?.flows || [];
   const steps = flows.length > 0 ? flows[0].steps : [];
@@ -73,25 +75,45 @@ const Backgrounds: React.FC = () => {
 
           {/* Background List */}
           {steps.length > 0 ? (
-            <CardListColumn
-              cards={steps.map((step) => ({
-                id: step.backgroundId,
-                name: step.backgroundName,
-                imageUrl: step.backgroundImg || "/image/icon.png",
-                tags: step.tags && step.tags.length > 0 ? step.tags : ["배경"],
-                isOpen: step.isOpened,
-              }))}
-              onCardClick={(card) => {
-                navigate(`/backgrounds/${card.id}`);
-              }}
-            />
+            <>
+              <div
+                className={
+                  "self-stretch inline-flex flex-col justify-start items-start gap-4 scrollbar-hide"
+                }
+              >
+                {steps.map((item, index) => (
+                  <CardMediaLeft
+                    isOpen={item.isOpened}
+                    key={item.backgroundId || index}
+                    imageUrl={item.imageUrl}
+                    name={item.backgroundName}
+                    description={item.description}
+                    tags={item.tags}
+                    onClick={() => handleClick(item)}
+                  />
+                ))}
+              </div>
+            </>
           ) : (
-            <div className="text-center py-8 text-gray-500">
-              배경이 없습니다.
-            </div>
+            <>
+              {/* Background List */}
+              <div className="text-center py-8 text-gray-500">
+                배경이 없습니다.
+              </div>
+            </>
           )}
         </div>
       </div>
+      {/* Pay BottomSheet */}
+      <BottomSheet open={!!lockedBackground} onClose={closeSheet}>
+        <BackgroundUnlockSheet
+          background={lockedBackground}
+          onClose={closeSheet}
+          onUnlock={() => {
+            closeSheet();
+          }}
+        />
+      </BottomSheet>
 
       <BottomNav />
     </div>
