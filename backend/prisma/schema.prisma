@@ -179,6 +179,7 @@ model Story {
   characterId     String     @map("character_id")
   characterPrompt String     @map("character_prompt")
   id              String     @id @default(uuid()) @map("story_id")
+  img             String     @default("IMAGE") @map("story_img") @db.VarChar(255)
   userId          String     @map("user_id")
   chats           Chat[]
   background      Background @relation(fields: [backgroundId], references: [id], onDelete: Cascade)
