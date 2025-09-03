@@ -9,13 +9,12 @@ import auth from "./routes/auth.js";
 import backgroundFlow from "./routes/backgroundFlow.js";
 import stories from "./routes/stories.js";
 
-
 // import stories from './routes/stories.js'
 
 import chats from "./routes/chats";
+import path from "node:path";
 // import personas from './routes/personas.js'
 // import tags from './routes/tags.js'
-
 
 export async function createServer() {
   const fastify = Fastify({
@@ -36,9 +35,9 @@ export async function createServer() {
   await fastify.register(sensible);
 
   // Fastify 예시
-  fastify.register(require('@fastify/static'), {
-    root: path.join(__dirname, '../public'),
-    prefix: '/', // ← 여기 중요!
+  fastify.register(require("@fastify/static"), {
+    root: path.join(__dirname, "../public"),
+    prefix: "/", // ← 여기 중요!
   });
   // Prisma
   const prisma = new PrismaClient();

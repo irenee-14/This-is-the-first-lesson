@@ -159,7 +159,7 @@ async function chatsRoutes(fastify: FastifyInstance) {
         const chatSummaries = chats.map((chat) => ({
           chatId: chat.id,
           characterName: chat.character.name,
-          characterImg: chat.character.characterImg,
+          characterImg: chat.character.characterImg ?? undefined,
           storyName: chat.story.name,
           backgroundName: chat.background.name,
           personaName: chat.personaName,
@@ -227,7 +227,7 @@ async function chatsRoutes(fastify: FastifyInstance) {
           character: {
             characterId: chat.character.id,
             name: chat.character.name,
-            characterImg: chat.character.characterImg,
+            characterImg: chat.character.characterImg ?? undefined,
             traits: chat.character.traits,
             personality: chat.character.personality,
             dialogueStyle: chat.character.dialogueStyle,
@@ -238,7 +238,7 @@ async function chatsRoutes(fastify: FastifyInstance) {
             backgroundId: chat.background.id,
             name: chat.background.name,
             description: chat.background.description,
-            backgroundImg: chat.background.backgroundImg,
+            backgroundImg: chat.background.backgroundImg ?? undefined,
           },
           story: {
             storyId: chat.story.id,
@@ -276,13 +276,14 @@ async function chatsRoutes(fastify: FastifyInstance) {
     async (
       request: FastifyRequest<{
         Params: { chatId: string };
-        Querystring: MessageListQuery;
+        Querystring: { limit?: number; before?: number };
       }>,
       reply: FastifyReply
     ) => {
       try {
         const { chatId } = request.params;
-        const { page = 1, limit = 50, before, after } = request.query;
+        const { limit = 20, before } = request.query;
+
         const userId = request.headers["x-user-id"] as string;
 
         if (!userId) {
@@ -307,17 +308,44 @@ async function chatsRoutes(fastify: FastifyInstance) {
             error: "채팅에 접근할 권한이 없습니다.",
           } as ApiResponse);
 
-        const where: any = { chatId };
-        if (before !== undefined) where.seq = { lt: before };
-        if (after !== undefined) where.seq = { gt: after };
+        const parsedLimit = typeof limit === "string" ? Number(limit) : limit;
+        if (Number.isNaN(parsedLimit) || parsedLimit <= 0) {
+          return reply.status(400).send({
+            success: false,
+            error: "잘못된 limit 값입니다.",
+          });
+        }
 
-        const total = await prisma.message.count({ where: { chatId } });
+        let where: any = { chatId };
+
+        if (before !== undefined) {
+          const parsedBefore = Number(before);
+          if (Number.isNaN(parsedBefore)) {
+            return reply.status(400).send({
+              success: false,
+              error: "잘못된 before 값입니다.",
+            });
+          }
+          where.seq = { lt: parsedBefore };
+        }
+
         const messages = await prisma.message.findMany({
           where,
-          orderBy: { seq: "asc" },
-          skip: (page - 1) * limit,
-          take: limit,
+          orderBy: { seq: "desc" },
+          take: parsedLimit + 1,
         });
+
+        const total = await prisma.message.count({ where: { chatId } });
+
+        const hasNext = messages.length > limit;
+        let messagesToReturn = hasNext ? messages.slice(0, limit) : messages;
+
+        messagesToReturn = messagesToReturn.reverse();
+
+        const nextBefore =
+          messagesToReturn.length > 0
+            ? messagesToReturn[0].seq // 이제 가장 오래된 메시지 시퀀스를 nextBefore로 사용
+            : undefined;
 
         return reply.send({
           success: true,
@@ -332,14 +360,18 @@ async function chatsRoutes(fastify: FastifyInstance) {
               createdAt: msg.createdAt.toISOString(),
             })),
             total,
-            page,
+            page: 1, // cursor 기반 페이지네이션이므로 고정값
             limit,
-            hasNext: page * limit < total,
-            hasPrev: page > 1,
+            hasNext,
+            hasPrev: false, // 역순 정렬이므로 이전 페이지 개념 없음
+            nextBefore,
           } as MessageListResponse,
         } as ApiResponse<MessageListResponse>);
       } catch (error) {
-        console.error("메시지 조회 오류:", error);
+        console.error(
+          "메시지 조회 오류:",
+          error instanceof Error ? error.stack : error
+        );
         return reply.status(500).send({
           success: false,
           error: "메시지 조회 중 오류가 발생했습니다.",
@@ -482,6 +514,68 @@ async function chatsRoutes(fastify: FastifyInstance) {
         return reply.status(500).send({
           success: false,
           error: "메시지 전송 중 오류가 발생했습니다.",
+        } as ApiResponse);
+      }
+    }
+  );
+
+  // 6. 채팅 삭제 API
+  fastify.delete(
+    "/api/v1/chats/:chatId",
+    async (
+      request: FastifyRequest<{ Params: { chatId: string } }>,
+      reply: FastifyReply
+    ) => {
+      try {
+        const { chatId } = request.params;
+        const userId = request.headers["x-user-id"] as string;
+
+        if (!userId) {
+          return reply.status(401).send({
+            success: false,
+            error: "인증이 필요합니다.",
+          } as ApiResponse);
+        }
+
+        const chat = await prisma.chat.findUnique({
+          where: { id: chatId },
+          select: { ownerId: true, personaId: true },
+        });
+        console.log("=== DEBUG INFO ===");
+        console.log("chatId:", chatId);
+        console.log("chatId type:", typeof chatId);
+        console.log("chat result:", chat);
+        if (!chat) {
+          return reply.status(404).send({
+            success: false,
+            error: "채팅을 찾을 수 없습니다.",
+          } as ApiResponse);
+        }
+        if (chat.ownerId !== userId) {
+          return reply.status(403).send({
+            success: false,
+            error: "채팅에 접근할 권한이 없습니다.",
+          } as ApiResponse);
+        }
+
+        // 메시지 삭제
+        await prisma.message.deleteMany({ where: { chatId } });
+        // 페르소나 삭제
+        if (chat.personaId) {
+          await prisma.persona.delete({ where: { id: chat.personaId } });
+        }
+        // 채팅 삭제
+        await prisma.chat.delete({ where: { id: chatId } });
+
+        return reply.send({
+          success: true,
+          data: { chatId },
+        } as ApiResponse);
+      } catch (error) {
+        console.error("채팅 삭제 오류:", error);
+        return reply.status(500).send({
+          success: false,
+          error: "채팅 삭제 중 오류가 발생했습니다.",
         } as ApiResponse);
       }
     }

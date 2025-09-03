@@ -1,167 +1,159 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import Header from "@/components/layout/Header";
 import BottomNav from "@/components/layout/BottomNav";
-import Notification from "@/components/features/Notification";
 import OtherMessage from "@/components/features/OtherMessage";
 import MyMessage from "@/components/features/MyMessage";
-import { useLocation } from "react-router-dom";
 import FloatingInputButton from "@/components/features/FloatingInputButton";
-
-interface ChatMessage {
-  id: string;
-  type: "other" | "my" | "notification";
-  content: string[];
-  characterName?: string;
-  profileImage?: string;
-  timestamp?: string;
-}
+import { useParams } from "react-router-dom";
+import { useChat } from "@/hooks/useChat";
+import { useTopSentinelObserver } from "@/hooks/useTopSentinelObserver";
 
 const ChatPage: React.FC = () => {
-  // const location = useLocation();
-  // const { character } = location.state || {};
-  const character = {
-    name: "반지호",
+  const { chatId } = useParams<{ chatId: string }>();
+
+  const {
+    chatDetail,
+    messages,
+    hasMore,
+    isLoadingMessages,
+    loadMoreMessages,
+    sendMessage,
+    isSending,
+    isAiTyping,
+  } = useChat(chatId || "");
+
+  const containerRef = useRef<HTMLDivElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const topSentinelRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    if (!containerRef.current) return;
+    const el = containerRef.current;
+
+    // DOM 렌더가 끝난 다음 프레임에 실행
+    requestAnimationFrame(() => {
+      el.scrollTop = el.scrollHeight;
+    });
   };
 
-  const [messages] = useState<ChatMessage[]>([
-    {
-      id: "2",
-      type: "other",
-      content: ['"사랑해, 사랑한다고" 어쩌고저쩌고외쳤다.'],
-      characterName: "반지호",
-      profileImage: "",
-      timestamp: "[2025.08.13 (수) 11:59]",
-    },
-    {
-      id: "3",
-      type: "other",
-      content: [
-        '그것은 흡사 부활절날\n 여러 종류에서 일제히 울려오는 조악과도 같이\n즐겁고 경쾌한 소리였습니다. 우리 아가씨가 노새 등에 실린 버들고리 사이에 의젓이 올라타고 몸소 나타난 것입니다. 맑은 산 정기와, 소나기 뒤에 싸늘하게 씻긴 공기를 씌어 얼굴이 온통 발갛게 상기되어 있었습니다. 꼬마는 앓아 누워 있고, 노라드 아주머니는 휴가를 얻어 자기 아이들을 보러 갔다는 것이었습니다."text" 어쩌고저쩌고언제끝날까두둥탁',
-      ],
-      characterName: "반지호",
-      profileImage: "",
-    },
-    {
-      id: "4",
-      type: "other",
-      content: [
-        '그것은 흡사 부활절날 여러 종류에서 일제히 울려오는 조악과도 같이 즐겁고 경쾌한 소리였습니다. 우리 아가씨가 노새 등에 실린 버들고리 사이에 의젓이 올라타고 몸소 나타난 것입니다. 맑은 산 정기와, 소나기 뒤에 싸늘하게 씻긴 공기를 씌어 얼굴이 온통 발갛게 상기되어 있었습니다. 꼬마는 앓아 누워 있고, 노라드 아주머니는 휴가를 얻어 자기 아이들을 보러 갔다는 것이었습니다. "text" ',
-      ],
-      characterName: "반지호",
-      profileImage: "",
-    },
-    {
-      id: "5",
-      type: "notification",
-      content: ["반지호가 기억을 불러왔어요"],
-    },
-    {
-      id: "6",
-      type: "other",
-      content: [
-        "그것은 흡사 부활절날",
-        '여러 종류에서 일제히 울려오는 조악과도 같이 즐겁고 경쾌한 소리였습니다. 우리 아가씨가 노새 등에 실린 버들고리 사이에 의젓이 올라타고 몸소 나타난 것입니다. 맑은 산 정기와, 소나기 뒤에 싸늘하게 씻긴 공기를 씌어 얼굴이 온통 발갛게 상기되어 있었습니다. 꼬마는 앓아 누워 있고, 노라드 아주머니는 휴가를 얻어 자기 아이들을 보러 갔다는 것이었습니다."text"',
-      ],
-      characterName: "반지호",
-      profileImage: "",
-    },
-    {
-      id: "7",
-      type: "my",
-      content: [
-        '맑은 산 정기와, 소나기 뒤에 싸늘하게 씻긴 공기를 느꼈다. "언제까지 그럴래?" 맑은 산 정기와, 소나기 뒤에 싸늘하게 씻긴 공기를 씌어 얼굴이 온통 발갛게 상기되어 있었습니다. 꼬마는 앓아 누워 있고, 노라드 아주머니는 휴가를 얻어 자기 아이들을 보러 갔다는 것이었습니다.',
-      ],
-    },
-  ]);
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]); // messages가 바뀔 때 실행
 
-  // 메시지 액션 핸들러들
-  const handleReset = (messageId: string) => {
-    console.log("Reset message:", messageId);
-  };
+  // 상단 도달 시 이전 메시지 불러오기 (IntersectionObserver가 더 안정적)
+  const handleLoadMore = useCallback(async () => {
+    if (!isLoadingMessages && hasMore && containerRef.current) {
+      const container = containerRef.current;
+      const prevScrollTop = container.scrollTop;
+      const prevScrollHeight = container.scrollHeight;
 
-  const handleEdit = (messageId: string) => {
-    console.log("Edit message:", messageId);
-  };
+      await loadMoreMessages();
 
-  const handleDelete = (messageId: string) => {
-    console.log("Delete message:", messageId);
-  };
+      // 이전 메시지 prepend 후 스크롤 위치 유지
+      requestAnimationFrame(() => {
+        if (!containerRef.current) return;
+        const now = containerRef.current;
+        const newScrollHeight = now.scrollHeight;
+        now.scrollTop = newScrollHeight - prevScrollHeight + prevScrollTop;
+      });
+    }
+  }, [isLoadingMessages, hasMore, loadMoreMessages]);
 
-  const handleShare = (messageId: string) => {
-    console.log("Share message:", messageId);
-  };
+  useTopSentinelObserver({
+    containerRef,
+    topSentinelRef,
+    handleLoadMore,
+  });
 
-  const handleBookmark = (messageId: string) => {
-    console.log("Bookmark message:", messageId);
-  };
+  // 메시지/타이핑 상태 변경 시 하단으로 스크롤
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "auto" });
+  }, [messages, isAiTyping]);
 
   const handleInputSubmit = (value: string) => {
-    console.log("Input submitted:", value);
+    if (!value.trim() || isSending) return;
+    sendMessage(value);
   };
 
-  // 마지막 상대방 메시지인지 확인하는 함수
-  const isLastOtherMessage = (currentIndex: number): boolean => {
-    for (let i = currentIndex + 1; i < messages.length; i++) {
-      if (messages[i].type === "other") {
-        return false;
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const onScroll = () => {
+      if (container.scrollTop < 50) {
+        handleLoadMore();
       }
-    }
-    return true;
-  };
+    };
+
+    container.addEventListener("scroll", onScroll);
+    return () => container.removeEventListener("scroll", onScroll);
+  }, [handleLoadMore]);
+
+  if (!chatId) return <div>잘못된 접근입니다.</div>;
 
   return (
-    <div className="min-h-screen bg-[#12121d] text-white flex flex-col">
-      <Header variant="withText" title={character.name} />
+    <div className="h-svh bg-[#12121d] text-white flex flex-col min-h-0">
+      <Header variant="withText" title={chatDetail?.character.name || "채팅"} />
 
-      {/* chat content */}
-      <div className="pt-14 pb-14">
-        <div className="flex-1 overflow-y-auto pb-24">
-          <div className="max-w-full">
+      {/* 스크롤 영역은 반드시 min-h-0 부모 안에서 overflow-y-auto */}
+      <div className="flex-1 min-h-0 pb-6">
+        <div
+          className="h-full overflow-y-auto px-4 pt-14 pb-24 scrollbar-hide"
+          data-chat-container
+          ref={containerRef}
+        >
+          {/* 상단 감지용 센티넬 */}
+          <div ref={topSentinelRef} className="h-1" />
+
+          {isLoadingMessages && (
+            <div className="flex justify-center py-4 text-gray-400">
+              채팅을 불러오는 중...
+            </div>
+          )}
+
+          <div className="space-y-4">
             {messages.map((message, index) => {
-              switch (message.type) {
-                case "notification":
-                  return (
-                    <div key={message.id} className="flex justify-center">
-                      <div className="w-full p-4">
-                        <Notification content={message.content[0]} />
-                      </div>
-                    </div>
-                  );
+              const key = `temp-${message.chatId}-${
+                message.seq
+              }-${Date.now()}-${Math.random()}`;
+              const isLastMessage =
+                index === messages.length - 1 && message.role === "character";
 
-                case "other":
-                  return (
-                    <div key={message.id} className="flex justify-start">
-                      <OtherMessage
-                        content={message.content}
-                        characterName={character.name}
-                        profileImage={message.profileImage}
-                        isLastMessage={isLastOtherMessage(index)}
-                        onReset={() => handleReset(message.id)}
-                        onEdit={() => handleEdit(message.id)}
-                        onDelete={() => handleDelete(message.id)}
-                        onShare={() => handleShare(message.id)}
-                        onBookmark={() => handleBookmark(message.id)}
-                      />
-                    </div>
-                  );
-
-                case "my":
-                  return (
-                    <div key={message.id} className="flex justify-end">
-                      <MyMessage content={message.content} />
-                    </div>
-                  );
-
-                default:
-                  return null;
-              }
+              return message.role === "character" ? (
+                <div key={key} className="flex justify-start">
+                  <OtherMessage
+                    content={message.contents}
+                    characterName={chatDetail?.character.name || "캐릭터"}
+                    profileImage={chatDetail?.character.characterImg || ""}
+                    isLastMessage={isLastMessage}
+                  />
+                </div>
+              ) : (
+                <div key={key} className="flex justify-end">
+                  <MyMessage content={message.contents} />
+                </div>
+              );
             })}
+
+            {/* 상대방 타이핑 표시 (임시 버블) */}
+            {isAiTyping && (
+              <div className="flex justify-start">
+                <OtherMessage
+                  typing
+                  content=""
+                  characterName={chatDetail?.character.name || "캐릭터"}
+                  profileImage={chatDetail?.character.characterImg || ""}
+                  isLastMessage={false}
+                />
+              </div>
+            )}
           </div>
+
+          <div ref={messagesEndRef} />
         </div>
       </div>
 
       <FloatingInputButton onInputSubmit={handleInputSubmit} />
-
       <BottomNav />
     </div>
   );

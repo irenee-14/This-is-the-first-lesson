@@ -20,6 +20,7 @@ import Backgrounds from "@/pages/Backgrounds";
 import Story from "@/pages/Story";
 import Chats from "@/pages/Chats";
 import MyPage from "@/pages/MyPage";
+import Feed from "@/pages/FeedPage";
 
 function FlowResetWrapper({ children }: { children: React.ReactNode }) {
   useFlowReset();
@@ -40,25 +41,22 @@ const router = createBrowserRouter([
       { path: "/characters/:charId", element: <CharacterDetail /> },
       { path: "/backgrounds", element: <Backgrounds /> },
       {
-        element: <RequireBackgroundDetail />,
+        // element: <RequireBackgroundDetail />,
         children: [
           { path: "/backgrounds/:bgId", element: <BackgroundDetail /> },
         ],
       },
       {
-        element: <RequirePersona />,
-        children: [{ path: "/personas", element: <Personas /> }],
-      },
-      {
-        // element: <RequireStory />,
-        children: [{ path: "/story", element: <Story /> }],
+        // element: <RequirePersona />,
+        children: [{ path: "/personas/:storyId", element: <Personas /> }],
       },
       { path: "/chats", element: <Chats /> },
+      { path: "/feed", element: <Feed /> },
       { path: "/mypage", element: <MyPage /> },
       {
-        element: <RequireChat />,
+        // element: <RequireChat />,
         children: [
-          { path: "/chat", element: <Chat /> },
+          { path: "/chat/:chatId", element: <Chat /> },
           // { path: "/chat/:chatId", element: <ChatRoom /> },
         ],
       },
