@@ -152,8 +152,8 @@ async function chatsRoutes(fastify: FastifyInstance) {
             },
           },
           orderBy: { updatedAt: "desc" },
-          skip: (page - 1) * limit,
-          take: limit,
+          skip: (page - 1) * Number(limit),
+          take: Number(limit),
         });
 
         const chatSummaries = chats.map((chat) => ({
