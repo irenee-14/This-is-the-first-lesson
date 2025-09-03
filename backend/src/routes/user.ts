@@ -5,6 +5,7 @@ import {
   UpdateUserRequest,
   ApiResponse 
 } from '../types/api'
+import { open } from 'node:fs';
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -12,11 +13,23 @@ declare module 'fastify' {
   }
 }
 
+const DAY = 24 * 60 * 60 * 1000;
+const MIN = 60 * 1000;
+
+function formatRemain(ms: number): [number, number, number] {
+  const totalMin = Math.ceil(ms / MIN);
+  const days = Math.floor(totalMin / 1440);
+  const hours = Math.floor((totalMin % 1440) / 60);
+  const minutes = totalMin % 60;
+
+  return [days, hours, minutes];
+}
+
+
 export default async function usersRoutes(fastify: FastifyInstance) {
   // GET /api/v1/users - 유저 목록(관리자)
   fastify.get('/api/v1/users', async (request, reply) => {
     try {
-      // TODO: Check if user is admin
 
       const users = await fastify.prisma.user.findMany({
         orderBy: { createdAt: 'desc' }
@@ -162,19 +175,11 @@ export default async function usersRoutes(fastify: FastifyInstance) {
     }
   })
 
-  // GET /api/v1/users/:userId/unlocked-backgrounds - 특정 유저의 오픈된 배경 조회
-  fastify.get<{ 
-    Params: { userId: string },
+  // GET /api/v1/users/unlocked-backgrounds - 특정 유저의 오픈된 배경 조회
+  fastify.get<{
     Querystring: { writerId?: string }
-  }>('/api/v1/users/:userId/unlocked-backgrounds', {
+  }>('/api/v1/users/unlocked-backgrounds', {
     schema: {
-      params: {
-        type: 'object',
-        required: ['userId'],
-        properties: {
-          userId: { type: 'string' }
-        }
-      },
       querystring: {
         type: 'object',
         properties: {
@@ -184,7 +189,7 @@ export default async function usersRoutes(fastify: FastifyInstance) {
     }
   }, async (request, reply) => {
     try {
-      const { userId } = request.params
+      const userId = request.headers['x-user-id'] as string
       const { writerId } = request.query
 
       const user = await fastify.prisma.user.findUnique({
@@ -240,20 +245,12 @@ export default async function usersRoutes(fastify: FastifyInstance) {
     }
   })
 
-  // PATCH /api/v1/users/:userId/unlocked-backgrounds - 특정 유저의 오픈 배경 추가
-  fastify.patch<{ 
-    Params: { userId: string },
+  // PATCH /api/v1/users/unlocked-backgrounds - 특정 유저의 오픈 배경 추가
+  fastify.patch<{
     Querystring: { writerId?: string },
     Body: { backgroundId: string }
-  }>('/api/v1/users/:userId/unlocked-backgrounds', {
+  }>('/api/v1/users/unlocked-backgrounds', {
     schema: {
-      params: {
-        type: 'object',
-        required: ['userId'],
-        properties: {
-          userId: { type: 'string' }
-        }
-      },
       querystring: {
         type: 'object',
         properties: {
@@ -270,7 +267,7 @@ export default async function usersRoutes(fastify: FastifyInstance) {
     }
   }, async (request, reply) => {
     try {
-      const { userId } = request.params
+      const userId = request.headers['x-user-id'] as string
       const { writerId } = request.query
       const { backgroundId } = request.body
 
@@ -328,26 +325,21 @@ export default async function usersRoutes(fastify: FastifyInstance) {
     }
   })
 
-    // GET /api/v1/users/:userId/background-flows-with-opened - 전체 배경 플로우 + 오픈 여부
-  fastify.get<{ Params: { userId: string }, Querystring: { writerId: string } }>(
-    '/api/v1/users/:userId/background-flows-with-opened',
+    // GET /api/v1/users/background-flows-with-opened - 전체 배경 플로우 + 오픈 여부
+  fastify.get<{ Querystring: { writerId: string} }>(
+    '/api/v1/users/background-flows-with-opened',
     {
       schema: {
-        params: {
-          type: 'object',
-          required: ['userId'],
-          properties: { userId: { type: 'string' } }
-        },
         querystring: {
           type: 'object',
           required: ['writerId'],
-          properties: { writerId: { type: 'string' } }
+          properties: { writerId: { type: 'string' }}
         }
       }
     },
     async (request, reply) => {
       try {
-        const { userId } = request.params;
+        const userId = request.headers['x-user-id'] as string
         const { writerId } = request.query;
 
         // 1. 전체 플로우 및 스텝, 배경 정보 조회
@@ -397,4 +389,119 @@ export default async function usersRoutes(fastify: FastifyInstance) {
       }
     }
   );
+
+  // GET /api/v1/users/flows-with-opened - 전체 플로우 + 오픈 여부
+  fastify.get<{ Querystring: { writerId: string, characterId: string} }>(
+    '/api/v1/users/flows-with-opened',
+    {
+      schema: {
+        querystring: {
+          type: 'object',
+          required: ['writerId', 'characterId'],
+          properties: { 
+            writerId: { type: 'string' }, 
+            characterId: { type: 'string'}
+          }
+        }
+      }
+    },
+    async (request, reply) => {
+      try {
+        const userId = request.headers['x-user-id'] as string;
+
+        const { writerId, characterId } = request.query;
+
+        const flows = await fastify.prisma.backgroundFlow.findMany({
+          where: { writerId },
+          orderBy: { version: 'asc' },
+          include: {
+            backgroundSteps: {
+              include: { background: true },
+              orderBy: { orderKey: 'asc' }
+            }
+          }
+        });
+        const steps = flows.flatMap(f => f.backgroundSteps);
+
+        const openBackgrounds = await fastify.prisma.openBackground.findMany({
+          where: { userId, writerId },
+          select: { backgroundId: true, openedAt: true },
+          orderBy: { openedAt: 'desc' }
+        });
+        const latestOpenDate = openBackgrounds[0]?.openedAt.getTime();
+        const openedIds = new Set(openBackgrounds.map(o => o.backgroundId));
+
+        const bgIdsForStory: string[] = [];
+        const seen = new Set<string>();
+
+        for (const step of steps) {
+          const id = step.backgroundId;
+          if (openedIds.has(id) && !seen.has(id)) {
+            seen.add(id);
+            bgIdsForStory.push(id);
+          }
+        }
+
+        const stories = bgIdsForStory.length
+          ? await fastify.prisma.story.findMany({
+              where: { userId, characterId, backgroundId: { in: bgIdsForStory } },
+              select: { 
+                id: true, 
+                name: true, 
+                backgroundId: true, 
+                opening: true, 
+                characterId: true, 
+                background: { select: { tags: true } },
+                character:  { select: { tags: true } },
+               }
+            })
+          : [];
+
+        console.log(openedIds);
+        const storyByBg = Object.fromEntries(stories.map(s => [s.backgroundId, s] as const));
+        let seq = 1;
+        const cards = steps.map(step => {
+          const bg = step.background;
+          const bgId = step.backgroundId;
+          const isOpen = openedIds.has(bgId);
+          const story = storyByBg[bgId];
+          const dDay = latestOpenDate + DAY * 7 * seq - Date.now();
+
+          seq++;
+
+          console.log({ bgId, isOpen, hasStory: !!story, dDay });
+          if (isOpen && story && bg) {
+            return {
+              id: story.id,
+              title: story.name,
+              imgUrl: bg.backgroundImg ?? null,
+              tags: Array.from(new Set([...(bg.tags as string[]), ...(story.character.tags as string[])])),
+              description: story.opening ?? null,
+              dDay: null,
+              isOpen
+            };
+          }
+          return {
+            id: bgId,
+            title: bg?.name ?? '',
+            imgUrl: bg?.backgroundImg ?? null,
+            tags: (bg?.tags as string[]) ?? [],
+            description: bg?.description ?? null,
+            dDay: formatRemain(dDay),
+            isOpen: false
+          };
+        });
+
+        return reply.send({ success: true, data: cards });
+      } catch (error) {
+        fastify.log.error(error);
+        return reply.status(500).send({
+          success: false,
+          error: 'Internal server error'
+        } as ApiResponse);
+      }
+    }
+  );
 }
+
+

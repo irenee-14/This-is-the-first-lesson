@@ -115,7 +115,7 @@ export default async function backgroundFlowRoutes(fastify: FastifyInstance) {
         orderBy: { version: 'desc' },
         select: { version: true }
     })
-    const nextVersion = latestFlow ? latestFlow.version : 0
+    const nextVersion = latestFlow ? latestFlow.version + 1 : 0
 
       const flow = await fastify.prisma.backgroundFlow.create({
         data: {

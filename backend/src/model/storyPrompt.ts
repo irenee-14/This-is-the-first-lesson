@@ -3,8 +3,6 @@ import { $Enums } from "generated/prisma";
 import path from "path";
 import { callGptApi, toMessageInputs } from "./common";
 
-dotenv.config({ path: path.resolve(__dirname, "../../.env") });
-
 type CharacterDTO = {
   id: string;
   name: string;
