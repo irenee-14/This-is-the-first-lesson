@@ -4,23 +4,23 @@ import IconButton from "@/components/ui/IconButton";
 import keyIcon from "/src/assets/icons/key.png";
 
 interface BackgroundUnlockSheetProps {
-  background: { backgroundName: string } | null;
+  name: string | null;
   onClose: () => void;
   onUnlock: () => void;
 }
 
 export function BackgroundUnlockSheet({
-  background,
+  name,
   onClose,
   onUnlock,
 }: BackgroundUnlockSheetProps) {
-  if (!background) return null;
+  if (!name) return null;
 
   return (
     <div className="flex flex-col gap-10">
       <div className="flex flex-col gap-4">
         <h2 className="text-lg font-medium">
-          위프를 사용해서 [{background.backgroundName}]을(를) 오픈할까요?
+          위프를 사용해서 [{name}]을(를) 오픈할까요?
         </h2>
 
         <div className="flex w-full rounded-md bg-gray-700 items-center gap-3 p-3 ">

@@ -1,35 +1,47 @@
 import CardMediaLeft from "@/components/features/CardMediaLeft";
 import BottomNav from "@/components/layout/BottomNav";
 import Header from "@/components/layout/Header";
-import { BottomSheet } from "@/components/ui/BottomSheet";
+import BottomSheet from "@/components/ui/BottomSheet";
 import { useApi } from "@/hooks/useApi";
 import { useBackgroundClickHandler } from "@/hooks/useBackgroundClickHandler";
 import { useFlowStore } from "@/stores/useFlowStore";
 import { useUserStore } from "@/stores/useUserStore";
 import type { BackgroundListResponse } from "@/types/background";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { BackgroundUnlockSheet } from "@/components/features/BackgroundUnlockSheet";
+import type { Flow } from "@/types/story";
 
-const Backgrounds: React.FC = () => {
+export interface BackgroundUnlockSheetProps {
+  flow: Flow | null;
+  onClose: () => void;
+  onUnlock: () => void;
+}
+
+export default function Stories() {
   const {
-    data: backgroundsData,
+    data: flowData,
     loading,
     error,
     get,
-  } = useApi<BackgroundListResponse>();
-  const { writerId } = useFlowStore();
-  const { userId } = useUserStore();
-  const { handleClick, lockedBackground, closeSheet } =
-    useBackgroundClickHandler();
+  } = useApi<{ data: import("@/types/story").Flow[] }>();
+
+  const { handleClick, lockedFlow, closeSheet } = useBackgroundClickHandler();
+  const [searchParams] = useSearchParams();
+
+  const writerId = searchParams.get("writerId");
+  const characterId = searchParams.get("characterId");
 
   useEffect(() => {
-    if (userId && writerId) {
-      get(`/users/${userId}/background-flows-with-opened?writerId=${writerId}`);
+    if (writerId && characterId) {
+      get(
+        `/users/flows-with-opened?writerId=${writerId}&characterId=${characterId}`
+      );
     }
-  }, [get, userId, writerId]);
+  }, [get, characterId, writerId]);
 
-  const flows = backgroundsData?.data?.flows || [];
-  const steps = flows.length > 0 ? flows[0].steps : [];
+  const flows = flowData?.data || [];
+  // steps 변수 제거 - flows가 직접 steps 역할
 
   if (loading) {
     return (
@@ -74,40 +86,37 @@ const Backgrounds: React.FC = () => {
           </div>
 
           {/* Background List */}
-          {steps.length > 0 ? (
+          {flows.length > 0 ? (
             <>
               <div
                 className={
                   "self-stretch inline-flex flex-col justify-start items-start gap-4 scrollbar-hide"
                 }
               >
-                {steps.map((item, index) => (
+                {flows.map((flow, index) => (
                   <CardMediaLeft
-                    isOpen={item.isOpened}
-                    key={item.backgroundId || index}
-                    imageUrl={item.imageUrl}
-                    name={item.backgroundName}
-                    description={item.description}
-                    tags={item.tags}
-                    onClick={() => handleClick(item)}
+                    key={flow.id || index}
+                    isOpen={flow.isOpen}
+                    imageUrl={flow.imageUrl}
+                    name={flow.name}
+                    description={flow.description}
+                    tags={flow.tags}
+                    onClick={() => handleClick(flow)}
                   />
                 ))}
               </div>
             </>
           ) : (
-            <>
-              {/* Background List */}
-              <div className="text-center py-8 text-gray-500">
-                배경이 없습니다.
-              </div>
-            </>
+            <div className="text-center py-8 text-gray-400">
+              배경 정보를 불러오는 중입니다...
+            </div>
           )}
         </div>
       </div>
       {/* Pay BottomSheet */}
-      <BottomSheet open={!!lockedBackground} onClose={closeSheet}>
+      <BottomSheet open={!!lockedFlow} onClose={closeSheet}>
         <BackgroundUnlockSheet
-          background={lockedBackground}
+          name={lockedFlow?.title || "Unknown Background"}
           onClose={closeSheet}
           onUnlock={() => {
             closeSheet();
@@ -118,6 +127,4 @@ const Backgrounds: React.FC = () => {
       <BottomNav />
     </div>
   );
-};
-
-export default Backgrounds;
+}

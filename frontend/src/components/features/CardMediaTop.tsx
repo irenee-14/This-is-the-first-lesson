@@ -1,20 +1,25 @@
 import Chip from "@/components/ui/Chip";
 import { cn } from "@/lib/utils";
 import { ReactComponent as LockIcon } from "@/assets/icons/Lock.svg";
-import { useState } from "react";
+import { useBackgroundClickHandler } from "@/hooks/useBackgroundClickHandler";
+import BottomSheet from "@/components/ui/BottomSheet";
+import { BackgroundUnlockSheet } from "./BackgroundUnlockSheet";
+import type { Flow } from "@/types/story";
 
 export interface CardMediaTopProps {
+  flow?: Flow; // string에서 Flow로 변경
   isOpen?: boolean;
   imageUrl?: string;
   name?: string;
   description?: string;
   chips?: string[];
-  className?: string;
   onClick?: () => void;
-  variant?: "horizontal" | "grid";
+  variant?: "vertical" | "horizontal" | "grid";
+  className?: string;
 }
 
 export default function CardMediaTop({
+  flow,
   isOpen = true,
   imageUrl,
   name,
@@ -25,11 +30,11 @@ export default function CardMediaTop({
   variant = "grid",
 }: CardMediaTopProps) {
   const isHorizontal = variant === "horizontal";
-  const [showModal, setShowModal] = useState(false);
+  const { handleClick, lockedFlow, closeSheet } = useBackgroundClickHandler();
 
-  const handleClick = () => {
-    if (!isOpen) {
-      setShowModal(true);
+  const handleCardClick = () => {
+    if (flow) {
+      handleClick(flow);
     } else if (onClick) {
       onClick();
     }
@@ -44,7 +49,7 @@ export default function CardMediaTop({
           onClick && isOpen && "cursor-pointer",
           className
         )}
-        onClick={handleClick}
+        onClick={handleCardClick}
         aria-disabled={!isOpen}
       >
         <div
@@ -96,23 +101,18 @@ export default function CardMediaTop({
           </div>
         )}
       </div>
-      {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="bg-gray-100 rounded-lg shadow-lg p-6 min-w-[220px] flex flex-col items-center">
-            <div className="text-lg font-bold mb-2 text-gray-950">
-              잠긴 배경입니다
-            </div>
-            <div className="text-sm text-gray-700 mb-4">
-              해당 배경은 잠겨 있어 선택할 수 없습니다.
-            </div>
-            <button
-              className="px-4 py-2 bg-primary text-white rounded"
-              onClick={() => setShowModal(false)}
-            >
-              확인
-            </button>
-          </div>
-        </div>
+
+      {/* flow가 있을 때만 BottomSheet 표시 */}
+      {flow && (
+        <BottomSheet open={!!lockedFlow} onClose={closeSheet}>
+          <BackgroundUnlockSheet
+            name="조선시대" //임시
+            onClose={closeSheet}
+            onUnlock={() => {
+              closeSheet();
+            }}
+          />
+        </BottomSheet>
       )}
     </>
   );

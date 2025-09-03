@@ -1,22 +1,21 @@
-import type { Background } from "@/types/background";
+import type { Flow } from "@/types/story";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export function useBackgroundClickHandler() {
-  const [lockedBackground, setLockedBackground] = useState<Background | null>(
-    null
-  );
+  const [lockedFlow, setLockedFlow] = useState<Flow | null>(null);
   const navigate = useNavigate();
 
-  const handleClick = (background: Background) => {
-    if (background.isOpened) {
-      navigate(`/backgrounds/${background.backgroundId}`);
+  const handleClick = (flow?: Flow) => {
+    if (!flow) return;
+    if (flow.isOpen) {
+      navigate(`/story/${flow.id}`);
     } else {
-      setLockedBackground(background);
+      setLockedFlow(flow);
     }
   };
 
-  const closeSheet = () => setLockedBackground(null);
+  const closeSheet = () => setLockedFlow(null);
 
-  return { handleClick, lockedBackground, closeSheet };
+  return { handleClick, lockedFlow, closeSheet };
 }

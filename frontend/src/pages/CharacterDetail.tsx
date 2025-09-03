@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useApi } from "@/hooks/useApi";
 import { useParams, useNavigate } from "react-router-dom";
 import Header from "@/components/layout/Header";
@@ -19,7 +19,6 @@ const getImageUrl = (dbPath: string) =>
   new URL(`../assets/images/${dbPath}`, import.meta.url).href;
 
 export default function CharacterDetailPage() {
-  const { setCharacter, setWriter } = useFlowStore();
   const navigate = useNavigate();
   const { charId } = useParams();
 
@@ -34,12 +33,13 @@ export default function CharacterDetailPage() {
   }>();
 
   const {
-    data: backgroundsData,
-    loading: backgroundLoading,
-    error: backgroundError,
-    get: getBackground,
-  } = useApi<import("@/types/background").BackgroundListResponse>();
+    data: flowData,
+    loading: flowLoading,
+    error: flowError,
+    get: getFlow,
+  } = useApi<{ data: import("@/types/story").Flow[] }>();
 
+  // 1. 타입 정의 수정
   const {
     data: chatListData,
     loading: chatListLoading,
@@ -47,28 +47,47 @@ export default function CharacterDetailPage() {
     get: getChatList,
   } = useApi<{
     success: boolean;
-    data: import("@/types/chat").ChatSummary[];
+    data: {
+      chats: import("@/types/chat").ChatSummary[];
+      total: number;
+      page: number;
+      limit: number;
+    };
   }>();
 
-  useEffect(() => {
-    getBackground("/backgrounds");
-  }, [getBackground]);
-
+  // 캐릭터 데이터 로딩
   useEffect(() => {
     if (charId) {
       getCharacter(`/characters/${charId}`);
     }
   }, [charId, getCharacter]);
 
+  // 채팅 목록 로딩
   useEffect(() => {
     if (charId) {
       getChatList(`/chats?characterId=${charId}`);
-
-      console.log("chatListData:", chatListData);
     }
   }, [charId, getChatList]);
 
-  if (characterLoading || backgroundLoading) {
+  // Flow 데이터 로딩 - characterData가 로딩된 후에 실행
+  useEffect(() => {
+    if (charId && characterData?.data?.writerId) {
+      const writerId = characterData.data.writerId;
+      getFlow(
+        `/users/flows-with-opened?writerId=${writerId}&characterId=${charId}`
+      );
+    }
+  }, [charId, characterData, getFlow]);
+
+  // 디버깅을 위한 로그
+  // useEffect(() => {
+  //   console.log("Character Data:", characterData);
+  //   console.log("Flow Data:", flowData);
+  //   console.log("Flow Loading:", flowLoading);
+  //   console.log("Flow Error:", flowError);
+  // }, [characterData, flowData, flowLoading, flowError]);
+
+  if (characterLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Header />
@@ -78,40 +97,48 @@ export default function CharacterDetailPage() {
     );
   }
 
-  if (characterError || backgroundError) {
+  if (characterError) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Header />
-        <div>오류가 발생했습니다: {characterError || backgroundError}</div>
+        <div>오류가 발생했습니다: {characterError}</div>
         <BottomNav />
       </div>
     );
   }
 
   const character = characterData?.data;
-  const backgrounds = backgroundsData?.data?.backgrounds || [];
   if (!character) {
     return <div>캐릭터 정보를 불러올 수 없습니다.</div>;
   }
-  if (!backgrounds) {
-    return <div>배경 정보를 불러올 수 없습니다.</div>;
-  }
 
   // -------------------------------------------------------
-  const chatCount = Array.isArray(chatListData?.data)
-    ? chatListData.data.length
-    : 0;
+  // 채팅 데이터에서 실제 채팅 개수 계산
+  const chatCount = chatListData?.data?.chats?.length || 0;
   const hasChatHistory = chatCount > 0;
 
   // -------------------------------------------------------
+
   const handleChatClick = () => {
-    setCharacter(character.characterId);
-    setWriter(character.writerId);
-    navigate(`/backgrounds`);
+    if (hasChatHistory && chatCount > 0) {
+      navigate(
+        `/stories?writerId=${characterData?.data?.writerId}&characterId=${charId}`
+      );
+    } else {
+      const firstStory = flowData?.data?.[0];
+      if (firstStory) {
+        navigate(`/story/${firstStory.id}`);
+      } else {
+        navigate(`/characters`);
+      }
+    }
   };
 
-  const handleBackgroundClick = (backgroundId: string) => {
-    navigate(`/backgrounds/${backgroundId}`);
+  const handleStoryClick = (storyId: string) => {
+    navigate(`/personas/${storyId}`);
+  };
+  const handleBeforeChatClick = (chatId: string) => {
+    navigate(`/chat/${chatId}`);
   };
 
   function onLikeClick(): void {
@@ -162,10 +189,11 @@ export default function CharacterDetailPage() {
         {/* Character Detail Tabs */}
         <CharacterDetailTabs
           character={character}
-          backgrounds={backgrounds}
+          flow={flowData?.data ?? []}
           hasChatHistory={hasChatHistory}
-          chatList={chatListData?.data ?? []}
-          onBackgroundClick={handleBackgroundClick}
+          chatList={chatListData?.data?.chats ?? []}
+          onStoryClick={handleStoryClick}
+          onChatClick={handleBeforeChatClick}
         />
       </div>
       <FloatingButton

@@ -2,23 +2,25 @@ import { useState } from "react";
 import CharacterDescriptionTab from "./CharacterDescriptionTab";
 import CharacterChatTab from "./CharacterChatTab";
 import type { Character } from "@/types/character";
-import type { Background } from "@/types/background";
 import type { ChatSummary } from "@/types/chat";
+import type { Flow } from "@/types/story";
 
 interface CharacterDetailTabsProps {
   character: Character;
-  backgrounds: Background[];
+  flow: Flow[];
   hasChatHistory: boolean;
   chatList: ChatSummary[];
-  onBackgroundClick: (backgroundId: string) => void;
+  onStoryClick: (storyId: string) => void;
+  onChatClick: (chatId: string) => void;
 }
 
 export default function CharacterDetailTabs({
   character,
-  backgrounds,
+  flow,
   hasChatHistory,
   chatList,
-  onBackgroundClick,
+  onStoryClick,
+  onChatClick,
 }: CharacterDetailTabsProps) {
   const [activeTab, setActiveTab] = useState<"description" | "chat">(
     "description"
@@ -57,16 +59,16 @@ export default function CharacterDetailTabs({
         {activeTab === "description" ? (
           <CharacterDescriptionTab
             character={character}
-            backgrounds={backgrounds}
+            flow={flow}
             hasChatHistory={hasChatHistory}
-            onBackgroundClick={onBackgroundClick}
+            onStoryClick={onStoryClick}
           />
         ) : (
           <CharacterChatTab
             character={character}
             hasChatHistory={hasChatHistory}
             chatList={chatList}
-            onBackgroundClick={onBackgroundClick}
+            onChatClick={onChatClick}
           />
         )}
       </div>

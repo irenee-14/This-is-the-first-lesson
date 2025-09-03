@@ -1,36 +1,28 @@
 import BottomNav from "@/components/layout/BottomNav";
 import Header from "@/components/layout/Header";
-import Chip from "@/components/ui/Chip";
 import FloatingButton from "@/components/features/FloatingButton";
-import { useFlowStore } from "@/stores/useFlowStore";
-import { useApi } from "@/hooks/useApi";
-import type { BackgroundDetailResponse } from "@/types/background";
-import React, { useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
 
-const BackgroundDetail: React.FC = () => {
+import { useApi } from "@/hooks/useApi";
+import { useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import type { StoryResponse } from "@/types/story";
+
+export default function StoryDetail() {
   const navigate = useNavigate();
-  const { bgId } = useParams();
-  const { setBackground } = useFlowStore();
-  const {
-    data: backgroundData,
-    loading,
-    error,
-    get,
-  } = useApi<BackgroundDetailResponse>();
+  const { storyId } = useParams();
+  const { data: storyData, loading, error, get } = useApi<StoryResponse>();
 
   useEffect(() => {
-    if (bgId) {
-      get(`/backgrounds/${bgId}`);
+    if (storyId) {
+      get(`/stories/${storyId}`);
     }
-  }, [bgId, get]);
+  }, [storyId, get]);
 
-  const background = backgroundData?.data;
+  const story = storyData?.data;
 
   const handleChatClick = () => {
-    if (background) {
-      setBackground(background.backgroundId);
-      navigate(`/personas`);
+    if (story) {
+      navigate(`/personas/${storyId}`);
     }
   };
 
@@ -62,7 +54,7 @@ const BackgroundDetail: React.FC = () => {
     );
   }
 
-  if (!background) {
+  if (!story) {
     return (
       <div className="min-h-screen">
         <Header variant="withText" title="배경 정보" />
@@ -73,20 +65,17 @@ const BackgroundDetail: React.FC = () => {
       </div>
     );
   }
-
   return (
     <div className="min-h-screen">
       <Header variant="withText" title="작품 확인" />
 
       <div className="pt-14 pb-36">
-        {/* Background Section */}
         <div className="relative flex flex-col p-4 gap-3">
-          {/* Background Image */}
           <div className="relative w-full aspect-square">
-            {/* Fallback gradient background */}
+            {/* Fallback gradient  */}
             <div className="absolute inset-0 w-full h-full bg-gradient-to-b from-purple-600 via-purple-500 to-indigoGray-black" />
 
-            {/* Background Image */}
+            {/*  Image */}
             <img
               src="/src/assets/images/backgrounds/library.png"
               alt="Background Image"
@@ -99,17 +88,16 @@ const BackgroundDetail: React.FC = () => {
             {/* Gradient Overlay */}
             <div className="absolute inset-0 w-full h-full bg-gradient-to-t from-indigoGray-black via-transparent to-transparent" />
           </div>
-          {/* Background Info */}
+          {/*  Info */}
           <div className="flex flex-col gap-2">
             <h1 className="text-2xl font-bold text-White-Font ">
-              {background.backgroundName}와 {background.backgroundName}에서
-              대화하기
+              {story.storyName}와 {story.storyName}에서 대화하기
             </h1>
           </div>
-          {/* Background Description */}
+          {/*  Description */}
           <div>
             <p className="text-sm font-normal leading-tight">
-              {background.description}
+              {story.characterPrompt}
             </p>
           </div>
         </div>
@@ -119,6 +107,4 @@ const BackgroundDetail: React.FC = () => {
       <BottomNav />
     </div>
   );
-};
-
-export default BackgroundDetail;
+}

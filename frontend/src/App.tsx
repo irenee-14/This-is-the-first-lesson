@@ -2,7 +2,6 @@ import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
 
 import Characters from "@/pages/Characters";
 import NotFound from "@/pages/NotFound";
-import BackgroundDetail from "@/pages/BackgroundDetail";
 import Personas from "@/pages/Personas";
 import CharacterDetail from "@/pages/CharacterDetail";
 import { useFlowReset } from "@/hooks/useFlowReset";
@@ -16,11 +15,11 @@ import {
   RequirePersona,
   RequireChat,
 } from "@/utils/RequireFlow";
-import Backgrounds from "@/pages/Backgrounds";
-import Story from "@/pages/Story";
 import Chats from "@/pages/Chats";
 import MyPage from "@/pages/MyPage";
 import Feed from "@/pages/FeedPage";
+import StoryDetail from "@/pages/StoryDetail";
+import Stories from "./pages/Stories";
 
 function FlowResetWrapper({ children }: { children: React.ReactNode }) {
   useFlowReset();
@@ -39,12 +38,13 @@ const router = createBrowserRouter([
       { path: "/demo", element: <ComponentDemo /> },
       { path: "/characters", element: <Characters /> },
       { path: "/characters/:charId", element: <CharacterDetail /> },
-      { path: "/backgrounds", element: <Backgrounds /> },
+      {
+        path: "/stories",
+        element: <Stories />,
+      },
       {
         // element: <RequireBackgroundDetail />,
-        children: [
-          { path: "/backgrounds/:bgId", element: <BackgroundDetail /> },
-        ],
+        children: [{ path: "/story/:storyId", element: <StoryDetail /> }],
       },
       {
         // element: <RequirePersona />,
