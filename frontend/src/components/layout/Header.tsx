@@ -71,7 +71,6 @@ const Header = React.forwardRef<HTMLElement, HeaderProps>(
               onClick={handleBack}
               className="w-8 h-8 flex items-center justify-center"
             >
-              {" "}
               <ArrowLeftIcon className="w-6 h-6 text-white" />
             </button>
 
@@ -86,7 +85,6 @@ const Header = React.forwardRef<HTMLElement, HeaderProps>(
             onClick={handleMenu}
             className="w-8 h-8 flex items-center justify-center"
           >
-            {" "}
             <DotIcon className="w-6 h-6 text-white" />
           </button>
         </nav>
