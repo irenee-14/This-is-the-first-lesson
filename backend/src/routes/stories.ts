@@ -125,6 +125,12 @@ export default async function storiesRoutes(fastify: FastifyInstance) {
         }
       })
 
+      const background = await fastify.prisma.background.findUnique({
+        where: { id: story.backgroundId }
+      })
+      const character = await fastify.prisma.character.findUnique({
+        where: { id: story.characterId }
+      })
       if (!story) {
         return reply.status(404).send({
           success: false,
@@ -134,6 +140,7 @@ export default async function storiesRoutes(fastify: FastifyInstance) {
 
       const response: Story = {
         storyId: story.id,
+        name: character.name + "와" +background.name,
         characterId: story.characterId,
         backgroundId: story.backgroundId,
         writerId: story.userId || '',
@@ -185,7 +192,7 @@ export default async function storiesRoutes(fastify: FastifyInstance) {
           error: 'Character not found'
         } as ApiResponse)
       }
-      //TODO 스토리 생성 배경과 캐릭터가 같은 작가인 것인지 확인,,,
+
       const background = await fastify.prisma.background.findUnique({
         where: { id: body.backgroundId }
       })
@@ -194,6 +201,13 @@ export default async function storiesRoutes(fastify: FastifyInstance) {
         return reply.status(404).send({
           success: false,
           error: 'Background not found'
+        } as ApiResponse)
+      }
+
+      if (character.writerId !== background.writerId) {
+        return reply.status(403).send({
+          success: false,
+          error: '동일한 작가의 캐릭터와 배경만 생성 가능합니다.'
         } as ApiResponse)
       }
 
