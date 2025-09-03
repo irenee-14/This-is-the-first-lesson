@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
 import { ReactComponent as NavigationIcon } from "@/assets/icons/Navigation.svg";
@@ -17,6 +17,7 @@ const navItems = [
 export default function BottomNav() {
   const [selected, setSelected] = useState("characters");
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleNavClick = (key: string) => {
     setSelected(key);
@@ -37,6 +38,20 @@ export default function BottomNav() {
         break;
     }
   };
+
+  // 현재 경로에 따라 활성화된 탭 설정
+  useEffect(() => {
+    const pathname = location.pathname;
+    if (pathname.startsWith("/chats") || pathname.startsWith("/chat/")) {
+      setSelected("chat");
+    } else if (pathname.startsWith("/characters")) {
+      setSelected("characters");
+    } else if (pathname.startsWith("/feed")) {
+      setSelected("feed");
+    } else if (pathname.startsWith("/mypage")) {
+      setSelected("mypage");
+    }
+  }, [location.pathname]);
 
   return (
     <nav
