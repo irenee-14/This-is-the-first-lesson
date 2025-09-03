@@ -54,6 +54,7 @@ model Character {
   id            String         @id @default(uuid()) @map("character_id")
   characterImg  String?        @default("IMAGE") @map("character_img") @db.VarChar(255)
   writerId      String         @map("writer_id")
+  tags          String[]       @map("tags")
   characterTags CharacterTag[]
   writer        User           @relation(fields: [writerId], references: [id], onDelete: Cascade)
   chats         Chat[]

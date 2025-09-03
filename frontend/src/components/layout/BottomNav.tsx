@@ -4,13 +4,13 @@ import { cn } from "@/lib/utils";
 
 import { ReactComponent as NavigationIcon } from "@/assets/icons/Navigation.svg";
 import { ReactComponent as CircleIcon } from "@/assets/icons/Circle.svg";
-import { ReactComponent as BookIcon } from "@/assets/icons/Book.svg";
+import { ReactComponent as FeedIcon } from "@/assets/icons/feed.svg";
 import { ReactComponent as MenuIcon } from "@/assets/icons/Menu.svg";
 
 const navItems = [
   { key: "chat", label: "진행중인 챗", icon: NavigationIcon },
   { key: "characters", label: "캐릭터 둘러보기", icon: CircleIcon },
-  { key: "works", label: "작품 둘러보기", icon: BookIcon },
+  { key: "feed", label: "피드 둘러보기", icon: FeedIcon },
   { key: "mypage", label: "My Page", icon: MenuIcon },
 ];
 
@@ -27,8 +27,8 @@ export default function BottomNav() {
       case "characters":
         navigate("/characters");
         break;
-      case "works":
-        navigate("/characters");
+      case "feed":
+        navigate("/feed");
         break;
       case "mypage":
         navigate("/mypage");
