@@ -8,11 +8,11 @@ import user from "./routes/user.js";
 import auth from "./routes/auth.js";
 import backgroundFlow from "./routes/backgroundFlow.js";
 import stories from "./routes/stories.js";
+import personas from './routes/personas.js'
 
 // import stories from './routes/stories.js'
 
-import chats from "./routes/chats";
-// import personas from './routes/personas.js'
+// import chats from "./routes/chats";
 // import tags from './routes/tags.js'
 
 export async function createServer() {
@@ -41,9 +41,9 @@ export async function createServer() {
   await fastify.register(characters);
   await fastify.register(backgrounds);
   await fastify.register(stories);
-  await fastify.register(chats);
+  // await fastify.register(chats);
   await fastify.register(user);
-  // await fastify.register(personas)
+  await fastify.register(personas);
   // await fastify.register(tags)
   await fastify.register(auth);
   await fastify.register(backgroundFlow);

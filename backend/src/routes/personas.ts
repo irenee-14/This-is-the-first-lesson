@@ -14,20 +14,10 @@ declare module 'fastify' {
 }
 
 export default async function personasRoutes(fastify: FastifyInstance) {
-  // GET /api/v1/users/:userId/personas - 페르소나 목록 조회
-  fastify.get<{ Params: { userId: string } }>('/api/v1/users/:userId/personas', {
-    schema: {
-      params: {
-        type: 'object',
-        required: ['userId'],
-        properties: {
-          userId: { type: 'string' }
-        }
-      }
-    }
-  }, async (request, reply) => {
+  // GET /api/v1/users/personas - 페르소나 목록 조회
+  fastify.get('/api/v1/users/personas', async (request, reply) => {
     try {
-      const { userId } = request.params
+      const userId = request.headers['x-user-id'] as string
 
       const user = await fastify.prisma.user.findUnique({
         where: { id: userId }
@@ -48,9 +38,9 @@ export default async function personasRoutes(fastify: FastifyInstance) {
       const response: Persona[] = personas.map(persona => ({
         personalId: persona.id,
         userId: persona.userId,
-        name: persona.name || undefined,
-        gender: persona.gender || undefined,
-        prompt: persona.prompt || undefined,
+        name: persona.name,
+        gender: persona.gender,
+        prompt: persona.prompt,
         createdAt: persona.createdAt.toISOString(),
         updatedAt: persona.updatedAt.toISOString()
       }))
@@ -97,9 +87,9 @@ export default async function personasRoutes(fastify: FastifyInstance) {
       const response: Persona = {
         personalId: persona.id,
         userId: persona.userId,
-        name: persona.name || undefined,
-        gender: persona.gender || undefined,
-        prompt: persona.prompt || undefined,
+        name: persona.name,
+        gender: persona.gender,
+        prompt: persona.prompt,
         createdAt: persona.createdAt.toISOString(),
         updatedAt: persona.updatedAt.toISOString()
       }
@@ -117,32 +107,24 @@ export default async function personasRoutes(fastify: FastifyInstance) {
     }
   })
 
-  // POST /api/v1/users/:userId/personas - 페르소나 생성
+  // POST /api/v1/users/personas - 페르소나 생성
   fastify.post<{ 
-    Params: { userId: string },
     Body: CreatePersonaRequest 
-  }>('/api/v1/users/:userId/personas', {
+  }>('/api/v1/users/personas', {
     schema: {
-      params: {
-        type: 'object',
-        required: ['userId'],
-        properties: {
-          userId: { type: 'string' }
-        }
-      },
       body: {
         type: 'object',
-        required: ['name', 'prompt'],
+        required: ['name', 'gender', 'prompt'],
         properties: {
           name: { type: 'string' },
-          gender: { type: 'string' },
+          gender: { type: 'string', enum: ['male', 'female', 'undisclosed'] },
           prompt: { type: 'string' }
         }
       }
     }
   }, async (request, reply) => {
     try {
-      const { userId } = request.params
+      const userId = request.headers['x-user-id'] as string
       const body = request.body
 
       const user = await fastify.prisma.user.findUnique({
@@ -155,24 +137,12 @@ export default async function personasRoutes(fastify: FastifyInstance) {
           error: 'User not found'
         } as ApiResponse)
       }
-
-      // Check if user already has a persona (one-to-one relationship)
-      const existingPersona = await fastify.prisma.persona.findUnique({
-        where: { userId }
-      })
-
-      if (existingPersona) {
-        return reply.status(409).send({
-          success: false,
-          error: 'User already has a persona'
-        } as ApiResponse)
-      }
-
+      
       const persona = await fastify.prisma.persona.create({
         data: {
           userId,
           name: body.name,
-          gender: body.gender,
+          gender: body.gender as 'male' | 'female' | 'undisclosed',
           prompt: body.prompt
         }
       })
@@ -207,7 +177,7 @@ export default async function personasRoutes(fastify: FastifyInstance) {
         type: 'object',
         properties: {
           name: { type: 'string' },
-          gender: { type: 'string' },
+          gender: { type: 'string', enum: ['male', 'female', 'undisclosed'] },
           prompt: { type: 'string' }
         }
       }
@@ -216,6 +186,7 @@ export default async function personasRoutes(fastify: FastifyInstance) {
     try {
       const { personaId } = request.params
       const body = request.body
+      const currentUserId = request.headers['x-user-id'] as string
 
       const persona = await fastify.prisma.persona.findUnique({
         where: { id: personaId }
@@ -228,15 +199,22 @@ export default async function personasRoutes(fastify: FastifyInstance) {
         } as ApiResponse)
       }
 
-      // TODO: Check if user has permission to update this persona
+      // Check if user has permission to update this persona
+      if (persona.userId !== currentUserId) {
+        return reply.status(403).send({
+          success: false,
+          error: 'Permission denied'
+        } as ApiResponse)
+      }
+
+      const updateData: any = {}
+      if (body.name !== undefined) updateData.name = body.name
+      if (body.gender !== undefined) updateData.gender = body.gender as 'male' | 'female' | 'undisclosed'
+      if (body.prompt !== undefined) updateData.prompt = body.prompt
 
       const updatedPersona = await fastify.prisma.persona.update({
         where: { id: personaId },
-        data: {
-          name: body.name,
-          gender: body.gender,
-          prompt: body.prompt
-        }
+        data: updateData
       })
 
       return reply.send({
@@ -266,6 +244,7 @@ export default async function personasRoutes(fastify: FastifyInstance) {
   }, async (request, reply) => {
     try {
       const { personaId } = request.params
+      const currentUserId = request.headers['x-user-id'] as string
 
       const persona = await fastify.prisma.persona.findUnique({
         where: { id: personaId }
@@ -278,7 +257,13 @@ export default async function personasRoutes(fastify: FastifyInstance) {
         } as ApiResponse)
       }
 
-      // TODO: Check if user has permission to delete this persona
+      // Check if user has permission to delete this persona
+      if (persona.userId !== currentUserId) {
+        return reply.status(403).send({
+          success: false,
+          error: 'Permission denied'
+        } as ApiResponse)
+      }
 
       await fastify.prisma.persona.delete({
         where: { id: personaId }
