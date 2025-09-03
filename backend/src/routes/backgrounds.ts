@@ -97,13 +97,13 @@ export default async function backgroundsRoutes(fastify: FastifyInstance) {
             totalPages: Math.ceil(total / limit)
           }
         }
-      } as ApiResponse)
+      } as ApiResponse);
     } catch (error) {
-      fastify.log.error(error)
+      fastify.log.error(error);
       return reply.status(500).send({
         success: false,
         error: 'Internal server error'
-      } as ApiResponse)
+      } as ApiResponse);
     }
   })
 
@@ -207,17 +207,15 @@ export default async function backgroundsRoutes(fastify: FastifyInstance) {
       const tags = body.tags ?? [] 
       await Promise.all(
         tags.map(async (tagName) => {
-          const tag = await fastify.prisma.tag.findUnique({
+          let tag = await fastify.prisma.tag.findUnique({
             where: { name: tagName },
             select: { id: true },
           })
       
           if (!tag) {
-            // 특정 태그 못 찾으면 전체 요청 실패
-            throw reply.status(400).send({
-              success: false,
-              error: `올바르지 않은 태그: ${tagName}`,
-            } as ApiResponse)
+            tag = await fastify.prisma.tag.create({
+              data: { name: tagName }
+            }) 
           }
       
           await fastify.prisma.backgroundTag.create({
