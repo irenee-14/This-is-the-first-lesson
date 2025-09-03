@@ -424,6 +424,14 @@ export default async function backgroundsRoutes(fastify: FastifyInstance) {
       const character = await fastify.prisma.character.findUnique({
         where: { id: body.characterId }
       })
+
+      if (!character) {
+        return reply.status(404).send({
+          success: false,
+          error: 'Character not found'
+        } as ApiResponse)
+      }
+      
       const storyPrompt = await buildGptStory(character, background)
       const {name, characterPrompt, opening} = JSON.parse(storyPrompt || '{}')
       const basicStory = await fastify.prisma.story.create({
