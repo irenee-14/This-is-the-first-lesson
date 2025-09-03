@@ -20,7 +20,7 @@ import Backgrounds from "@/pages/Backgrounds";
 import Story from "@/pages/Story";
 import Chats from "@/pages/Chats";
 import MyPage from "@/pages/MyPage";
-import Feed from "./pages/FeedPage";
+import Feed from "@/pages/FeedPage";
 
 function FlowResetWrapper({ children }: { children: React.ReactNode }) {
   useFlowReset();
