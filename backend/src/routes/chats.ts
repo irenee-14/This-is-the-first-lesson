@@ -282,7 +282,7 @@ async function chatsRoutes(fastify: FastifyInstance) {
     ) => {
       try {
         const { chatId } = request.params;
-        const { limit = 50, before } = request.query;
+        const { limit = 20, before } = request.query;
 
         const userId = request.headers["x-user-id"] as string;
 

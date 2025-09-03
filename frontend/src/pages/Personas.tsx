@@ -104,8 +104,6 @@ const Personas: React.FC = () => {
 
       setPersonaData(persona);
       try {
-        console.log(storyId, persona);
-
         const response = await post(`/chats`, {
           storyId,
           persona,

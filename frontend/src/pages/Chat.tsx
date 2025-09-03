@@ -42,10 +42,7 @@ const ChatPage: React.FC = () => {
 
   // 상단 도달 시 이전 메시지 불러오기 (IntersectionObserver가 더 안정적)
   const handleLoadMore = useCallback(async () => {
-    console.log("handleLoadMore 호출!", { isLoadingMessages, hasMore });
-
     if (!isLoadingMessages && hasMore && containerRef.current) {
-      console.log("handleLoadMore 호출!", { isLoadingMessages, hasMore });
       const container = containerRef.current;
       const prevScrollTop = container.scrollTop;
       const prevScrollHeight = container.scrollHeight;
@@ -83,9 +80,7 @@ const ChatPage: React.FC = () => {
     if (!container) return;
 
     const onScroll = () => {
-      console.log("스크롤 이벤트 발생! scrollTop:", container.scrollTop);
       if (container.scrollTop < 50) {
-        console.log("상단 도달!");
         handleLoadMore();
       }
     };

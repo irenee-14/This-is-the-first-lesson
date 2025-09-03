@@ -158,13 +158,7 @@ export default function ComponentDemo() {
                   상대방 메시지 (OtherMessage)
                 </h3>
                 <OtherMessage
-                  content={[
-                    "첫 번째 일반 텍스트입니다.",
-                    '"첫 번째 말풍선입니다."',
-                    "두 번째 일반 텍스트입니다.",
-                    '"두 번째 말풍선\n여러 줄로\n표시됩니다."',
-                    "마지막 일반 텍스트입니다.",
-                  ]}
+                  content='첫 번째 일반 텍스트입니다.\"첫 번째 말풍선입니다.\" 두 번째 일반 텍스트입니다. \"두 번째 말풍선\n여러 줄로\n표시됩니다.\" 마지막 일반 텍스트입니다.'
                   characterName="AI 어시스턴트"
                   isLastMessage={true}
                   onReset={() => console.log("Reset clicked")}
@@ -180,10 +174,7 @@ export default function ComponentDemo() {
                   상대방 메시지 (마지막이 아닌 경우 - 2개 아이콘만)
                 </h3>
                 <OtherMessage
-                  content={[
-                    "이전 메시지입니다.",
-                    '"마지막이 아니라서 아이콘이 2개만 보입니다."',
-                  ]}
+                  content='이전 메시지입니다. "마지막이 아니라서 아이콘이 2개만 보입니다."'
                   characterName="AI 어시스턴트"
                   isLastMessage={false}
                   onReset={() => console.log("Reset clicked")}

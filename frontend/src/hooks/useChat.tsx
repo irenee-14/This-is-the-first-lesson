@@ -19,7 +19,7 @@ export function useChat(chatId: string) {
   const [isLoadingMessages, setIsLoadingMessages] = useState(false);
 
   const [isSending, setIsSending] = useState(false);
-  const [isAiTyping, setIsAiTyping] = useState(false); // 👈 추가
+  const [isAiTyping, setIsAiTyping] = useState(false);
 
   // 채팅 상세 정보 로드
   const loadChatDetail = useCallback(async () => {
@@ -57,14 +57,6 @@ export function useChat(chatId: string) {
 
           setNextBefore(nb);
           setHasMore(Boolean(hasNext));
-
-          // 디버깅용: 실제 응답 기준으로 로깅 (중복호출 혼동 줄이기)
-          console.log("메시지 불러오기 params:", {
-            chatId,
-            beforeUsed: before,
-            nextBeforeFromServer: nb,
-            hasNext,
-          });
         }
       } catch (error) {
         console.error("메시지 불러오기 실패:", error);
