@@ -170,6 +170,78 @@ export default async function backgroundsRoutes(fastify: FastifyInstance) {
     }
   })
 
+    // GET /api/v1/backgrounds/basic?characterId= - 배경 베이직 조회
+    fastify.get<{ Querystring: { characterId: string } }>('/api/v1/backgrounds/basic', {
+      schema: {
+        querystring: {
+          type: 'object',
+          properties: {
+            characterId: { type: 'string' }
+          }
+        }
+      }
+    }, async (request, reply) => {
+      try {
+        const { characterId } = request.query
+  
+        const basicStory = await fastify.prisma.story.findFirst({
+          where: {characterId: characterId, basic: true},
+          include: {
+            background: {
+              select: {
+                id: true
+              }
+            }
+          }
+        })
+
+        const background = await fastify.prisma.background.findUnique({
+          where: { id : basicStory.backgroundId },
+          include: {
+            writer: {
+              select: {
+                id: true,
+                name: true
+              }
+            }
+          }
+        })
+  
+        if (!background) {
+          return reply.status(404).send({
+            success: false,
+            error: 'Background not found'
+          } as ApiResponse)
+        }
+  
+        const response: Background = {
+          backgroundId: background.id,
+          backgroundName: background.name || '',
+          writerId: background.writerId,
+          writerName: background.writer.name || '',
+          description: background.description,
+          tags: background.tags,
+          introTitle: background.introTitle,
+          introDescription: background.introDescription,
+          unlockChatCount: background.unlockChatCount || undefined,
+          backgroundImg: background.backgroundImg || undefined,
+          createdAt: background.createdAt.toISOString(),
+          updatedAt: background.updatedAt.toISOString()
+        }
+  
+        return reply.send({
+          success: true,
+          data: response
+        } as ApiResponse)
+      } catch (error) {
+        fastify.log.error(error)
+        return reply.status(500).send({
+          success: false,
+          error: 'Internal server error'
+        } as ApiResponse)
+      }
+    })
+
   // POST /api/v1/backgrounds - 배경 생성
   fastify.post<{ Body: CreateBackgroundRequest }>('/api/v1/backgrounds', {
     schema: {
