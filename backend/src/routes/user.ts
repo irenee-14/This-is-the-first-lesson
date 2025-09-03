@@ -358,6 +358,7 @@ export default async function usersRoutes(fastify: FastifyInstance) {
         success: true,
         data: { openId: openBackground.id }
       } as ApiResponse)
+    }
     } catch (error) {
       fastify.log.error(error)
       return reply.status(400).send({
