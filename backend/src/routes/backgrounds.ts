@@ -195,6 +195,13 @@ export default async function backgroundsRoutes(fastify: FastifyInstance) {
           }
         })
 
+        if (!basicStory) {
+          return reply.status(404).send({
+            success: false,
+            error: 'basic story not found'
+          } as ApiResponse)
+        }
+
         const background = await fastify.prisma.background.findUnique({
           where: { id : basicStory.backgroundId },
           include: {
