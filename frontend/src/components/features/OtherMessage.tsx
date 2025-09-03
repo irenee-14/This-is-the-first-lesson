@@ -42,7 +42,7 @@ const OtherMessage: React.FC<OtherMessageProps> = ({
 
     if (segment.isQuoted) {
       return (
-        <div key={segmentIndex} className="flex justify-start">
+        <div key={segmentIndex} className="flex justify-start py-3">
           <div className="inline-block max-w-xs">
             <div className="bg-gray-900 rounded-lg px-3 py-2 rounded-tl-[var(--Radius-s,0.5rem)] rounded-tr-[var(--Radius-s,0.5rem)] rounded-br-[var(--Radius-s,0.5rem)] rounded-bl-none">
               <span className="text-white text-sm leading-5 font-normal tracking-[-0.28px]">
@@ -67,7 +67,7 @@ const OtherMessage: React.FC<OtherMessageProps> = ({
     const parsedLines = parseMultipleLines(contentArray.split("\n"));
 
     return parsedLines.map((lineSegments, lineIndex) => (
-      <div key={lineIndex} className="flex flex-col items-start gap-3">
+      <div key={lineIndex} className="flex flex-col items-start gap-1">
         {lineSegments.map((segment, segmentIndex) =>
           renderTextSegment(segment, lineIndex * 1000 + segmentIndex)
         )}
@@ -95,24 +95,27 @@ const OtherMessage: React.FC<OtherMessageProps> = ({
 
       {/* 메시지 내용 */}
       {typing ? (
-        <div className="flex items-center gap-1 py-2">
+        <div className="flex items-center gap-1 py-4 px-1">
           <span className="w-2 h-2 rounded-full bg-gray-400 animate-bounce [animation-delay:-0.2s]" />
           <span className="w-2 h-2 rounded-full bg-gray-400 animate-bounce [animation-delay:-0.1s]" />
           <span className="w-2 h-2 rounded-full bg-gray-400 animate-bounce" />
         </div>
       ) : (
-        <div>{parseContent(content)}</div>
-      )}
+        <>
+          <div>{parseContent(content)}</div>
+          {/* 메시지 액션 */}
 
-      {/* 메시지 액션 */}
-      <MessageActions
-        onReset={onReset}
-        onEdit={onEdit}
-        onDelete={onDelete}
-        onShare={onShare}
-        onBookmark={onBookmark}
-        isLastMessage={isLastMessage}
-      />
+          <MessageActions
+            key={`${content}-${isLastMessage}`}
+            onReset={onReset}
+            onEdit={onEdit}
+            onDelete={onDelete}
+            onShare={onShare}
+            onBookmark={onBookmark}
+            isLastMessage={isLastMessage}
+          />
+        </>
+      )}
     </div>
   );
 };

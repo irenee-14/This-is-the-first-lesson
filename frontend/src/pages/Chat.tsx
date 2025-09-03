@@ -101,9 +101,9 @@ const ChatPage: React.FC = () => {
       <Header variant="withText" title={chatDetail?.character.name || "채팅"} />
 
       {/* 스크롤 영역은 반드시 min-h-0 부모 안에서 overflow-y-auto */}
-      <div className="flex-1 min-h-0">
+      <div className="flex-1 min-h-0 pb-6">
         <div
-          className="h-full overflow-y-auto px-4 pt-14 pb-24"
+          className="h-full overflow-y-auto px-4 pt-14 pb-24 scrollbar-hide"
           data-chat-container
           ref={containerRef}
         >
@@ -117,17 +117,20 @@ const ChatPage: React.FC = () => {
           )}
 
           <div className="space-y-4">
-            {messages.map((message) => {
+            {messages.map((message, index) => {
               const key = `temp-${message.chatId}-${
                 message.seq
               }-${Date.now()}-${Math.random()}`;
+              const isLastMessage =
+                index === messages.length - 1 && message.role === "character";
+
               return message.role === "character" ? (
                 <div key={key} className="flex justify-start">
                   <OtherMessage
                     content={message.contents}
                     characterName={chatDetail?.character.name || "캐릭터"}
                     profileImage={chatDetail?.character.characterImg || ""}
-                    isLastMessage={true}
+                    isLastMessage={isLastMessage}
                   />
                 </div>
               ) : (
@@ -145,7 +148,7 @@ const ChatPage: React.FC = () => {
                   content=""
                   characterName={chatDetail?.character.name || "캐릭터"}
                   profileImage={chatDetail?.character.characterImg || ""}
-                  isLastMessage={true}
+                  isLastMessage={false}
                 />
               </div>
             )}
