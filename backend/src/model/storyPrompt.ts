@@ -5,7 +5,6 @@ import { callGptApi } from './common'
 
 dotenv.config({ path: path.resolve(__dirname, '../../.env') })
 
-
 type CharacterDTO = {
     id: string
     name: string
