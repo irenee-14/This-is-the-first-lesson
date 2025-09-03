@@ -6,6 +6,7 @@ import {
   ApiResponse 
 } from '../types/api'
 import { open } from 'node:fs';
+import { buildGptStory } from '../model/storyPrompt'
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -303,6 +304,12 @@ export default async function usersRoutes(fastify: FastifyInstance) {
           error: '해당 작가의 배경 플로우가 존재하지 않습니다.'
         } as ApiResponse);
       }
+
+      //TODO 너무 너무 비효율적이다....
+      const characters = await fastify.prisma.character.findMany({
+        where: { writerId : writerId}
+      })
+
       const openBackground = await fastify.prisma.openBackground.create({
         data: {
           userId,
@@ -311,6 +318,41 @@ export default async function usersRoutes(fastify: FastifyInstance) {
           writerId: writerId || background.writerId
         }
       })
+
+      // Create stories for writer's characters if they don't exist for this background and user
+      if (characters.length > 0) {
+        const characterIds = characters.map(c => c.id)
+        const existingStories = await fastify.prisma.story.findMany({
+          where: {
+            userId,
+            backgroundId,
+            characterId: { in: characterIds }
+          },
+          select: { characterId: true }
+        })
+        const existingSet = new Set(existingStories.map(s => s.characterId))
+        const toCreate = characters.filter(c => !existingSet.has(c.id))
+
+        const payloads = await Promise.all(
+          toCreate.map(async c => {
+            const parsed: any = await buildGptStory(c as any, background as any)
+              .then(r => (typeof r === 'string' ? JSON.parse(r) : r))
+              .catch(() => null)
+            return {
+              userId,
+              backgroundId,
+              characterId: c.id,
+              basic: true,
+              name: parsed?.name ?? `${background.name} x ${c.name}`,
+              opening: parsed?.opening ?? '',
+              characterPrompt: parsed?.characterPrompt ?? c.personality
+            }
+          })
+        )
+        
+        await fastify.prisma.$transaction(
+          payloads.map(data => fastify.prisma.story.create({ data }))
+        )
 
       return reply.status(201).send({
         success: true,
