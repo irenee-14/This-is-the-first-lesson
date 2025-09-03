@@ -7,6 +7,7 @@ import {
   BackgroundListQuery,
   ApiResponse 
 } from '../types/api'
+import { buildGptStory } from 'src/model/storyPrompt'
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -200,7 +201,8 @@ export default async function backgroundsRoutes(fastify: FastifyInstance) {
           tags: body.tags || [],
           introTitle: body.introTitle,
           introDescription: body.introDescription,
-          unlockChatCount: body.unlockChatCount
+          unlockChatCount: body.unlockChatCount,
+          basic: false
         }
       })
 
@@ -271,6 +273,97 @@ export default async function backgroundsRoutes(fastify: FastifyInstance) {
       return reply.status(201).send({
         success: true,
         data: { backgroundId: background.id }
+      } as ApiResponse)
+    } catch (error) {
+      fastify.log.error(error)
+      return reply.status(400).send({
+        success: false,
+        error: 'Invalid request data'
+      } as ApiResponse)
+    }
+  })
+
+  // POST /api/v1/backgrounds/basic - 베이직 배경 생성
+  fastify.post<{ Body: CreateBackgroundRequest }>('/api/v1/backgrounds/basic', {
+    schema: {
+      body: {
+        type: 'object',
+        required: ['backgroundName'],
+        properties: {
+          backgroundName: { type: 'string' },
+          description: { type: 'string' },
+          prompt: { type: 'string' },
+          tags: { type: 'array', items: { type: 'string' } },
+          introTitle: { type: 'string' },
+          introDescription: { type: 'string' },
+          unlockChatCount: { type: 'number' },
+          characterId: { type: 'string' }
+        }
+      }
+    }
+  }, async (request, reply) => {
+    try {
+      const body = request.body
+      const writerId = request.headers['x-user-id'] as string
+
+      const background = await fastify.prisma.background.create({
+        data: {
+          writerId,
+          name: body.backgroundName,
+          description: body.description,
+          prompt: body.prompt,
+          tags: body.tags || [],
+          introTitle: body.introTitle,
+          introDescription: body.introDescription,
+          unlockChatCount: body.unlockChatCount,
+          basic: true
+        }
+      })
+
+      const tags = body.tags ?? [] 
+      await Promise.all(
+        tags.map(async (tagName) => {
+          let tag = await fastify.prisma.tag.findUnique({
+            where: { name: tagName },
+            select: { id: true },
+          })
+      
+          if (!tag) {
+            tag = await fastify.prisma.tag.create({
+              data: { name: tagName }
+            }) 
+          }
+      
+          await fastify.prisma.backgroundTag.create({
+            data: {
+              tagId: tag.id,
+              backgroundId: background.id
+            }
+          })
+          
+          return tag.id
+        })
+      )
+      const character = await fastify.prisma.character.findUnique({
+        where: { id: body.characterId }
+      })
+      const storyPrompt = await buildGptStory(character, background)
+      const {name, characterPrompt, opening} = JSON.parse(storyPrompt || '{}')
+      const basicStory = await fastify.prisma.story.create({
+        data: {
+          backgroundId: background.id,
+          basic: true,
+          userId: writerId,
+          characterId: body.characterId,
+          name: name,
+          characterPrompt: characterPrompt,
+          opening: opening
+        }
+      })
+
+      return reply.status(201).send({
+        success: true,
+        data: { backgroundId: background.id, storyId: basicStory.id }
       } as ApiResponse)
     } catch (error) {
       fastify.log.error(error)
