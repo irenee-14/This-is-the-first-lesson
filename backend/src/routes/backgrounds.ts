@@ -355,9 +355,15 @@ export default async function backgroundsRoutes(fastify: FastifyInstance) {
     }
   })
 
-  // POST /api/v1/backgrounds/basic - 베이직 배경 생성
-  fastify.post<{ Body: CreateBackgroundRequest }>('/api/v1/backgrounds/basic', {
+  // POST /api/v1/backgrounds/basic? - 베이직 배경 생성
+  fastify.post<{ Querystring: { characterId: string }, Body: CreateBackgroundRequest }>('/api/v1/backgrounds/basic', {
     schema: {
+      querystring: {
+        type: 'object',
+        properties: {
+          characterId: { type: 'string' }
+        }
+      },
       body: {
         type: 'object',
         required: ['backgroundName'],
@@ -369,7 +375,6 @@ export default async function backgroundsRoutes(fastify: FastifyInstance) {
           introTitle: { type: 'string' },
           introDescription: { type: 'string' },
           unlockChatCount: { type: 'number' },
-          characterId: { type: 'string' }
         }
       }
     }
