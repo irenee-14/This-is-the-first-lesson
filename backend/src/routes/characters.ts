@@ -214,23 +214,23 @@ export default async function charactersRoutes(fastify: FastifyInstance) {
           gender: body.gender as Gender,
           description: body.description,
           writerNote: body.writerNote,
+          tags: body.tags || []
         }
       })
       //TODO tag 못 찾으면 create 안되게
       const tags = body.tags ?? [] 
       await Promise.all(
         tags.map(async (tagName) => {
-          const tag = await fastify.prisma.tag.findUnique({
+          let tag = await fastify.prisma.tag.findUnique({
             where: { name: tagName },
             select: { id: true },
           })
       
           if (!tag) {
             // 특정 태그 못 찾으면 전체 요청 실패
-            throw reply.status(400).send({
-              success: false,
-              error: `올바르지 않은 태그: ${tagName}`,
-            } as ApiResponse)
+            tag = await fastify.prisma.tag.create({
+              data: { name: tagName }
+            })
           }
       
           await fastify.prisma.characterTag.create({

@@ -54,6 +54,7 @@ export async function callGptApi(
       messages: messages,
       max_tokens: options?.maxTokens || 500,
       temperature: options?.temperature || 0.8,
+
     });
 
     if (!response.choices || response.choices.length === 0) {
