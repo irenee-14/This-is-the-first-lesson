@@ -49,10 +49,10 @@ export default function CharacterDescriptionTab({
 
       {/* Background Area */}
       <div className="gap-6 flex flex-col">
-        {hasChatHistory ? (
+        {!hasChatHistory ? (
           <CharacterInfoSection
             title="배경 설명"
-            content={character.dialogueStyle}
+            content={backgrounds[0].description} // 기본 배경
           />
         ) : (
           <></>

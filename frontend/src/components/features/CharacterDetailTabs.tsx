@@ -3,11 +3,13 @@ import CharacterDescriptionTab from "./CharacterDescriptionTab";
 import CharacterChatTab from "./CharacterChatTab";
 import type { Character } from "@/types/character";
 import type { Background } from "@/types/background";
+import type { ChatSummary } from "@/types/chat";
 
 interface CharacterDetailTabsProps {
   character: Character;
   backgrounds: Background[];
   hasChatHistory: boolean;
+  chatList: ChatSummary[];
   onBackgroundClick: (backgroundId: string) => void;
 }
 
@@ -15,6 +17,7 @@ export default function CharacterDetailTabs({
   character,
   backgrounds,
   hasChatHistory,
+  chatList,
   onBackgroundClick,
 }: CharacterDetailTabsProps) {
   const [activeTab, setActiveTab] = useState<"description" | "chat">(
@@ -61,8 +64,8 @@ export default function CharacterDetailTabs({
         ) : (
           <CharacterChatTab
             character={character}
-            backgrounds={backgrounds}
             hasChatHistory={hasChatHistory}
+            chatList={chatList}
             onBackgroundClick={onBackgroundClick}
           />
         )}

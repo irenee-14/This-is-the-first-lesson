@@ -40,6 +40,16 @@ export default function CharacterDetailPage() {
     get: getBackground,
   } = useApi<import("@/types/background").BackgroundListResponse>();
 
+  const {
+    data: chatListData,
+    loading: chatListLoading,
+    error: chatListError,
+    get: getChatList,
+  } = useApi<{
+    success: boolean;
+    data: import("@/types/chat").ChatSummary[];
+  }>();
+
   useEffect(() => {
     getBackground("/backgrounds");
   }, [getBackground]);
@@ -49,6 +59,14 @@ export default function CharacterDetailPage() {
       getCharacter(`/characters/${charId}`);
     }
   }, [charId, getCharacter]);
+
+  useEffect(() => {
+    if (charId) {
+      getChatList(`/chats?characterId=${charId}`);
+
+      console.log("chatListData:", chatListData);
+    }
+  }, [charId, getChatList]);
 
   if (characterLoading || backgroundLoading) {
     return (
@@ -72,7 +90,6 @@ export default function CharacterDetailPage() {
 
   const character = characterData?.data;
   const backgrounds = backgroundsData?.data?.backgrounds || [];
-
   if (!character) {
     return <div>캐릭터 정보를 불러올 수 없습니다.</div>;
   }
@@ -81,11 +98,10 @@ export default function CharacterDetailPage() {
   }
 
   // -------------------------------------------------------
-  // const hasChatHistory =
-  //   character.chatHistory && character.chatHistory.length > 0;
-  // chatHistory 연결 필요
-  // chat history가 없을 경우 배경 설명 추가, 채팅하기 누를 시 바로 페르소나로 이동
-  const hasChatHistory = true;
+  const chatCount = Array.isArray(chatListData?.data)
+    ? chatListData.data.length
+    : 0;
+  const hasChatHistory = chatCount > 0;
 
   // -------------------------------------------------------
   const handleChatClick = () => {
@@ -148,6 +164,7 @@ export default function CharacterDetailPage() {
           character={character}
           backgrounds={backgrounds}
           hasChatHistory={hasChatHistory}
+          chatList={chatListData?.data ?? []}
           onBackgroundClick={handleBackgroundClick}
         />
       </div>

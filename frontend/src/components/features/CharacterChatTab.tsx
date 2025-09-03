@@ -1,31 +1,32 @@
 import CardMediaLeft from "./CardMediaLeft";
 import type { Character } from "@/types/character";
 import type { Background } from "@/types/background";
+import type { ChatSummary } from "@/types/chat";
 
 interface CharacterChatTabProps {
   character: Character;
-  backgrounds: Background[];
   hasChatHistory: boolean;
+  chatList: ChatSummary[];
   onBackgroundClick: (backgroundId: string) => void;
 }
 
 export default function CharacterChatTab({
   character,
-  backgrounds,
   hasChatHistory,
+  chatList,
   onBackgroundClick,
 }: CharacterChatTabProps) {
   return (
     <div>
-      {hasChatHistory ? (
+      {hasChatHistory && chatList.length > 0 ? (
         <div className="flex flex-col gap-4">
-          {backgrounds.map((background: Background) => (
+          {chatList.map((chatList: ChatSummary) => (
             <CardMediaLeft
-              key={background.backgroundId}
+              key={chatList.id}
               imageUrl="src/assets/images/characters/character_1.png"
-              name={background.backgroundName}
-              description={background.description}
-              onClick={() => onBackgroundClick(background.backgroundId)}
+              name={chatList.backgroundName}
+              description={chatList.lastMessage}
+              onClick={() => onBackgroundClick(chatList.id)}
             />
           ))}
         </div>
