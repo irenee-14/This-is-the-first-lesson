@@ -14,7 +14,7 @@ declare module 'fastify' {
   }
 }
 
-//TODO 어떤 캐릭터의 basic 작품 조회, 어떤 배경의 basic 작품 조회하는 API 필요할까?
+//TODO 어떤 캐릭터의 basic 작품 조회, 어떤 배경의 basic 작품 조회하는 API 필요할까/
 
 export default async function storiesRoutes(fastify: FastifyInstance) {
   // GET /api/v1/stories - 작품 목록 조회
@@ -63,6 +63,7 @@ export default async function storiesRoutes(fastify: FastifyInstance) {
 
       const response: Story[] = stories.map(story => ({
         storyId: story.id,
+        name: story.name,
         characterId: story.characterId,
         backgroundId: story.backgroundId,
         writerId: story.userId || '',
@@ -125,12 +126,6 @@ export default async function storiesRoutes(fastify: FastifyInstance) {
         }
       })
 
-      const background = await fastify.prisma.background.findUnique({
-        where: { id: story.backgroundId }
-      })
-      const character = await fastify.prisma.character.findUnique({
-        where: { id: story.characterId }
-      })
       if (!story) {
         return reply.status(404).send({
           success: false,
@@ -140,7 +135,78 @@ export default async function storiesRoutes(fastify: FastifyInstance) {
 
       const response: Story = {
         storyId: story.id,
-        name: character.name + "와" +background.name,
+        name: story.name,
+        characterId: story.characterId,
+        backgroundId: story.backgroundId,
+        writerId: story.userId || '',
+        basic: story.basic,
+        characterPrompt: story.characterPrompt || undefined,
+        opening: story.opening,
+        createdAt: story.createdAt.toISOString(),
+        updatedAt: story.updatedAt.toISOString()
+      }
+
+      return reply.send({
+        success: true,
+        data: response
+      } as ApiResponse)
+    } catch (error) {
+      fastify.log.error(error)
+      return reply.status(500).send({
+        success: false,
+        error: 'Internal server error'
+      } as ApiResponse)
+    }
+  })
+
+  // GET /api/v1/stories/basic?characterId= - 베이직 작품 조회
+  fastify.get<{ Querystring: { characterId: string } }>('/api/v1/stories/basic', {
+    schema: {
+      querystring: {
+        type: 'object',
+        properties: {
+          characterId: { type: 'string' }
+        }
+      }
+    }
+  }, async (request, reply) => {
+    try {
+      const characterId = request.query.characterId
+
+      const story = await fastify.prisma.story.findFirst({
+        where: { characterId: characterId, basic: true },
+        include: {
+          character: {
+            select: {
+              id: true,
+              name: true
+            }
+          },
+          background: {
+            select: {
+              id: true,
+              name: true
+            }
+          },
+          user: {
+            select: {
+              id: true,
+              name: true
+            }
+          }
+        }
+      })
+
+      if (!story) {
+        return reply.status(404).send({
+          success: false,
+          error: 'Story not found'
+        } as ApiResponse)
+      }
+
+      const response: Story = {
+        storyId: story.id,
+        name: story.name,
         characterId: story.characterId,
         backgroundId: story.backgroundId,
         writerId: story.userId || '',
