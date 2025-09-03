@@ -1,14 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useApi } from "@/hooks/useApi";
 import { useParams, useNavigate } from "react-router-dom";
 import Header from "@/components/layout/Header";
 import BottomNav from "@/components/layout/BottomNav";
 import FloatingButton from "@/components/features/FloatingButton";
 import Chip from "@/components/ui/Chip";
-import CharacterDetailTabs from "@/components/features/CharacterDetailTabs";
+import CharacterDetailTabs from "@/components/features/characterTab/CharacterDetailTabs";
 import { ReactComponent as LikeIcon } from "@/assets/icons/Like.svg";
 import { ReactComponent as ChatIcon } from "@/assets/icons/Chat.svg";
-import { useFlowStore } from "@/stores/useFlowStore";
 
 const mockCharacter = {
   likeCount: 24,
@@ -18,7 +17,7 @@ const mockCharacter = {
 const getImageUrl = (dbPath: string) =>
   new URL(`../assets/images/${dbPath}`, import.meta.url).href;
 
-export default function CharacterDetailPage() {
+export default function CharacterDetail() {
   const navigate = useNavigate();
   const { charId } = useParams();
 
@@ -39,7 +38,6 @@ export default function CharacterDetailPage() {
     get: getFlow,
   } = useApi<{ data: import("@/types/story").Flow[] }>();
 
-  // 1. 타입 정의 수정
   const {
     data: chatListData,
     loading: chatListLoading,
@@ -78,14 +76,6 @@ export default function CharacterDetailPage() {
       );
     }
   }, [charId, characterData, getFlow]);
-
-  // 디버깅을 위한 로그
-  // useEffect(() => {
-  //   console.log("Character Data:", characterData);
-  //   console.log("Flow Data:", flowData);
-  //   console.log("Flow Loading:", flowLoading);
-  //   console.log("Flow Error:", flowError);
-  // }, [characterData, flowData, flowLoading, flowError]);
 
   if (characterLoading) {
     return (

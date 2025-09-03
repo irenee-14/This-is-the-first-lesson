@@ -1,6 +1,6 @@
 import { useState } from "react";
-import CharacterDescriptionTab from "./CharacterDescriptionTab";
-import CharacterChatTab from "./CharacterChatTab";
+import CharacterDescriptionTab from "@/components/features/characterTab/CharacterDescriptionTab";
+import CharacterChatTab from "@/components/features/characterTab/CharacterChatTab";
 import type { Character } from "@/types/character";
 import type { ChatSummary } from "@/types/chat";
 import type { Flow } from "@/types/story";

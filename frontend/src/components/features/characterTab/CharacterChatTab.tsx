@@ -1,4 +1,4 @@
-import CardMediaLeft from "./CardMediaLeft";
+import CardMediaLeft from "@/components/features/card/CardMediaLeft";
 import type { Character } from "@/types/character";
 import type { ChatSummary } from "@/types/chat";
 

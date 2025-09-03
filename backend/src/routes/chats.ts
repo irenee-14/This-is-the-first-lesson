@@ -11,7 +11,7 @@ import {
   MessageListQuery,
   MessageListResponse,
 } from "../types/api";
-import { buildGptChat } from "../model/chatPrompt";
+import { buildGptxChat } from "../model/chatPrompt";
 
 const prisma = new PrismaClient();
 
@@ -134,10 +134,10 @@ async function chatsRoutes(fastify: FastifyInstance) {
           } as ApiResponse);
         }
 
+        console.log("characterId", characterId);
         const where: any = { ownerId: userId };
         if (characterId) where.characterId = characterId;
         if (storyId) where.storyId = storyId;
-
         const total = await prisma.chat.count({ where });
         const chats = await prisma.chat.findMany({
           where,
@@ -159,7 +159,7 @@ async function chatsRoutes(fastify: FastifyInstance) {
         const chatSummaries = chats.map((chat) => ({
           chatId: chat.id,
           characterName: chat.character.name,
-          characterImg: chat.character.characterImg ?? undefined,
+          characterImg: chat.character.characterImg,
           storyName: chat.story.name,
           backgroundName: chat.background.name,
           personaName: chat.personaName,

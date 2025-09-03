@@ -1,12 +1,9 @@
-import CardMediaLeft from "@/components/features/CardMediaLeft";
+import CardMediaLeft from "@/components/features/card/CardMediaLeft";
 import BottomNav from "@/components/layout/BottomNav";
 import Header from "@/components/layout/Header";
 import BottomSheet from "@/components/ui/BottomSheet";
 import { useApi } from "@/hooks/useApi";
 import { useBackgroundClickHandler } from "@/hooks/useBackgroundClickHandler";
-import { useFlowStore } from "@/stores/useFlowStore";
-import { useUserStore } from "@/stores/useUserStore";
-import type { BackgroundListResponse } from "@/types/background";
 import { useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { BackgroundUnlockSheet } from "@/components/features/BackgroundUnlockSheet";
@@ -41,7 +38,6 @@ export default function Stories() {
   }, [get, characterId, writerId]);
 
   const flows = flowData?.data || [];
-  // steps 변수 제거 - flows가 직접 steps 역할
 
   if (loading) {
     return (

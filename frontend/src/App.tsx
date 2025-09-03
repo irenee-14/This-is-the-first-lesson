@@ -1,6 +1,6 @@
 import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
 
-import Characters from "@/pages/Characters";
+import Characters from "@/pages/CharacterList";
 import NotFound from "@/pages/NotFound";
 import Personas from "@/pages/Personas";
 import CharacterDetail from "@/pages/CharacterDetail";
@@ -8,18 +8,17 @@ import { useFlowReset } from "@/hooks/useFlowReset";
 import { useFlowStore } from "./stores/useFlowStore";
 import { useEffect } from "react";
 import Home from "@/pages/Home";
-import ComponentDemo from "@/pages/ComponentDemo";
 import Chat from "@/pages/Chat";
 import {
   RequireBackgroundDetail,
   RequirePersona,
   RequireChat,
 } from "@/utils/RequireFlow";
-import Chats from "@/pages/Chats";
+import Chats from "@/pages/ChatList";
 import MyPage from "@/pages/MyPage";
 import Feed from "@/pages/FeedPage";
 import StoryDetail from "@/pages/StoryDetail";
-import Stories from "./pages/Stories";
+import Stories from "./pages/StoryList";
 
 function FlowResetWrapper({ children }: { children: React.ReactNode }) {
   useFlowReset();
@@ -35,7 +34,6 @@ const router = createBrowserRouter([
     ),
     children: [
       { path: "/", element: <Home /> },
-      { path: "/demo", element: <ComponentDemo /> },
       { path: "/characters", element: <Characters /> },
       { path: "/characters/:charId", element: <CharacterDetail /> },
       {
@@ -60,7 +58,6 @@ const router = createBrowserRouter([
           // { path: "/chat/:chatId", element: <ChatRoom /> },
         ],
       },
-      { path: "/component-demo", element: <ComponentDemo /> },
       { path: "*", element: <NotFound /> },
     ],
   },

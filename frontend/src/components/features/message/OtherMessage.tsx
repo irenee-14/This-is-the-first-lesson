@@ -1,5 +1,5 @@
 import React from "react";
-import MessageActions from "@/components/features/MessageActions";
+import MessageActions from "@/components/features/message/MessageActions";
 import { parseMultipleLines, type ParsedTextSegment } from "@/utils/textParser";
 
 interface OtherMessageProps {

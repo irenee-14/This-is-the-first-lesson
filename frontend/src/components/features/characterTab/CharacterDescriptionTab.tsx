@@ -1,6 +1,6 @@
 import Chip from "@/components/ui/Chip";
-import CharacterInfoSection from "./CharacterInfoSection";
-import CardMediaTop from "./CardMediaTop";
+import CharacterInfoSection from "@/components/features/characterTab/CharacterInfoSection";
+import CardMediaTop from "@/components/features/card/CardMediaTop";
 import { ReactComponent as PenIcon } from "@/assets/icons/Pen.svg";
 import type { Character } from "@/types/character";
 import type { Flow } from "@/types/story";

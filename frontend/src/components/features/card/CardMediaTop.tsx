@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import { ReactComponent as LockIcon } from "@/assets/icons/Lock.svg";
 import { useBackgroundClickHandler } from "@/hooks/useBackgroundClickHandler";
 import BottomSheet from "@/components/ui/BottomSheet";
-import { BackgroundUnlockSheet } from "./BackgroundUnlockSheet";
+import { BackgroundUnlockSheet } from "@components/features/BackgroundUnlockSheet";
 import type { Flow } from "@/types/story";
 
 export interface CardMediaTopProps {
