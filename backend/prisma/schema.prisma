@@ -79,7 +79,7 @@ model Background {
   backgroundImg    String?          @default("IMAGE") @map("background_img") @db.VarChar(255)
   introDescription String           @map("intro_description")
   introTitle       String           @map("intro_title") @db.VarChar(255)
-  unlockChatCount  Int              @default(100) @map("unlock_chat_count")
+  unlockChatCount  Int              @default(4) @map("unlock_chat_count")
   writerId         String           @map("writer_id")
   backgroundSteps  BackgroundStep[]
   backgroundTags   BackgroundTag[]

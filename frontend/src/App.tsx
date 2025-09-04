@@ -74,7 +74,7 @@ const router = createBrowserRouter([
 
 function App() {
   return (
-    <main className="min-h-screen w-full max-w-sm md:max-w-md lg:max-w-lg mx-auto flex-1 scrollbar-stable">
+    <main className="relative min-h-screen w-full max-w-sm md:max-w-md lg:max-w-lg mx-auto flex-1 scrollbar-stable">
       <ToastProvider>
         {/* <DebugFlow /> */}
         <RouterProvider router={router} />

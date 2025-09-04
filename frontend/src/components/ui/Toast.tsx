@@ -29,15 +29,16 @@ export const Toast: React.FC<ToastProps> = ({
 
   return (
     <div
-      className="w-full max-w-sm md:max-w-md lg:max-w-lg mx-auto flex-1 fixed bottom-4
-    left-1/2 transform -translate-x-1/2 z-50 animate-slide-up"
+      className="absolute bottom-[120px] z-50 flex justify-center w-full px-4 animate-slide-up"
+      style={{
+        pointerEvents: "none",
+      }}
     >
       <div
-        className="flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg"
+        className="flex items-center gap-3 px-6 py-3 rounded-lg shadow-lg
+    w-full h-12 bg-gray-900"
         style={{
-          backgroundColor: "#2f304b",
-          minWidth: "328px",
-          height: "48px",
+          pointerEvents: "auto",
         }}
       >
         {/* Icon */}

@@ -485,7 +485,10 @@ async function chatsRoutes(fastify: FastifyInstance) {
 
         const unlockCnt = chat.background.unlockChatCount;
         let unlockedBackground = null;
-        if (updated.chatCount >= unlockCnt) {
+
+        // 채팅 개수가 일정 개수를 넘으면 Toast 알림
+        // if (updated.chatCount >= unlockCnt) {
+        if (updated.chatCount >= 2) {
           const latestFlow = await fastify.prisma.backgroundFlow.findFirst({
             where: { writerId: chat.background.writerId },
             orderBy: { createdAt: "desc" },
@@ -496,44 +499,40 @@ async function chatsRoutes(fastify: FastifyInstance) {
               error: "해당 작가의 배경 플로우가 존재하지 않습니다.",
             } as ApiResponse);
           }
-  
           const thisStep = await fastify.prisma.backgroundStep.findFirst({
             where: {
-              flowId : latestFlow.id,
-              backgroundId: chat.backgroundId
-            }
-          })
-  
+              flowId: latestFlow.id,
+              backgroundId: chat.backgroundId,
+            },
+          });
           const nextStep = await fastify.prisma.backgroundStep.findFirst({
             where: {
-              flowId : latestFlow.id,
+              flowId: latestFlow.id,
               ...(thisStep
                 ? { orderKey: { gt: thisStep.orderKey } } // 현재 단계가 있으면 그 다음
-              : {}  
-              )
+                : {}),
             },
             include: {
-              background: true
+              background: true,
             },
             orderBy: {
-              orderKey: 'asc' // 가장 작은 orderKey부터 정렬
-            }
-          })
+              orderKey: "asc", // 가장 작은 orderKey부터 정렬
+            },
+          });
           if (!nextStep) {
             return reply.status(400).send({
               success: false,
               error: "해당 작가의 배경 플로우가 존재하지 않습니다.",
             } as ApiResponse);
           }
-        
           await fastify.prisma.openBackground.create({
             data: {
               userId,
-              backgroundId : nextStep.backgroundId,
+              backgroundId: nextStep.backgroundId,
               flowId: latestFlow.id,
-              writerId: chat.background.writerId
-            }
-          })
+              writerId: chat.background.writerId,
+            },
+          });
           unlockedBackground = nextStep.background.name;
         }
 
@@ -548,6 +547,7 @@ async function chatsRoutes(fastify: FastifyInstance) {
               role: userMessage.role,
               contents: userMessage.contents,
               createdAt: userMessage.createdAt.toISOString(),
+              unlockedBackground: unlockedBackground,
             },
             aiMessage: {
               chatId: aiMessage.chatId,
@@ -558,7 +558,7 @@ async function chatsRoutes(fastify: FastifyInstance) {
               contents: aiMessage.contents,
               createdAt: aiMessage.createdAt.toISOString(),
             },
-            unlockedBackground: unlockedBackground
+            unlockedBackground: unlockedBackground,
           } as SendMessageResponse,
         } as ApiResponse<SendMessageResponse>);
       } catch (error) {
@@ -591,7 +591,7 @@ async function chatsRoutes(fastify: FastifyInstance) {
 
         const chat = await prisma.chat.findUnique({
           where: { id: chatId },
-          select: { ownerId: true, personaId: true },
+          select: { ownerId: true },
         });
         console.log("=== DEBUG INFO ===");
         console.log("chatId:", chatId);
@@ -612,10 +612,7 @@ async function chatsRoutes(fastify: FastifyInstance) {
 
         // 메시지 삭제
         await prisma.message.deleteMany({ where: { chatId } });
-        // 페르소나 삭제
-        if (chat.personaId) {
-          await prisma.persona.delete({ where: { id: chat.personaId } });
-        }
+
         // 채팅 삭제
         await prisma.chat.delete({ where: { id: chatId } });
 
