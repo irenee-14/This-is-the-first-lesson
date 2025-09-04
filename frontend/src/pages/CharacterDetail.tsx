@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useCallback } from "react";
+import { useEffect, useMemo, useCallback, useState } from "react";
 import { useApi } from "@/hooks/useApi";
 import { useParams, useNavigate } from "react-router-dom";
 import Header from "@/components/layout/Header";
@@ -15,7 +15,7 @@ import { ReactComponent as ChatIcon } from "@/assets/icons/Chat.svg";
 import CharacterDetailTabs from "@/components/features/characterTab/DetailTab";
 import type { Flow } from "@/types/story";
 
-const mockCharacter = {
+const Count = {
   likeCount: 24,
   chatCount: 24,
 };
@@ -26,6 +26,8 @@ const getImageUrl = (dbPath: string) =>
 function CharacterDetailContent() {
   const navigate = useNavigate();
   const { charId } = useParams();
+
+  const [likeCount, setLikeCount] = useState(Count.likeCount); // 초기값을 Count.likeCount와 동일하게 설정
 
   const {
     data: characterData,
@@ -109,8 +111,8 @@ function CharacterDetailContent() {
   );
 
   const onLikeClick = useCallback((): void => {
-    console.log("Like button clicked!");
-  }, []);
+    setLikeCount((prev) => prev + 1);
+  }, [likeCount]);
 
   if (characterLoading) {
     return (
@@ -155,10 +157,10 @@ function CharacterDetailContent() {
             />
             <div className="absolute bottom-4 left-4 flex gap-1">
               <Chip size="l" leftIcon={<LikeIcon />}>
-                {mockCharacter.likeCount}
+                {likeCount}
               </Chip>
               <Chip size="l" leftIcon={<ChatIcon />}>
-                {mockCharacter.chatCount}
+                {Count.chatCount}
               </Chip>
             </div>
           </div>

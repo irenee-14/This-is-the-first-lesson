@@ -1,7 +1,5 @@
 import BottomNav from "@/components/layout/BottomNav";
-import Header from "@/components/layout/Header";
 
-import { ReactComponent as ArrowLeftIcon } from "@/assets/icons/Arrow-Left.svg";
 import { ReactComponent as SearchIcon } from "@/assets/icons/Search.svg";
 import { ReactComponent as PlayIcon } from "@/assets/icons/Play.svg";
 import { ReactComponent as HeartIcon } from "@/assets/icons/Heart.svg";
@@ -73,15 +71,10 @@ const mockRecommendations: Recommendation[] = [
 export default function Feed() {
   return (
     <>
-      <Header />
-
-      <div className="pt-14 pb-20 bg-[#12121d] min-h-screen">
+      <div className="pb-20 bg-[#12121d] min-h-screen">
         {/* 상단 네비게이션 */}
         <div className="bg-[#12121d] px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <div className="w-8 h-8 flex items-center justify-center">
-              <ArrowLeftIcon className="w-6 h-6 text-white" />
-            </div>
             <h1 className="text-lg font-semibold text-[#f5f5fa]">탐색하기</h1>
           </div>
           <div className="w-8 h-8 flex items-center justify-center">
