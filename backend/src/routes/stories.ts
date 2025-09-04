@@ -75,6 +75,8 @@ export default async function storiesRoutes(fastify: FastifyInstance) {
         name: story.name,
         characterId: story.characterId,
         backgroundId: story.backgroundId,
+        characterName: story.character.name,
+        backgroundName: story.background.name,
         writerId: story.userId || '',
         img: story.img,
         basic: story.basic,
@@ -148,6 +150,8 @@ export default async function storiesRoutes(fastify: FastifyInstance) {
         name: story.name,
         characterId: story.characterId,
         backgroundId: story.backgroundId,
+        characterName: story.character.name,
+        backgroundName: story.background.name,
         writerId: story.userId || '',
         basic: story.basic,
         img: story.img,
@@ -225,6 +229,8 @@ export default async function storiesRoutes(fastify: FastifyInstance) {
         img: story.img,
         characterPrompt: story.characterPrompt || undefined,
         opening: story.opening,
+        characterName: story.character.name,
+        backgroundName: story.background.name,
         createdAt: story.createdAt.toISOString(),
         updatedAt: story.updatedAt.toISOString()
       }

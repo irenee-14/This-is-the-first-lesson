@@ -91,6 +91,8 @@ export interface Story {
   name: string;
   characterId: string;
   backgroundId: string;
+  characterName: string;
+  backgroundName: string;
   writerId: string;
   basic: boolean;
   characterPrompt?: string;
