@@ -1,5 +1,6 @@
 export interface ChatSummary {
   id: string;
+  chatId: string;
   characterName: string;
   characterImg: string;
   storyName: string;

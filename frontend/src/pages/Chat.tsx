@@ -1,14 +1,14 @@
 import React, { useCallback, useEffect, useRef } from "react";
 import Header from "@/components/layout/Header";
 import BottomNav from "@/components/layout/BottomNav";
-import OtherMessage from "@/components/features/OtherMessage";
-import MyMessage from "@/components/features/MyMessage";
+import OtherMessage from "@/components/features/message/OtherMessage";
+import MyMessage from "@/components/features/message/MyMessage";
 import FloatingInputButton from "@/components/features/FloatingInputButton";
 import { useParams } from "react-router-dom";
 import { useChat } from "@/hooks/useChat";
 import { useTopSentinelObserver } from "@/hooks/useTopSentinelObserver";
 
-const ChatPage: React.FC = () => {
+const Chat: React.FC = () => {
   const { chatId } = useParams<{ chatId: string }>();
 
   const {
@@ -159,4 +159,4 @@ const ChatPage: React.FC = () => {
   );
 };
 
-export default ChatPage;
+export default Chat;

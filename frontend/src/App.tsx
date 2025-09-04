@@ -1,26 +1,24 @@
 import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
 
-import Characters from "@/pages/Characters";
+import Characters from "@/pages/CharacterList";
 import NotFound from "@/pages/NotFound";
-import BackgroundDetail from "@/pages/BackgroundDetail";
 import Personas from "@/pages/Personas";
 import CharacterDetail from "@/pages/CharacterDetail";
 import { useFlowReset } from "@/hooks/useFlowReset";
-import { useFlowStore } from "./stores/useFlowStore";
-import { useEffect } from "react";
+// import { useFlowStore } from "./stores/useFlowStore";
+// import { useEffect } from "react";
 import Home from "@/pages/Home";
-import ComponentDemo from "@/pages/ComponentDemo";
 import Chat from "@/pages/Chat";
-import {
-  RequireBackgroundDetail,
-  RequirePersona,
-  RequireChat,
-} from "@/utils/RequireFlow";
-import Backgrounds from "@/pages/Backgrounds";
-import Story from "@/pages/Story";
-import Chats from "@/pages/Chats";
+// import {
+//   RequireBackgroundDetail,
+//   RequirePersona,
+//   RequireChat,
+// } from "@/utils/RequireFlow";
+import Chats from "@/pages/ChatList";
 import MyPage from "@/pages/MyPage";
 import Feed from "@/pages/FeedPage";
+import StoryDetail from "@/pages/StoryDetail";
+import Stories from "./pages/StoryList";
 
 function FlowResetWrapper({ children }: { children: React.ReactNode }) {
   useFlowReset();
@@ -36,15 +34,15 @@ const router = createBrowserRouter([
     ),
     children: [
       { path: "/", element: <Home /> },
-      { path: "/demo", element: <ComponentDemo /> },
       { path: "/characters", element: <Characters /> },
       { path: "/characters/:charId", element: <CharacterDetail /> },
-      { path: "/backgrounds", element: <Backgrounds /> },
+      {
+        path: "/stories",
+        element: <Stories />,
+      },
       {
         // element: <RequireBackgroundDetail />,
-        children: [
-          { path: "/backgrounds/:bgId", element: <BackgroundDetail /> },
-        ],
+        children: [{ path: "/story/:storyId", element: <StoryDetail /> }],
       },
       {
         // element: <RequirePersona />,
@@ -60,25 +58,24 @@ const router = createBrowserRouter([
           // { path: "/chat/:chatId", element: <ChatRoom /> },
         ],
       },
-      { path: "/component-demo", element: <ComponentDemo /> },
       { path: "*", element: <NotFound /> },
     ],
   },
 ]);
 
-function DebugFlow() {
-  const state = useFlowStore();
+// function DebugFlow() {
+//   const state = useFlowStore();
 
-  useEffect(() => {
-    console.log("현재 Flow 상태:", state);
-  }, [state]);
+//   useEffect(() => {
+//     console.log("현재 Flow 상태:", state);
+//   }, [state]);
 
-  return null;
-}
+//   return null;
+// }
 
 function App() {
   return (
-    <main className="min-h-screen w-full max-w-sm md:max-w-md lg:max-w-lg mx-auto flex-1">
+    <main className="min-h-screen w-full max-w-sm md:max-w-md lg:max-w-lg mx-auto flex-1 scrollbar-stable">
       {/* <DebugFlow /> */}
       <RouterProvider router={router} />
     </main>

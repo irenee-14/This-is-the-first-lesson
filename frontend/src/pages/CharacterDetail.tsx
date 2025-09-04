@@ -1,16 +1,21 @@
-import { useEffect } from "react";
+import { useEffect, useMemo, useCallback, useState } from "react";
 import { useApi } from "@/hooks/useApi";
 import { useParams, useNavigate } from "react-router-dom";
 import Header from "@/components/layout/Header";
 import BottomNav from "@/components/layout/BottomNav";
 import FloatingButton from "@/components/features/FloatingButton";
 import Chip from "@/components/ui/Chip";
-import CharacterDetailTabs from "@/components/features/CharacterDetailTabs";
+import {
+  BackgroundUnlockProvider,
+  useBackgroundUnlockHandler,
+} from "@/components/features/BackgroundUnlockProvider";
+import { useFlowManager } from "@/hooks/useFlowManager";
 import { ReactComponent as LikeIcon } from "@/assets/icons/Like.svg";
 import { ReactComponent as ChatIcon } from "@/assets/icons/Chat.svg";
-import { useFlowStore } from "@/stores/useFlowStore";
+import CharacterDetailTabs from "@/components/features/characterTab/DetailTab";
+import type { Flow } from "@/types/story";
 
-const mockCharacter = {
+const Count = {
   likeCount: 24,
   chatCount: 24,
 };
@@ -18,39 +23,92 @@ const mockCharacter = {
 const getImageUrl = (dbPath: string) =>
   new URL(`../assets/images/${dbPath}`, import.meta.url).href;
 
-export default function CharacterDetailPage() {
-  const { setCharacter, setWriter } = useFlowStore();
+interface CharacterDetailContentProps {
+  flows: import("@/types/story").Flow[];
+  characterData:
+    | {
+        success: boolean;
+        data: import("@/types/character").Character;
+      }
+    | undefined;
+  characterLoading: boolean;
+  characterError: string | null;
+}
+
+function CharacterDetailContent({
+  flows,
+  characterData,
+  characterLoading,
+  characterError,
+}: CharacterDetailContentProps) {
   const navigate = useNavigate();
   const { charId } = useParams();
 
-  const {
-    data: characterData,
-    loading: characterLoading,
-    error: characterError,
-    get: getCharacter,
-  } = useApi<{
+  const [likeCount, setLikeCount] = useState(Count.likeCount); // 초기값을 Count.likeCount와 동일하게 설정
+
+  const { data: chatListData, get: getChatList } = useApi<{
     success: boolean;
-    data: import("@/types/character").Character;
+    data: {
+      chats: import("@/types/chat").ChatSummary[];
+      total: number;
+      page: number;
+      limit: number;
+    };
   }>();
 
-  const {
-    data: backgroundsData,
-    loading: backgroundLoading,
-    error: backgroundError,
-    get: getBackground,
-  } = useApi<import("@/types/background").BackgroundListResponse>();
+  const handleClick = useBackgroundUnlockHandler();
 
-  useEffect(() => {
-    getBackground("/backgrounds");
-  }, [getBackground]);
-
+  // 채팅 목록 로딩
   useEffect(() => {
     if (charId) {
-      getCharacter(`/characters/${charId}`);
+      getChatList(`/chats?characterId=${charId}`);
     }
-  }, [charId, getCharacter]);
+  }, [charId, getChatList]);
 
-  if (characterLoading || backgroundLoading) {
+  // 채팅 데이터에서 실제 채팅 개수 계산
+  const chatCount = useMemo(
+    () => chatListData?.data?.chats?.length || 0,
+    [chatListData?.data?.chats?.length]
+  );
+  const hasChatHistory = chatCount > 0;
+
+  const character = characterData?.data;
+
+  const handleChatClick = useCallback(() => {
+    if (hasChatHistory && character) {
+      navigate(`/stories?writerId=${character.writerId}&characterId=${charId}`);
+    } else {
+      const firstStory = flows[0];
+      navigate(firstStory ? `/story/${firstStory.id}` : `/characters`);
+    }
+  }, [hasChatHistory, character, charId, flows, navigate]);
+
+  const handleStoryClick = useCallback(
+    (storyId: string) => {
+      navigate(`/personas/${storyId}`);
+    },
+    [navigate]
+  );
+
+  const handleFlowClick = useCallback(
+    (flow: Flow) => {
+      handleClick(flow);
+    },
+    [handleClick]
+  );
+
+  const handleBeforeChatClick = useCallback(
+    (chatId: string) => {
+      navigate(`/chat/${chatId}`);
+    },
+    [navigate]
+  );
+
+  const onLikeClick = useCallback((): void => {
+    setLikeCount((prev) => prev + 1);
+  }, []);
+
+  if (characterLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Header />
@@ -60,52 +118,25 @@ export default function CharacterDetailPage() {
     );
   }
 
-  if (characterError || backgroundError) {
+  if (characterError) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Header />
-        <div>오류가 발생했습니다: {characterError || backgroundError}</div>
+        <div>오류가 발생했습니다: {characterError}</div>
         <BottomNav />
       </div>
     );
   }
 
-  const character = characterData?.data;
-  const backgrounds = backgroundsData?.data?.backgrounds || [];
-
   if (!character) {
     return <div>캐릭터 정보를 불러올 수 없습니다.</div>;
-  }
-  if (!backgrounds) {
-    return <div>배경 정보를 불러올 수 없습니다.</div>;
-  }
-
-  // -------------------------------------------------------
-  // const hasChatHistory =
-  //   character.chatHistory && character.chatHistory.length > 0;
-  // chatHistory 연결 필요
-  // chat history가 없을 경우 배경 설명 추가, 채팅하기 누를 시 바로 페르소나로 이동
-  const hasChatHistory = true;
-
-  // -------------------------------------------------------
-  const handleChatClick = () => {
-    setCharacter(character.characterId);
-    setWriter(character.writerId);
-    navigate(`/backgrounds`);
-  };
-
-  const handleBackgroundClick = (backgroundId: string) => {
-    navigate(`/backgrounds/${backgroundId}`);
-  };
-
-  function onLikeClick(): void {
-    console.log("Like button clicked!");
   }
 
   return (
     <div className="min-h-screen">
       <Header variant="withText" title={character.name} />
       <div className="pt-14 pb-20">
+        {/* 캐릭터 이미지 */}
         <div className="relative">
           <div className="relative w-full h-90 aspect-square">
             <div className="w-full h-90 bg-gradient-to-b from-purple-600 via-purple-500 to-indigoGray-black" />
@@ -120,15 +151,15 @@ export default function CharacterDetailPage() {
             />
             <div className="absolute bottom-4 left-4 flex gap-1">
               <Chip size="l" leftIcon={<LikeIcon />}>
-                {mockCharacter.likeCount}
+                {likeCount}
               </Chip>
               <Chip size="l" leftIcon={<ChatIcon />}>
-                {mockCharacter.chatCount}
+                {Count.chatCount}
               </Chip>
             </div>
           </div>
 
-          {/* Character Info */}
+          {/* 캐릭터 정보 */}
           <div className="px-4 py-4">
             <h1 className="text-2xl font-bold text-White-Font mb-3">
               {character.name}
@@ -143,20 +174,64 @@ export default function CharacterDetailPage() {
           </div>
         </div>
 
-        {/* Character Detail Tabs */}
+        {/* 캐릭터 상세 탭 */}
         <CharacterDetailTabs
           character={character}
-          backgrounds={backgrounds}
+          flow={flows}
           hasChatHistory={hasChatHistory}
-          onBackgroundClick={handleBackgroundClick}
+          chatList={chatListData?.data?.chats ?? []}
+          onStoryClick={handleStoryClick}
+          onChatClick={handleBeforeChatClick}
+          onFlowClick={handleFlowClick}
         />
       </div>
+
       <FloatingButton
         like={true}
         onLikeClick={onLikeClick}
         onClick={handleChatClick}
       />
+
       <BottomNav />
     </div>
+  );
+}
+
+export default function CharacterDetail() {
+  const { charId } = useParams();
+  const { data: characterData, get: getCharacter } = useApi<{
+    success: boolean;
+    data: import("@/types/character").Character;
+  }>();
+
+  // 캐릭터 데이터 로딩
+  useEffect(() => {
+    if (charId) {
+      getCharacter(`/characters/${charId}`);
+    }
+  }, [charId, getCharacter]);
+
+  const { updateFlowItem, reloadFlowData, flows } = useFlowManager({
+    writerId: characterData?.data?.writerId,
+    characterId: charId,
+    autoLoad: true, // 자동 로드 활성화
+  });
+
+  const handleUnlockSuccess = (flowId: string) => {
+    // 로컬 상태 즉시 업데이트
+    updateFlowItem(flowId, { isOpen: true });
+    // 서버에서 최신 데이터 다시 가져오기
+    reloadFlowData();
+  };
+
+  return (
+    <BackgroundUnlockProvider onUnlockSuccess={handleUnlockSuccess}>
+      <CharacterDetailContent
+        flows={flows}
+        characterData={characterData || undefined}
+        characterLoading={characterData === undefined}
+        characterError={null}
+      />
+    </BackgroundUnlockProvider>
   );
 }

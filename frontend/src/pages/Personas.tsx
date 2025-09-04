@@ -6,7 +6,7 @@ import TextField from "@/components/ui/TextField";
 import RadioGroup from "@/components/ui/RadioGroup";
 import type { RadioGroupOption } from "@/components/ui/RadioGroup";
 import FloatingButton from "@/components/features/FloatingButton";
-import { useFlowStore } from "@/stores/useFlowStore";
+// import { useFlowStore } from "@/stores/useFlowStore";
 import { useNavigate, useParams } from "react-router-dom";
 import type { ChatData } from "@/types/chat";
 import { useApi } from "@/hooks/useApi";
@@ -22,7 +22,7 @@ interface PersonaOption {
 const Personas: React.FC = () => {
   const { storyId } = useParams();
 
-  const { setPersonaData } = useFlowStore();
+  // const { setPersonaData } = useFlowStore();
   const [selectedPersona, setSelectedPersona] = useState("");
   const [name, setName] = useState("");
   const [gender, setGender] = useState("");
@@ -96,13 +96,13 @@ const Personas: React.FC = () => {
     );
     if (selectedPersonaData) {
       const persona = {
-        id: selectedPersonaData.id,
+        // id: selectedPersonaData.id,
         name,
         gender,
         prompt: personaDescription,
       };
 
-      setPersonaData(persona);
+      // setPersonaData(persona);
       try {
         const response = await post(`/chats`, {
           storyId,

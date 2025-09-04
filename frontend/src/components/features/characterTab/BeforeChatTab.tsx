@@ -1,31 +1,31 @@
-import CardMediaLeft from "./CardMediaLeft";
+import CardMediaLeft from "@/components/features/card/CardMediaLeft";
 import type { Character } from "@/types/character";
-import type { Background } from "@/types/background";
+import type { ChatSummary } from "@/types/chat";
 
 interface CharacterChatTabProps {
   character: Character;
-  backgrounds: Background[];
-  hasChatHistory: boolean;
-  onBackgroundClick: (backgroundId: string) => void;
+  hasChatHistory?: boolean;
+  chatList: ChatSummary[];
+  onChatClick: (chatId: string) => void;
 }
 
 export default function CharacterChatTab({
   character,
-  backgrounds,
   hasChatHistory,
-  onBackgroundClick,
+  chatList,
+  onChatClick,
 }: CharacterChatTabProps) {
   return (
     <div>
-      {hasChatHistory ? (
+      {hasChatHistory || (chatList && chatList.length > 0) ? (
         <div className="flex flex-col gap-4">
-          {backgrounds.map((background: Background) => (
+          {chatList.map((chat: ChatSummary) => (
             <CardMediaLeft
-              key={background.backgroundId}
+              key={chat.chatId}
               imageUrl="src/assets/images/characters/character_1.png"
-              name={background.backgroundName}
-              description={background.description}
-              onClick={() => onBackgroundClick(background.backgroundId)}
+              name={chat.storyName}
+              description={chat.lastMessage || "채팅 기록이 없습니다"}
+              onClick={() => onChatClick(chat.chatId)}
             />
           ))}
         </div>
