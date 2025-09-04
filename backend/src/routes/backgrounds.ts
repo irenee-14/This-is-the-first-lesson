@@ -469,7 +469,7 @@ export default async function backgroundsRoutes(fastify: FastifyInstance) {
         }
 
         const storyPrompt = await buildGptStory(character, background);
-        const { name, characterPrompt, opening } = JSON.parse(
+        const { characterPrompt, opening } = JSON.parse(
           storyPrompt || "{}"
         );
 
@@ -507,7 +507,7 @@ export default async function backgroundsRoutes(fastify: FastifyInstance) {
             basic: true,
             userId: writerId,
             characterId: body.characterId,
-            name: name,
+            name: background.name,
             characterPrompt: characterPrompt,
             opening: opening,
             img: storyImg || undefined,

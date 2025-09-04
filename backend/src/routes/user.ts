@@ -365,7 +365,7 @@ export default async function usersRoutes(fastify: FastifyInstance) {
                 backgroundId,
                 characterId: c.id,
                 basic: true,
-                name: parsed?.name ?? `${background.name} x ${c.name}`,
+                name: background.name ,
                 opening: parsed?.opening ?? "",
                 characterPrompt: parsed?.characterPrompt ?? c.personality,
                 img: storyImg,
