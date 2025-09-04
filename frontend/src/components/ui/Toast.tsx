@@ -35,38 +35,21 @@ export const Toast: React.FC<ToastProps> = ({
       }}
     >
       <div
-        className="flex items-center gap-3 px-6 py-3 rounded-lg shadow-lg
-    w-full h-12 bg-gray-900"
+        className="items-center min-w-24 gap-3 px-6 py-3 rounded-lg shadow-lg
+         inline-flex justify-start w-full h-12 bg-indigoGray-900"
         style={{
           pointerEvents: "auto",
         }}
       >
-        {/* Icon */}
-        <div className="flex items-center justify-center w-4 h-4">
-          <span
-            className="text-sm font-medium"
-            style={{
-              color: "#f5f5fa",
-              fontSize: "14px",
-              lineHeight: "16.7px",
-            }}
-          >
-            {icon}
-          </span>
+        <div className="w-4 h-4 relative">
+          <div className="w-4 h-4 left-0 top-0 absolute"></div>
+          <div className="left-[1px] top-[1px] absolute text-center justify-start text-white text-sm font-medium">
+            🔑
+          </div>
         </div>
-
-        {/* Message */}
-        <span
-          className="flex-1 text-sm font-medium text-center"
-          style={{
-            color: "#f5f5fa",
-            fontSize: "14px",
-            lineHeight: "16.7px",
-            letterSpacing: "-0.28px",
-          }}
-        >
-          {message}
-        </span>
+        <div className="text-center justify-start">
+          <span className="text-white text-sm font-medium">{message}</span>
+        </div>
       </div>
     </div>
   );
