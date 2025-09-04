@@ -473,7 +473,7 @@ export default async function backgroundsRoutes(fastify: FastifyInstance) {
           storyPrompt || "{}"
         );
 
-        const storyImg = path.join("story", character.characterImg!);
+        const storyImg = path.join("story", path.basename(character.characterImg!));
         // let artworkImageUrl = null;
         // try {
         //   if (background.backgroundImg && character.characterImg) {
