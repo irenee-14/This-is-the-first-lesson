@@ -7,9 +7,7 @@ import {
   StoryListQuery
 } from '../types/api'
 import { buildGptStory } from 'src/model/storyPrompt'
-import { generateArtworkWithVision, downloadAndSaveImage } from 'src/model/common'
 import path from 'path'
-import fs from 'fs'
 
 declare module 'fastify' {
   interface FastifyInstance {
