@@ -1,6 +1,8 @@
 export type Flow = {
   id: string;
   title: string;
+  characterName: string;
+  backgroundName: string;
   imgUrl: string;
   tags: string[];
   description: string;
@@ -10,10 +12,14 @@ export type Flow = {
 
 export type Story = {
   storyId: string;
+  name: string;
   characterId: string;
+  characterName: string;
   backgroundId: string;
+  backgroundName: string;
   writerId: string;
   basic: boolean;
+  img: string;
   characterPrompt: string;
   opening: string;
   createdAt: string;
@@ -22,5 +28,5 @@ export type Story = {
 
 export type StoryResponse = {
   success: boolean;
-  data: Flow[] | Story | Story[];
+  data: Flow | Flow[] | Story | Story[];
 };
