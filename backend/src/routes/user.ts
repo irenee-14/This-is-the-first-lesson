@@ -326,13 +326,19 @@ export default async function usersRoutes(fastify: FastifyInstance) {
             flowId: latestFlow.id,
             writerId: writerId || background.writerId,
           },
-        });
+          select: { characterId: true }
+        })
+        const existingSet = new Set(existingStories.map(s => s.characterId))
+        const toCreate = characters.filter(c => !existingSet.has(c.id))
 
-        // Create stories for writer's characters if they don't exist for this background and user
-        if (characters.length > 0) {
-          const characterIds = characters.map((c) => c.id);
-          const existingStories = await fastify.prisma.story.findMany({
-            where: {
+        const payloads = await Promise.all(
+          toCreate.map(async c => {
+            const parsed: any = await buildGptStory(c as any, background as any)
+              .then(r => (typeof r === 'string' ? JSON.parse(r) : r))
+              .catch(() => null)
+
+            const storyImg  = path.join("story", c.characterImg?.replace(/\.png$/i, "") + "_" + background.backgroundImg);
+            return {
               userId,
               backgroundId,
               characterId: { in: characterIds },
