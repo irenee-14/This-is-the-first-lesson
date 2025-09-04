@@ -55,6 +55,7 @@ export interface Message {
   role: "character" | "persona";
   contents: string;
   createdAt: string;
+  unlockedBackground: string;
 }
 
 // API Response Types

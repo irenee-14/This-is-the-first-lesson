@@ -63,7 +63,7 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({ children }) => {
     (backgroundName: string) => {
       showToast(`채팅이 쌓여 [${backgroundName}] 배경이 열렸어요 !`, {
         icon: "🔑",
-        duration: 3000,
+        duration: 5000,
       });
     },
     [showToast]

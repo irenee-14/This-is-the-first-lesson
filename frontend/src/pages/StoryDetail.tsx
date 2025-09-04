@@ -35,7 +35,7 @@ export default function StoryDetail() {
   if (loading) {
     return (
       <div className="min-h-screen">
-        <Header variant="withText" title="배경 정보" />
+        <Header variant="withText" title="세계관 정보" />
         <div className="pt-14 pb-36 flex items-center justify-center">
           <div>로딩 중...</div>
         </div>
@@ -47,7 +47,7 @@ export default function StoryDetail() {
   if (error) {
     return (
       <div className="min-h-screen">
-        <Header variant="withText" title="배경 정보" />
+        <Header variant="withText" title="세계관 정보" />
         <div className="pt-14 pb-36 flex items-center justify-center">
           <div>오류가 발생했습니다: {error}</div>
         </div>
@@ -59,9 +59,9 @@ export default function StoryDetail() {
   if (!story) {
     return (
       <div className="min-h-screen">
-        <Header variant="withText" title="배경 정보" />
+        <Header variant="withText" title="세계관 정보" />
         <div className="pt-14 pb-36 flex items-center justify-center">
-          <div>배경을 찾을 수 없습니다.</div>
+          <div>세계관을 찾을 수 없습니다.</div>
         </div>
         <BottomNav />
       </div>

@@ -7,9 +7,11 @@ import type {
 } from "@/types/chat";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useApi } from "./useApi";
+import { useToastContext } from "@/components/ui/ToastProvider";
 
 export function useChat(chatId: string) {
   const { get, post, loading: apiLoading } = useApi();
+  const { showBackgroundUnlockToast } = useToastContext();
 
   const [chatDetail, setChatDetail] = useState<ChatDetail | null>(null);
 
@@ -94,6 +96,7 @@ export function useChat(chatId: string) {
       const tempUserMessage: Message = {
         chatId,
         seq: messages.length,
+        unlockedBackground: chatDetail?.background.name || "",
         backgroundId: chatDetail?.background.backgroundId || "",
         characterId: chatDetail?.character.characterId || "",
         role: "persona",
@@ -112,6 +115,11 @@ export function useChat(chatId: string) {
 
         if (response.success && response.data) {
           const { userMessage, aiMessage } = response.data;
+
+          // 배경 해금 알림 체크
+          if (userMessage.unlockedBackground) {
+            showBackgroundUnlockToast(userMessage.unlockedBackground);
+          }
 
           // 임시 유저 메시지를 실제 유저/AI 메시지로 치환
           setMessages((prev) => [

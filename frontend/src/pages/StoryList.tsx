@@ -21,7 +21,7 @@ function StoryListContent({ flows }: StoryListContentProps) {
 
   return (
     <div className="min-h-screen">
-      <Header variant="withText" title="배경 선택하기" />
+      <Header variant="withText" title="세계관 선택하기" />
 
       {/* Main Content */}
       <div className="pt-14 pb-36">
@@ -30,10 +30,10 @@ function StoryListContent({ flows }: StoryListContentProps) {
           {/* notification */}
           <div className="rounded inline-flex flex-col justify-center items-start gap-1">
             <div className="justify-start text-Font-White-Font text-base font-semibold font-['Pretendard']">
-              보고싶은 배경을 선택해 주세요
+              보고싶은 세계관을 선택해 주세요
             </div>
             <div className="justify-start text-Gray-300 text-sm font-normal font-['Pretendard'] leading-tight">
-              캐릭터와 채팅이 쌓이면 잠금된 배경을 볼 수 있어요
+              캐릭터와 채팅이 쌓이면 잠금된 세계관을 볼 수 있어요
             </div>
           </div>
 
@@ -62,7 +62,7 @@ function StoryListContent({ flows }: StoryListContentProps) {
             </>
           ) : (
             <div className="text-center py-8 text-gray-400">
-              배경 정보를 불러오는 중입니다...
+              세계관 정보를 불러오는 중입니다...
             </div>
           )}
         </div>
