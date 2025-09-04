@@ -8,7 +8,7 @@ interface BottomSheetProps {
   fullHeight?: boolean;
 }
 
-export const BottomSheet: React.FC<BottomSheetProps> = ({
+const BottomSheet: React.FC<BottomSheetProps> = ({
   open,
   onClose,
   children,
@@ -55,3 +55,5 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
     </div>
   );
 };
+
+export default BottomSheet;

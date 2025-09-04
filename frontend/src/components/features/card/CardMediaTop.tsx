@@ -1,20 +1,24 @@
 import Chip from "@/components/ui/Chip";
 import { cn } from "@/lib/utils";
 import { ReactComponent as LockIcon } from "@/assets/icons/Lock.svg";
-import { useState } from "react";
+import type { Flow } from "@/types/story";
 
 export interface CardMediaTopProps {
+  id: string;
+  flow?: Flow; // string에서 Flow로 변경
   isOpen?: boolean;
   imageUrl?: string;
   name?: string;
   description?: string;
   chips?: string[];
-  className?: string;
   onClick?: () => void;
-  variant?: "horizontal" | "grid";
+  onFlowClick?: (flow: Flow) => void; // flow 클릭 핸들러 추가
+  variant?: "vertical" | "horizontal" | "grid";
+  className?: string;
 }
 
 export default function CardMediaTop({
+  flow,
   isOpen = true,
   imageUrl,
   name,
@@ -22,14 +26,14 @@ export default function CardMediaTop({
   chips = [],
   className,
   onClick,
+  onFlowClick,
   variant = "grid",
 }: CardMediaTopProps) {
   const isHorizontal = variant === "horizontal";
-  const [showModal, setShowModal] = useState(false);
 
-  const handleClick = () => {
-    if (!isOpen) {
-      setShowModal(true);
+  const handleCardClick = () => {
+    if (flow && onFlowClick) {
+      onFlowClick(flow);
     } else if (onClick) {
       onClick();
     }
@@ -44,7 +48,7 @@ export default function CardMediaTop({
           onClick && isOpen && "cursor-pointer",
           className
         )}
-        onClick={handleClick}
+        onClick={handleCardClick}
         aria-disabled={!isOpen}
       >
         <div
@@ -96,24 +100,6 @@ export default function CardMediaTop({
           </div>
         )}
       </div>
-      {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="bg-gray-100 rounded-lg shadow-lg p-6 min-w-[220px] flex flex-col items-center">
-            <div className="text-lg font-bold mb-2 text-gray-950">
-              잠긴 배경입니다
-            </div>
-            <div className="text-sm text-gray-700 mb-4">
-              해당 배경은 잠겨 있어 선택할 수 없습니다.
-            </div>
-            <button
-              className="px-4 py-2 bg-primary text-white rounded"
-              onClick={() => setShowModal(false)}
-            >
-              확인
-            </button>
-          </div>
-        </div>
-      )}
     </>
   );
 }

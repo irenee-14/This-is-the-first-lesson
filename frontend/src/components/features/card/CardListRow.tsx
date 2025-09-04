@@ -1,4 +1,4 @@
-import CardMediaTop from "@/components/features/CardMediaTop";
+import CardMediaTop from "@/components/features/card/CardMediaTop";
 import { cn } from "@/lib/utils";
 
 interface CardData {

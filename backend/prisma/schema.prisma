@@ -163,7 +163,6 @@ model Persona {
   prompt    String   @map("prompt")
   id        String   @id @default(uuid()) @map("persona_id")
   userId    String   @map("user_id")
-  chats     Chat[]
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("personas")
@@ -196,7 +195,6 @@ model Chat {
   id            String        @id @default(uuid()) @map("chat_id")
   createdAt     DateTime      @default(now()) @map("created_at")
   ownerId       String        @map("owner_id")
-  personaId     String        @map("persona_id")
   storyId       String        @map("story_id")
   updatedAt     DateTime      @updatedAt @map("updated_at")
   personaGender String        @map("persona_gender") @db.VarChar(50)
@@ -205,7 +203,6 @@ model Chat {
   background    Background    @relation(fields: [backgroundId], references: [id], onDelete: Cascade)
   character     Character     @relation(fields: [characterId], references: [id], onDelete: Cascade)
   owner         User          @relation(fields: [ownerId], references: [id], onDelete: Cascade)
-  persona       Persona       @relation(fields: [personaId], references: [id], onDelete: Cascade)
   story         Story         @relation(fields: [storyId], references: [id], onDelete: Cascade)
   memoryPieces  MemoryPiece[]
   messages      Message[]

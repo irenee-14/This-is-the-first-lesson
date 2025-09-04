@@ -1,4 +1,4 @@
-import CardMediaTop from "@/components/features/CardMediaTop";
+import CardMediaTop from "@/components/features/card/CardMediaTop";
 import Input from "@/components/ui/Input";
 import { ReactComponent as SearchIcon } from "@/assets/icons/Search.svg";
 import { useNavigate } from "react-router-dom";

@@ -151,6 +151,9 @@ export default {
       animation: {
         "slide-up": "slideUp 0.3s ease-out forwards",
       },
+      scrollbarGutter: {
+        stable: "stable",
+      },
     },
   },
   plugins: [require("tailwindcss-animate"), scrollbarHide],

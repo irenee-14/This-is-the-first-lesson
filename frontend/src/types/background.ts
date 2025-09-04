@@ -11,7 +11,7 @@ export interface Background {
   imageUrl?: string;
   createdAt: string;
   updatedAt: string;
-  isOpened?: boolean;
+  isOpen?: boolean;
 }
 
 export interface BackgroundFlow {
