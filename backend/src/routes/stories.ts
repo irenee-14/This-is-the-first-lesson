@@ -290,8 +290,7 @@ export default async function storiesRoutes(fastify: FastifyInstance) {
       //GPT API 호출해서 작품 생성
       const storyPrompt = await buildGptStory(character, background)
       const {name, characterPrompt, opening} = JSON.parse(storyPrompt || '{}')
-      const ROOT = path.resolve(__dirname, "..", "..", "..");
-      const storyImg  = path.join(ROOT, "public", "character", character.characterImg!);
+      const storyImg  = path.join("character", character.characterImg!);
       
       // // 작품 이미지 생성
       // let artworkImageUrl = null
