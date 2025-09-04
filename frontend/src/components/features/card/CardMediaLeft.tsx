@@ -87,7 +87,12 @@ export default function CardMediaLeft({
       {hasTags && (
         <div className="w-full flex flex-wrap gap-1 mt-2">
           {tags.slice(0, 2).map((tag, index) => (
-            <Chip key={index} size="m" shape="rounded" variantStyle="filled">
+            <Chip
+              key={`${tag}-${index}`}
+              size="m"
+              shape="rounded"
+              variantStyle="filled"
+            >
               {tag}
             </Chip>
           ))}

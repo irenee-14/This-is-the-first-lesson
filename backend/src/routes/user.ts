@@ -3,6 +3,7 @@ import { PrismaClient } from "../../generated/prisma";
 import { User, UpdateUserRequest, ApiResponse } from "../types/api";
 import { open } from "node:fs";
 import { buildGptStory } from "../model/storyPrompt";
+import path from "node:path";
 
 declare module "fastify" {
   interface FastifyInstance {
