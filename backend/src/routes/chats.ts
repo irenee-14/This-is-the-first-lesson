@@ -479,10 +479,64 @@ async function chatsRoutes(fastify: FastifyInstance) {
           },
         });
 
-        await prisma.chat.update({
+        const updated = await prisma.chat.update({
           where: { id: chatId },
           data: { chatCount: chat.chatCount + 2n, updatedAt: new Date() },
         });
+
+        const unlockCnt = chat.background.unlockChatCount;
+        let unlockedBackground = null;
+        if (updated.chatCount >= unlockCnt) {
+          const latestFlow = await fastify.prisma.backgroundFlow.findFirst({
+            where: { writerId: chat.background.writerId },
+            orderBy: { createdAt: "desc" },
+          });
+          if (!latestFlow) {
+            return reply.status(400).send({
+              success: false,
+              error: "해당 작가의 배경 플로우가 존재하지 않습니다.",
+            } as ApiResponse);
+          }
+  
+          const thisStep = await fastify.prisma.backgroundStep.findFirst({
+            where: {
+              flowId : latestFlow.id,
+              backgroundId: chat.backgroundId
+            }
+          })
+  
+          const nextStep = await fastify.prisma.backgroundStep.findFirst({
+            where: {
+              flowId : latestFlow.id,
+              ...(thisStep
+                ? { orderKey: { gt: thisStep.orderKey } } // 현재 단계가 있으면 그 다음
+              : {}  
+              )
+            },
+            include: {
+              background: true
+            },
+            orderBy: {
+              orderKey: 'asc' // 가장 작은 orderKey부터 정렬
+            }
+          })
+          if (!nextStep) {
+            return reply.status(400).send({
+              success: false,
+              error: "해당 작가의 배경 플로우가 존재하지 않습니다.",
+            } as ApiResponse);
+          }
+        
+          await fastify.prisma.openBackground.create({
+            data: {
+              userId,
+              backgroundId : nextStep.backgroundId,
+              flowId: latestFlow.id,
+              writerId: chat.background.writerId
+            }
+          })
+          unlockedBackground = nextStep.background.name;
+        }
 
         return reply.send({
           success: true,
@@ -505,6 +559,7 @@ async function chatsRoutes(fastify: FastifyInstance) {
               contents: aiMessage.contents,
               createdAt: aiMessage.createdAt.toISOString(),
             },
+            unlockedBackground: unlockedBackground
           } as SendMessageResponse,
         } as ApiResponse<SendMessageResponse>);
       } catch (error) {
