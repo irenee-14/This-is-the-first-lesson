@@ -7,7 +7,9 @@ import {
   StoryListQuery
 } from '../types/api'
 import { buildGptStory } from 'src/model/storyPrompt'
-import { generateArtworkWithVision } from 'src/model/common'
+import { generateArtworkWithVision, downloadAndSaveImage } from 'src/model/common'
+import path from 'path'
+import fs from 'fs'
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -18,6 +20,12 @@ declare module 'fastify' {
 //TODO 어떤 캐릭터의 basic 작품 조회, 어떤 배경의 basic 작품 조회하는 API 필요할까/
 
 export default async function storiesRoutes(fastify: FastifyInstance) {
+  // public/story 폴더가 없으면 생성
+  const storyDir = path.resolve(__dirname, "../../../public/story");
+  if (!fs.existsSync(storyDir)) {
+    fs.mkdirSync(storyDir, { recursive: true });
+  }
+
   // GET /api/v1/stories - 작품 목록 조회
   fastify.get<{ Querystring: StoryListQuery}>('/api/v1/stories', {
     schema: {
@@ -299,7 +307,13 @@ export default async function storiesRoutes(fastify: FastifyInstance) {
             `${name} - ${background.name} 배경에서 ${character.name} 캐릭터가 등장하는 판타지 작품`
           )
           
-          artworkImageUrl = artworkResult.imageUrl
+          // 생성된 이미지를 public/story 폴더에 저장
+          if (artworkResult.imageUrl) {
+            const storyId = Date.now().toString(); // 고유한 파일명 생성
+            const savePath = `public/story/${storyId}.jpg`;
+            const relativePath = await downloadAndSaveImage(artworkResult.imageUrl, savePath);
+            artworkImageUrl = relativePath; // 로컬 저장 경로 사용
+          }
         }
       } catch (imageError) {
         fastify.log.warn('이미지 생성 실패, 기본값으로 진행')

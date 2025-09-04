@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 import path from "path";
 import OpenAI from "openai";
 import fs from "fs";
+import axios from "axios";
 
 dotenv.config({ path: path.resolve(__dirname, "../../../.env") });
 
@@ -108,6 +109,30 @@ export function encodeImageToBase64(imagePath: string): string {
   } catch (error) {
     console.error(`이미지 인코딩 오류: ${error}`);
     throw new Error(`이미지를 base64로 변환할 수 없습니다: ${imagePath}`);
+  }
+}
+
+// URL에서 이미지를 다운로드하여 로컬에 저장하는 함수
+export async function downloadAndSaveImage(imageUrl: string, savePath: string): Promise<string> {
+  try {
+    const response = await axios.get(imageUrl, {
+      responseType: 'arraybuffer'
+    });
+    
+    // 디렉토리가 없으면 생성
+    const dir = path.dirname(savePath);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    
+    // 이미지 저장
+    fs.writeFileSync(savePath, response.data);
+    
+    // 상대 경로 반환 (public 폴더 기준)
+    return path.relative('public', savePath);
+  } catch (error) {
+    console.error(`이미지 다운로드 오류: ${error}`);
+    throw new Error(`이미지를 다운로드할 수 없습니다: ${imageUrl}`);
   }
 }
 
