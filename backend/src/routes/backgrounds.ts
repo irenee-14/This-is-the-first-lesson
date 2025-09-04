@@ -8,8 +8,8 @@ import {
   ApiResponse 
 } from '../types/api'
 import { buildGptStory } from 'src/model/storyPrompt'
-import { downloadAndSaveImage, generateArtworkWithVision } from 'src/model/common'
-
+import path from "path";
+import { downloadAndSaveImage, generateArtworkWithVision, resolvePublicPath, ensureFileExists, PUBLIC_DIR } from 'src/model/common'
 declare module 'fastify' {
   interface FastifyInstance {
     prisma: PrismaClient
@@ -392,6 +392,7 @@ export default async function backgroundsRoutes(fastify: FastifyInstance) {
   }, async (request, reply) => {
     try {
       const body = request.body
+      const {characterId} = request.query
       const writerId = request.headers['x-user-id'] as string
 
       const background = await fastify.prisma.background.create({
@@ -434,7 +435,7 @@ export default async function backgroundsRoutes(fastify: FastifyInstance) {
         })
       )
       const character = await fastify.prisma.character.findUnique({
-        where: { id: body.characterId }
+        where: { id: characterId }
       })
 
       if (!character) {
@@ -443,43 +444,56 @@ export default async function backgroundsRoutes(fastify: FastifyInstance) {
           error: 'Character not found'
         } as ApiResponse)
       }
-      
+
+      if (!background) {
+        return reply.status(400).send({
+          success: false,
+          error: 'Background not found'
+        } as ApiResponse)
+      }
+      // // backend/src/routes/... 기준으로 3단계 올라가면 프로젝트 루트
+      const ROOT = path.resolve(__dirname, "..", "..", "..");
       const storyPrompt = await buildGptStory(character, background)
       const {name, characterPrompt, opening} = JSON.parse(storyPrompt || '{}')
-            // 작품 이미지 생성
-      let artworkImageUrl = null
-      try {
-        if (background.backgroundImg && character.characterImg) {
-          const backgroundImagePath = `public/backgrounds/${background.backgroundImg}`
-          const characterImagePath = `public/characters/${character.characterImg}`
-          
-          const artworkResult = await generateArtworkWithVision(
-            backgroundImagePath,
-            characterImagePath,
-            `${name} - ${background.name} 배경에서 ${character.name} 캐릭터가 등장하는 판타지 작품`
-          )
-          
-          // 생성된 이미지를 public/story 폴더에 저장
-          if (artworkResult.imageUrl) {
-            const storyId = Date.now().toString(); // 고유한 파일명 생성
-            const savePath = `public/story/${storyId}.jpg`;
-            const relativePath = await downloadAndSaveImage(artworkResult.imageUrl, savePath);
-            artworkImageUrl = relativePath; // 로컬 저장 경로 사용
-          }
-        }
-      } catch (imageError) {
-        fastify.log.warn('이미지 생성 실패, 기본값으로 진행')
-      }
+      const storyImg  = path.join(ROOT, "public", "character", character.characterImg!);
+
+      
+      // let artworkImageUrl: string | null = null;
+      // try {
+      //   if (background.backgroundImg && character.characterImg) {
+
+      //     const backgroundImagePath = path.join(ROOT, "public", "background", background.backgroundImg!);
+      //     const characterImagePath  = path.join(ROOT, "public", "character", character.characterImg!);
+
+      //     const artworkResult = await generateArtworkWithVision(
+      //       backgroundImagePath,
+      //       characterImagePath,
+      //       `${name} - ${background.name} 배경에서 ${character.name} 캐릭터가 등장하는 판타지 작품`
+      //     );
+
+      //     if (artworkResult.imageUrl) {
+      //       const storyId = Date.now().toString();
+      //       const saveAbsPath = path.join(ROOT, "public", "story", storyId)
+      //       const relWebPath = `${storyId}.png`; // 프론트에서 접근할 URL
+      //       await downloadAndSaveImage(artworkResult.imageUrl, saveAbsPath);
+      //       artworkImageUrl = relWebPath;
+      //     }
+      //   }
+      // } catch (imageError) {
+      //   fastify.log.warn(`이미지 생성 실패, 기본값으로 진행: ${String(imageError)}`);
+      // }
+
+
       const basicStory = await fastify.prisma.story.create({
         data: {
           backgroundId: background.id,
           basic: true,
           userId: writerId,
-          characterId: body.characterId,
+          characterId: characterId,
           name: name,
           characterPrompt: characterPrompt,
           opening: opening,
-          img: artworkImageUrl || undefined
+          img: storyImg
         }
       })
 

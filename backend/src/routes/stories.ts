@@ -20,12 +20,6 @@ declare module 'fastify' {
 //TODO 어떤 캐릭터의 basic 작품 조회, 어떤 배경의 basic 작품 조회하는 API 필요할까/
 
 export default async function storiesRoutes(fastify: FastifyInstance) {
-  // public/story 폴더가 없으면 생성
-  const storyDir = path.resolve(__dirname, "../../../public/story");
-  if (!fs.existsSync(storyDir)) {
-    fs.mkdirSync(storyDir, { recursive: true });
-  }
-
   // GET /api/v1/stories - 작품 목록 조회
   fastify.get<{ Querystring: StoryListQuery}>('/api/v1/stories', {
     schema: {

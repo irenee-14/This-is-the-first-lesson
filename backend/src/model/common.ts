@@ -140,7 +140,7 @@ export async function downloadAndSaveImage(imageUrl: string, savePath: string): 
 export async function generateArtworkImage(
   backgroundImagePath: string,
   characterImagePath: string,
-  prompt: string = "배경과 캐릭터를 자연스럽게 조합한 아름다운 작품 이미지"
+  prompt: string = "이미지로 준 똑같은 배경과 똑같은 캐릭터를 자연스럽게 조합한 아름다운 작품 이미지를 만들어줘. 모르는 사람이 봐도 같은 캐릭터임을 알 수 있을 정도로 캐릭터 외모가 똑같아야 함."
 ) {
   console.log("DALL-E API 호출 시작");
   const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
@@ -152,7 +152,7 @@ export async function generateArtworkImage(
 
     const response = await openai.images.generate({
       model: "dall-e-3",
-      prompt: `${prompt}. 배경 이미지와 캐릭터 이미지를 참고하여 자연스럽게 조합해주세요.`,
+      prompt: `${prompt}. 이미지로 준 똑같은 배경과 똑같은 캐릭터를 자연스럽게 조합한 아름다운 작품 이미지를 만들어줘. 모르는 사람이 봐도 같은 캐릭터임을 알 수 있을 정도로 캐릭터 외모가 똑같아야 함.`,
       n: 1,
       size: "1024x1024",
       quality: "standard",
@@ -174,7 +174,7 @@ export async function generateArtworkImage(
 export async function generateArtworkWithVision(
   backgroundImagePath: string,
   characterImagePath: string,
-  prompt: string = "배경과 캐릭터를 자연스럽게 조합한 아름다운 작품 이미지"
+  prompt: string = "이미지로 준 똑같은 배경과 똑같은 캐릭터를 자연스럽게 조합한 아름다운 작품 이미지를 만들어줘. 모르는 사람이 봐도 같은 캐릭터임을 알 수 있을 정도로 캐릭터 외모가 똑같아야 함."
 ) {
   console.log("Vision API + DALL-E 호출 시작");
   const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
@@ -241,4 +241,22 @@ export async function generateArtworkWithVision(
     console.error("Vision API + DALL-E 호출 오류:", error);
     throw new Error(`이미지 생성 오류: ${error}`);
   }
+}
+
+export const PUBLIC_DIR = path.resolve(__dirname, "../../public");
+
+export function resolvePublicPath(p?: string | null) {
+  if (!p) return null;
+  // 앞의 "public/" 제거 → 'background/x.png'처럼 맞춤
+  const rel = p.replace(/^[\\/]*public[\\/]+/i, "");
+  // 이중으로 'background/background' 붙는 것 방지
+  const normalized = rel.replace(/^[\\/]+/, "");
+  return path.join(PUBLIC_DIR, normalized);
+}
+
+export function ensureFileExists(p: string) {
+  if (!fs.existsSync(p)) {
+    throw new Error(`Image not found: ${p}`);
+  }
+  return p;
 }
