@@ -24,12 +24,10 @@ export function useBackgroundUnlock() {
   const unlockBackground = async (refetchFlow?: () => void) => {
     try {
       setIsUnlocking(true);
-      console.log("unlockBackground 시작, lockedFlow:", lockedFlow);
       if (lockedFlow?.id) {
         await patch("/users/unlocked-backgrounds", {
           backgroundId: lockedFlow.id,
         });
-        console.log("API 호출 성공, closeSheet 호출");
         closeSheet();
         // Flow 데이터 다시 불러오기
         if (refetchFlow) {
