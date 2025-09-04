@@ -9,7 +9,6 @@ import {
 } from '../types/api'
 import { buildGptStory } from 'src/model/storyPrompt'
 import path from "path";
-import { downloadAndSaveImage, generateArtworkWithVision, resolvePublicPath, ensureFileExists, PUBLIC_DIR } from 'src/model/common'
 declare module 'fastify' {
   interface FastifyInstance {
     prisma: PrismaClient
