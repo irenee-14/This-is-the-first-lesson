@@ -341,7 +341,7 @@ export default async function usersRoutes(fastify: FastifyInstance) {
               .catch(() => null)
 
             const ROOT = path.resolve(__dirname, "..", "..", "..");
-            const storyImg  = path.join(ROOT, "public", "character", c.characterImg!);
+            const storyImg  = path.join(ROOT, "public", "story", c.characterImg?.replace(/\.png$/i, "") + "_" + background.backgroundImg);
             return {
               userId,
               backgroundId,
