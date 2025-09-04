@@ -28,11 +28,12 @@ export function useBackgroundUnlock() {
         await patch("/users/unlocked-backgrounds", {
           backgroundId: lockedFlow.id,
         });
-        closeSheet();
 
         if (onSuccess) {
           onSuccess();
         }
+
+        closeSheet();
       } else {
         console.error("No lockedFlow or lockedFlow.id is missing");
       }

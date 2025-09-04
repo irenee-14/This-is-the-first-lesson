@@ -28,7 +28,6 @@ export function BackgroundUnlockProvider({
   const handleUnlockSuccessCallback = () => {
     if (lockedFlow?.id) {
       onUnlockSuccess?.(lockedFlow.id);
-      closeSheet();
     }
   };
 

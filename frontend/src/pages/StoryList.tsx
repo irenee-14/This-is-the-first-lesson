@@ -10,17 +10,11 @@ import {
 import { useFlowManager } from "@/hooks/useFlowManager";
 import { useMemo } from "react";
 
-function StoryListContent() {
-  const [searchParams] = useSearchParams();
-  const writerId = searchParams.get("writerId");
-  const characterId = searchParams.get("characterId");
+interface StoryListContentProps {
+  flows: import("@/types/story").Flow[];
+}
 
-  const { flows, updateFlowItem } = useFlowManager({
-    writerId: writerId || undefined,
-    characterId: characterId || undefined,
-    autoLoad: true,
-  });
-
+function StoryListContent({ flows }: StoryListContentProps) {
   const handleClick = useBackgroundUnlockHandler();
 
   const flowsMemo = useMemo(() => flows, [flows]);
@@ -84,19 +78,22 @@ export default function Stories() {
   const writerId = searchParams.get("writerId");
   const characterId = searchParams.get("characterId");
 
-  const { updateFlowItem } = useFlowManager({
+  const { updateFlowItem, reloadFlowData, flows } = useFlowManager({
     writerId: writerId || undefined,
     characterId: characterId || undefined,
-    autoLoad: false, // Provider에서 처리하므로 자동 로드 비활성화
+    autoLoad: true, // 자동 로드 활성화
   });
 
   const handleUnlockSuccess = (flowId: string) => {
+    // 로컬 상태 즉시 업데이트
     updateFlowItem(flowId, { isOpen: true });
+    // 서버에서 최신 데이터 다시 가져오기
+    reloadFlowData();
   };
 
   return (
     <BackgroundUnlockProvider onUnlockSuccess={handleUnlockSuccess}>
-      <StoryListContent />
+      <StoryListContent flows={flows} />
     </BackgroundUnlockProvider>
   );
 }

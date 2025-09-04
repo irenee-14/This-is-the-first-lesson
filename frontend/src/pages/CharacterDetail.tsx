@@ -23,21 +23,28 @@ const Count = {
 const getImageUrl = (dbPath: string) =>
   new URL(`../assets/images/${dbPath}`, import.meta.url).href;
 
-function CharacterDetailContent() {
+interface CharacterDetailContentProps {
+  flows: import("@/types/story").Flow[];
+  characterData:
+    | {
+        success: boolean;
+        data: import("@/types/character").Character;
+      }
+    | undefined;
+  characterLoading: boolean;
+  characterError: string | null;
+}
+
+function CharacterDetailContent({
+  flows,
+  characterData,
+  characterLoading,
+  characterError,
+}: CharacterDetailContentProps) {
   const navigate = useNavigate();
   const { charId } = useParams();
 
   const [likeCount, setLikeCount] = useState(Count.likeCount); // 초기값을 Count.likeCount와 동일하게 설정
-
-  const {
-    data: characterData,
-    loading: characterLoading,
-    error: characterError,
-    get: getCharacter,
-  } = useApi<{
-    success: boolean;
-    data: import("@/types/character").Character;
-  }>();
 
   const { data: chatListData, get: getChatList } = useApi<{
     success: boolean;
@@ -49,20 +56,7 @@ function CharacterDetailContent() {
     };
   }>();
 
-  const { flows } = useFlowManager({
-    writerId: characterData?.data?.writerId,
-    characterId: charId,
-    autoLoad: !!characterData?.data?.writerId && !!charId,
-  });
-
   const handleClick = useBackgroundUnlockHandler();
-
-  // 캐릭터 데이터 로딩
-  useEffect(() => {
-    if (charId) {
-      getCharacter(`/characters/${charId}`);
-    }
-  }, [charId, getCharacter]);
 
   // 채팅 목록 로딩
   useEffect(() => {
@@ -87,7 +81,7 @@ function CharacterDetailContent() {
       const firstStory = flows[0];
       navigate(firstStory ? `/story/${firstStory.id}` : `/characters`);
     }
-  }, [hasChatHistory, character?.writerId, charId, flows, navigate]);
+  }, [hasChatHistory, character, charId, flows, navigate]);
 
   const handleStoryClick = useCallback(
     (storyId: string) => {
@@ -112,7 +106,7 @@ function CharacterDetailContent() {
 
   const onLikeClick = useCallback((): void => {
     setLikeCount((prev) => prev + 1);
-  }, [likeCount]);
+  }, []);
 
   if (characterLoading) {
     return (
@@ -205,24 +199,39 @@ function CharacterDetailContent() {
 
 export default function CharacterDetail() {
   const { charId } = useParams();
-  const { data: characterData } = useApi<{
+  const { data: characterData, get: getCharacter } = useApi<{
     success: boolean;
     data: import("@/types/character").Character;
   }>();
 
-  const { updateFlowItem } = useFlowManager({
+  // 캐릭터 데이터 로딩
+  useEffect(() => {
+    if (charId) {
+      getCharacter(`/characters/${charId}`);
+    }
+  }, [charId, getCharacter]);
+
+  const { updateFlowItem, reloadFlowData, flows } = useFlowManager({
     writerId: characterData?.data?.writerId,
     characterId: charId,
-    autoLoad: false, // Provider에서 처리하므로 자동 로드 비활성화
+    autoLoad: true, // 자동 로드 활성화
   });
 
   const handleUnlockSuccess = (flowId: string) => {
+    // 로컬 상태 즉시 업데이트
     updateFlowItem(flowId, { isOpen: true });
+    // 서버에서 최신 데이터 다시 가져오기
+    reloadFlowData();
   };
 
   return (
     <BackgroundUnlockProvider onUnlockSuccess={handleUnlockSuccess}>
-      <CharacterDetailContent />
+      <CharacterDetailContent
+        flows={flows}
+        characterData={characterData || undefined}
+        characterLoading={characterData === undefined}
+        characterError={null}
+      />
     </BackgroundUnlockProvider>
   );
 }

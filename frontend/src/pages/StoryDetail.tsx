@@ -6,6 +6,7 @@ import { useApi } from "@/hooks/useApi";
 import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import type { StoryResponse } from "@/types/story";
+import CharacterInfoSection from "@/components/features/characterTab/CharacterInfoSection";
 
 export default function StoryDetail() {
   const navigate = useNavigate();
@@ -90,15 +91,29 @@ export default function StoryDetail() {
           </div>
           {/*  Info */}
           <div className="flex flex-col gap-2">
-            <h1 className="text-2xl font-bold text-White-Font ">
-              {story.storyName}와 {story.storyName}에서 대화하기
+            <h1 className="text-lg font-semibold text-White-Font ">
+              {Array.isArray(story)
+                ? "잘못된 데이터 형식입니다."
+                : `${story.characterName}와 ${story.backgroundName}에서 대화하기`}
             </h1>
           </div>
           {/*  Description */}
-          <div>
-            <p className="text-sm font-normal leading-tight">
-              {story.characterPrompt}
-            </p>
+          <div className="flex flex-col gap-4">
+            <CharacterInfoSection
+              content={
+                !Array.isArray(story) && "opening" in story
+                  ? story.characterPrompt
+                  : "잘못된 데이터 형식입니다."
+              }
+            />
+            <CharacterInfoSection
+              title="도입부"
+              content={
+                !Array.isArray(story) && "opening" in story
+                  ? story.opening
+                  : "잘못된 데이터 형식입니다."
+              }
+            />
           </div>
         </div>
       </div>
