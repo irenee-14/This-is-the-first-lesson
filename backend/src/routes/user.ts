@@ -7,6 +7,7 @@ import {
 } from '../types/api'
 import { open } from 'node:fs';
 import { buildGptStory } from '../model/storyPrompt'
+import path from 'node:path';
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -338,6 +339,9 @@ export default async function usersRoutes(fastify: FastifyInstance) {
             const parsed: any = await buildGptStory(c as any, background as any)
               .then(r => (typeof r === 'string' ? JSON.parse(r) : r))
               .catch(() => null)
+
+            const ROOT = path.resolve(__dirname, "..", "..", "..");
+            const storyImg  = path.join(ROOT, "public", "character", c.characterImg!);
             return {
               userId,
               backgroundId,
@@ -345,7 +349,8 @@ export default async function usersRoutes(fastify: FastifyInstance) {
               basic: true,
               name: parsed?.name ?? `${background.name} x ${c.name}`,
               opening: parsed?.opening ?? '',
-              characterPrompt: parsed?.characterPrompt ?? c.personality
+              characterPrompt: parsed?.characterPrompt ?? c.personality,
+              img: storyImg 
             }
           })
         )

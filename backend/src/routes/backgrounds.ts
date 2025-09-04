@@ -452,9 +452,9 @@ export default async function backgroundsRoutes(fastify: FastifyInstance) {
         } as ApiResponse)
       }
       // // backend/src/routes/... 기준으로 3단계 올라가면 프로젝트 루트
-      const ROOT = path.resolve(__dirname, "..", "..", "..");
       const storyPrompt = await buildGptStory(character, background)
       const {name, characterPrompt, opening} = JSON.parse(storyPrompt || '{}')
+      const ROOT = path.resolve(__dirname, "..", "..", "..");
       const storyImg  = path.join(ROOT, "public", "character", character.characterImg!);
 
       

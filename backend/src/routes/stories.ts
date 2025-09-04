@@ -291,33 +291,34 @@ export default async function storiesRoutes(fastify: FastifyInstance) {
 
       //GPT API 호출해서 작품 생성
       const storyPrompt = await buildGptStory(character, background)
-
       const {name, characterPrompt, opening} = JSON.parse(storyPrompt || '{}')
+      const ROOT = path.resolve(__dirname, "..", "..", "..");
+      const storyImg  = path.join(ROOT, "public", "character", character.characterImg!);
       
-      // 작품 이미지 생성
-      let artworkImageUrl = null
-      try {
-        if (background.backgroundImg && character.characterImg) {
-          const backgroundImagePath = `public/backgrounds/${background.backgroundImg}`
-          const characterImagePath = `public/characters/${character.characterImg}`
+      // // 작품 이미지 생성
+      // let artworkImageUrl = null
+      // try {
+      //   if (background.backgroundImg && character.characterImg) {
+      //     const backgroundImagePath = `public/backgrounds/${background.backgroundImg}`
+      //     const characterImagePath = `public/characters/${character.characterImg}`
           
-          const artworkResult = await generateArtworkWithVision(
-            backgroundImagePath,
-            characterImagePath,
-            `${name} - ${background.name} 배경에서 ${character.name} 캐릭터가 등장하는 판타지 작품`
-          )
+      //     const artworkResult = await generateArtworkWithVision(
+      //       backgroundImagePath,
+      //       characterImagePath,
+      //       `${name} - ${background.name} 배경에서 ${character.name} 캐릭터가 등장하는 판타지 작품`
+      //     )
           
-          // 생성된 이미지를 public/story 폴더에 저장
-          if (artworkResult.imageUrl) {
-            const storyId = Date.now().toString(); // 고유한 파일명 생성
-            const savePath = `public/story/${storyId}.jpg`;
-            const relativePath = await downloadAndSaveImage(artworkResult.imageUrl, savePath);
-            artworkImageUrl = relativePath; // 로컬 저장 경로 사용
-          }
-        }
-      } catch (imageError) {
-        fastify.log.warn('이미지 생성 실패, 기본값으로 진행')
-      }
+      //     // 생성된 이미지를 public/story 폴더에 저장
+      //     if (artworkResult.imageUrl) {
+      //       const storyId = Date.now().toString(); // 고유한 파일명 생성
+      //       const savePath = `public/story/${storyId}.jpg`;
+      //       const relativePath = await downloadAndSaveImage(artworkResult.imageUrl, savePath);
+      //       artworkImageUrl = relativePath; // 로컬 저장 경로 사용
+      //     }
+      //   }
+      // } catch (imageError) {
+      //   fastify.log.warn('이미지 생성 실패, 기본값으로 진행')
+      // }
       
       // const userId = request.headers['x-user-id'] as string
       const story = await fastify.prisma.story.create({
@@ -329,7 +330,7 @@ export default async function storiesRoutes(fastify: FastifyInstance) {
           characterPrompt: characterPrompt,
           basic: body.basic || false,
           opening: opening, 
-          img: artworkImageUrl || undefined
+          img: storyImg
         }
       })
 
