@@ -2,9 +2,9 @@ import Chip from "@/components/ui/Chip";
 import { cn } from "@/lib/utils";
 import { ReactComponent as LockIcon } from "@/assets/icons/Lock.svg";
 import type { Flow } from "@/types/story";
+import { getImageUrl } from "@/utils/imageUtils";
 
 export interface CardMediaTopProps {
-  id: string;
   flow?: Flow; // string에서 Flow로 변경
   isOpen?: boolean;
   imageUrl?: string;
@@ -57,11 +57,8 @@ export default function CardMediaTop({
             isHorizontal ? "w-40 h-40" : "w-full aspect-square"
           )}
           style={{
-            // backgroundImage: `url(${getImageUrl(imageUrl)})`,
             backgroundImage: imageUrl
-              ? imageUrl.startsWith("/assets/images/")
-                ? `url(${new URL(".." + imageUrl, import.meta.url).href})`
-                : `url(${imageUrl})`
+              ? `url(${getImageUrl(imageUrl)})`
               : undefined,
             backgroundSize: "cover",
             backgroundPosition: "center",

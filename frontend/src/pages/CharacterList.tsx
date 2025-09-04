@@ -7,9 +7,7 @@ import BottomNav from "@/components/layout/BottomNav";
 import { useApi } from "@/hooks/useApi";
 import type { CharacterListResponse, Character } from "@/types/character";
 import { useEffect } from "react";
-
-const getImageUrl = (dbPath: string) =>
-  new URL(`../assets/images/${dbPath}`, import.meta.url).href;
+import { getImageUrl } from "@/utils/imageUtils";
 
 export default function Characters() {
   const navigate = useNavigate();
@@ -35,7 +33,7 @@ export default function Characters() {
     chips: character.tags.length > 0 ? character.tags : ["Chip", "Chip"],
     imageUrl: character.characterImg
       ? getImageUrl(character.characterImg)
-      : "/image/icon.png",
+      : "/character/cha.png",
   });
 
   if (loading) {
@@ -69,8 +67,12 @@ export default function Characters() {
       <Header />
 
       <div className="pt-14 pb-20">
-        <div className="bg-gray-900 p-4 h-44">
-          <h2 className="h-40 text-2xl font-bold">배너</h2>
+        <div className="relative h-44 overflow-hidden">
+          <img
+            src="public/image/banner.png"
+            alt="배너"
+            className="w-full h-full object-cover"
+          />
         </div>
 
         <div className="p-3">

@@ -19,6 +19,8 @@ import MyPage from "@/pages/MyPage";
 import Feed from "@/pages/FeedPage";
 import StoryDetail from "@/pages/StoryDetail";
 import Stories from "./pages/StoryList";
+import { ToastProvider } from "@/components/ui/ToastProvider";
+import ToastExample from "./components/ui/ToastExample";
 
 function FlowResetWrapper({ children }: { children: React.ReactNode }) {
   useFlowReset();
@@ -36,10 +38,7 @@ const router = createBrowserRouter([
       { path: "/", element: <Home /> },
       { path: "/characters", element: <Characters /> },
       { path: "/characters/:charId", element: <CharacterDetail /> },
-      {
-        path: "/stories",
-        element: <Stories />,
-      },
+      { path: "/stories", element: <Stories /> },
       {
         // element: <RequireBackgroundDetail />,
         children: [{ path: "/story/:storyId", element: <StoryDetail /> }],
@@ -76,8 +75,10 @@ const router = createBrowserRouter([
 function App() {
   return (
     <main className="min-h-screen w-full max-w-sm md:max-w-md lg:max-w-lg mx-auto flex-1 scrollbar-stable">
-      {/* <DebugFlow /> */}
-      <RouterProvider router={router} />
+      <ToastProvider>
+        {/* <DebugFlow /> */}
+        <RouterProvider router={router} />
+      </ToastProvider>
     </main>
   );
 }

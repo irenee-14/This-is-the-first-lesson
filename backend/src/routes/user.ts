@@ -3,6 +3,7 @@ import { PrismaClient } from "../../generated/prisma";
 import { User, UpdateUserRequest, ApiResponse } from "../types/api";
 import { open } from "node:fs";
 import { buildGptStory } from "../model/storyPrompt";
+import path from "node:path";
 
 declare module "fastify" {
   interface FastifyInstance {
@@ -326,19 +327,13 @@ export default async function usersRoutes(fastify: FastifyInstance) {
             flowId: latestFlow.id,
             writerId: writerId || background.writerId,
           },
-          select: { characterId: true }
-        })
-        const existingSet = new Set(existingStories.map(s => s.characterId))
-        const toCreate = characters.filter(c => !existingSet.has(c.id))
+        });
 
-        const payloads = await Promise.all(
-          toCreate.map(async c => {
-            const parsed: any = await buildGptStory(c as any, background as any)
-              .then(r => (typeof r === 'string' ? JSON.parse(r) : r))
-              .catch(() => null)
-
-            const storyImg  = path.join("story", c.characterImg?.replace(/\.png$/i, "") + "_" + background.backgroundImg);
-            return {
+        // Create stories for writer's characters if they don't exist for this background and user
+        if (characters.length > 0) {
+          const characterIds = characters.map((c) => c.id);
+          const existingStories = await fastify.prisma.story.findMany({
+            where: {
               userId,
               backgroundId,
               characterId: { in: characterIds },
@@ -358,6 +353,13 @@ export default async function usersRoutes(fastify: FastifyInstance) {
               )
                 .then((r) => (typeof r === "string" ? JSON.parse(r) : r))
                 .catch(() => null);
+
+              const storyImg = path.join(
+                "story",
+                c.characterImg?.replace(/\.png$/i, "") +
+                  "_" +
+                  background.backgroundImg
+              );
               return {
                 userId,
                 backgroundId,
@@ -366,6 +368,7 @@ export default async function usersRoutes(fastify: FastifyInstance) {
                 name: parsed?.name ?? `${background.name} x ${c.name}`,
                 opening: parsed?.opening ?? "",
                 characterPrompt: parsed?.characterPrompt ?? c.personality,
+                img: storyImg,
               };
             })
           );
@@ -388,7 +391,6 @@ export default async function usersRoutes(fastify: FastifyInstance) {
       }
     }
   );
-
   // GET /api/v1/users/background-flows-with-opened - 전체 배경 플로우 + 오픈 여부
   fastify.get<{ Querystring: { writerId: string } }>(
     "/api/v1/users/background-flows-with-opened",
