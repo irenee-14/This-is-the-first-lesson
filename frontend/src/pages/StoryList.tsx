@@ -1,80 +1,29 @@
 import CardMediaLeft from "@/components/features/card/CardMediaLeft";
 import BottomNav from "@/components/layout/BottomNav";
 import Header from "@/components/layout/Header";
-import BottomSheet from "@/components/ui/BottomSheet";
-import { useApi } from "@/hooks/useApi";
-import { useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import { BackgroundUnlockSheet } from "@/components/features/BackgroundUnlockSheet";
-import type { Flow } from "@/types/story";
+import {
+  BackgroundUnlockProvider,
+  useBackgroundUnlockHandler,
+} from "@/components/features/BackgroundUnlockProvider";
 
-import { useBackgroundUnlock } from "@/hooks/useBackgroundUnlock";
+import { useFlowManager } from "@/hooks/useFlowManager";
+import { useMemo } from "react";
 
-export interface BackgroundUnlockSheetProps {
-  flow: Flow | null;
-  onClose: () => void;
-  onUnlock: () => void;
-}
-
-export default function Stories() {
-  const {
-    data: flowData,
-    loading,
-    error,
-    get,
-  } = useApi<{ data: import("@/types/story").Flow[] }>();
-
-  const { handleClick, lockedFlow, closeSheet, unlockBackground } =
-    useBackgroundUnlock();
-
+function StoryListContent() {
   const [searchParams] = useSearchParams();
-
   const writerId = searchParams.get("writerId");
   const characterId = searchParams.get("characterId");
 
-  const reloadFlowData = () => {
-    if (writerId && characterId) {
-      get(
-        `/users/flows-with-opened?writerId=${writerId}&characterId=${characterId}`
-      );
-    }
-  };
+  const { flows, updateFlowItem } = useFlowManager({
+    writerId: writerId || undefined,
+    characterId: characterId || undefined,
+    autoLoad: true,
+  });
 
-  useEffect(() => {
-    reloadFlowData();
-  }, [get, characterId, writerId]);
+  const handleClick = useBackgroundUnlockHandler();
 
-  const flows = flowData?.data || [];
-
-  const handleUnlockSuccessCallback = () => {
-    unlockBackground(() => {
-      reloadFlowData();
-    });
-  };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen">
-        <Header variant="withText" title="배경 선택하기" />
-        <div className="pt-14 pb-36 flex items-center justify-center">
-          <div>로딩 중...</div>
-        </div>
-        <BottomNav />
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen">
-        <Header variant="withText" title="배경 선택하기" />
-        <div className="pt-14 pb-36 flex items-center justify-center">
-          <div>오류가 발생했습니다: {error}</div>
-        </div>
-        <BottomNav />
-      </div>
-    );
-  }
+  const flowsMemo = useMemo(() => flows, [flows]);
 
   return (
     <div className="min-h-screen">
@@ -95,14 +44,14 @@ export default function Stories() {
           </div>
 
           {/* Background List */}
-          {flows.length > 0 ? (
+          {flowsMemo.length > 0 ? (
             <>
               <div
                 className={
                   "self-stretch inline-flex flex-col justify-start items-start gap-4 scrollbar-hide"
                 }
               >
-                {flows.map((flow, index) => (
+                {flowsMemo.map((flow, index) => (
                   <CardMediaLeft
                     key={flow.id || index}
                     isOpen={flow.isOpen}
@@ -124,21 +73,30 @@ export default function Stories() {
           )}
         </div>
       </div>
-      {/* Pay BottomSheet */}
-      <BottomSheet open={!!lockedFlow} onClose={closeSheet}>
-        {lockedFlow && (
-          <>
-            <BackgroundUnlockSheet
-              name={lockedFlow.title || "Unknown Background"}
-              backgroundId={lockedFlow.id || ""}
-              onClose={closeSheet}
-              onUnlockSuccess={handleUnlockSuccessCallback}
-            />
-          </>
-        )}
-      </BottomSheet>
 
       <BottomNav />
     </div>
+  );
+}
+
+export default function Stories() {
+  const [searchParams] = useSearchParams();
+  const writerId = searchParams.get("writerId");
+  const characterId = searchParams.get("characterId");
+
+  const { updateFlowItem } = useFlowManager({
+    writerId: writerId || undefined,
+    characterId: characterId || undefined,
+    autoLoad: false, // Provider에서 처리하므로 자동 로드 비활성화
+  });
+
+  const handleUnlockSuccess = (flowId: string) => {
+    updateFlowItem(flowId, { isOpen: true });
+  };
+
+  return (
+    <BackgroundUnlockProvider onUnlockSuccess={handleUnlockSuccess}>
+      <StoryListContent />
+    </BackgroundUnlockProvider>
   );
 }

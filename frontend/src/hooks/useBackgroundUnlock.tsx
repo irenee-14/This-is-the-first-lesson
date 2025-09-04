@@ -21,7 +21,7 @@ export function useBackgroundUnlock() {
 
   const closeSheet = () => setLockedFlow(null);
 
-  const unlockBackground = async (refetchFlow?: () => void) => {
+  const unlockBackground = async (onSuccess?: () => void) => {
     try {
       setIsUnlocking(true);
       if (lockedFlow?.id) {
@@ -29,9 +29,9 @@ export function useBackgroundUnlock() {
           backgroundId: lockedFlow.id,
         });
         closeSheet();
-        // Flow 데이터 다시 불러오기
-        if (refetchFlow) {
-          refetchFlow();
+
+        if (onSuccess) {
+          onSuccess();
         }
       } else {
         console.error("No lockedFlow or lockedFlow.id is missing");
