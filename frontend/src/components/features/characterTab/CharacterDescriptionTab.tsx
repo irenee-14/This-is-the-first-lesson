@@ -90,7 +90,7 @@ export default function CharacterDescriptionTab({
           {character.writerNote}
         </p>
       </div>
-
+      <div className="w-full h-2 bg-indigoGray-900"></div>
       {/* Background Area */}
       <div className="gap-6 flex flex-col">
         {!hasChatHistory && flow[0] && (
