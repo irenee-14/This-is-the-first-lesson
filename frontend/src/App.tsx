@@ -5,15 +5,15 @@ import NotFound from "@/pages/NotFound";
 import Personas from "@/pages/Personas";
 import CharacterDetail from "@/pages/CharacterDetail";
 import { useFlowReset } from "@/hooks/useFlowReset";
-import { useFlowStore } from "./stores/useFlowStore";
-import { useEffect } from "react";
+// import { useFlowStore } from "./stores/useFlowStore";
+// import { useEffect } from "react";
 import Home from "@/pages/Home";
 import Chat from "@/pages/Chat";
-import {
-  RequireBackgroundDetail,
-  RequirePersona,
-  RequireChat,
-} from "@/utils/RequireFlow";
+// import {
+//   RequireBackgroundDetail,
+//   RequirePersona,
+//   RequireChat,
+// } from "@/utils/RequireFlow";
 import Chats from "@/pages/ChatList";
 import MyPage from "@/pages/MyPage";
 import Feed from "@/pages/FeedPage";
@@ -63,19 +63,19 @@ const router = createBrowserRouter([
   },
 ]);
 
-function DebugFlow() {
-  const state = useFlowStore();
+// function DebugFlow() {
+//   const state = useFlowStore();
 
-  useEffect(() => {
-    console.log("현재 Flow 상태:", state);
-  }, [state]);
+//   useEffect(() => {
+//     console.log("현재 Flow 상태:", state);
+//   }, [state]);
 
-  return null;
-}
+//   return null;
+// }
 
 function App() {
   return (
-    <main className="min-h-screen w-full max-w-sm md:max-w-md lg:max-w-lg mx-auto flex-1">
+    <main className="min-h-screen w-full max-w-sm md:max-w-md lg:max-w-lg mx-auto flex-1 scrollbar-stable">
       {/* <DebugFlow /> */}
       <RouterProvider router={router} />
     </main>

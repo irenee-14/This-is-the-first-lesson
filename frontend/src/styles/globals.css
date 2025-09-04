@@ -12,6 +12,8 @@
   html {
     font-family: "Pretendard Variable", "Pretendard", -apple-system,
       BlinkMacSystemFont, system-ui, sans-serif;
+    /* 스크롤바로 인한 레이아웃 시프트 방지 */
+    scrollbar-gutter: stable;
   }
 
   body {
@@ -19,6 +21,9 @@
       BlinkMacSystemFont, system-ui, sans-serif;
     @apply bg-indigoGray-black text-white;
     font-weight: 400;
+    /* 스크롤바로 인한 레이아웃 시프트 방지 */
+    overflow-y: scroll;
+    scrollbar-gutter: stable;
   }
 
   :root {
@@ -47,6 +52,8 @@
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
+    /* 스크롤바 너비 계산을 위한 변수 */
+    --scrollbar-width: 0px;
   }
 
   .dark {
@@ -78,4 +85,37 @@
 }
 
 @layer components {
+  /* 스크롤바 스타일링 및 레이아웃 시프트 방지 */
+  .scrollbar-stable {
+    scrollbar-gutter: stable;
+  }
+
+  /* 스크롤바 숨기기 (필요한 경우) */
+  .scrollbar-hide {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
+  }
+
+  /* 스크롤바 커스터마이징 */
+  .scrollbar-custom::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .scrollbar-custom::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+  }
+
+  .scrollbar-custom::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+  }
+
+  .scrollbar-custom::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
+  }
 }
