@@ -74,6 +74,7 @@ model Background {
   name             String           @map("name") @db.VarChar(255)
   prompt           String           @map("prompt")
   tags             String[]         @map("tags")
+  basic            Boolean          @map("basic")
   id               String           @id @default(uuid()) @map("background_id")
   backgroundImg    String?          @default("IMAGE") @map("background_img") @db.VarChar(255)
   introDescription String           @map("intro_description")
@@ -177,6 +178,7 @@ model Story {
   characterId     String     @map("character_id")
   characterPrompt String     @map("character_prompt")
   id              String     @id @default(uuid()) @map("story_id")
+  img             String     @default("IMAGE") @map("story_img") @db.VarChar(255)
   userId          String     @map("user_id")
   chats           Chat[]
   background      Background @relation(fields: [backgroundId], references: [id], onDelete: Cascade)

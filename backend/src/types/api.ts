@@ -71,6 +71,8 @@ export interface CreateBackgroundRequest {
   introTitle: string;
   introDescription: string;
   unlockChatCount: number;
+  characterId: string;
+  imgUrl: string;
 }
 
 export interface UpdateBackgroundRequest {
@@ -86,11 +88,15 @@ export interface UpdateBackgroundRequest {
 // Story Types
 export interface Story {
   storyId: string;
+  name: string;
   characterId: string;
   backgroundId: string;
+  characterName: string;
+  backgroundName: string;
   writerId: string;
   basic: boolean;
   characterPrompt?: string;
+  img: string;
   opening: string;
   createdAt: string;
   updatedAt: string;

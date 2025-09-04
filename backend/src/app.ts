@@ -37,7 +37,7 @@ export async function createServer() {
 
   // Fastify 예시
   fastify.register(require("@fastify/static"), {
-    root: path.join(__dirname, "../public"),
+    root: path.join(__dirname, "../../public"),
     prefix: "/", // ← 여기 중요!
   });
   // Prisma
