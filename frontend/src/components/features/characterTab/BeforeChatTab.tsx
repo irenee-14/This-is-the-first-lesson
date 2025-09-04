@@ -1,6 +1,7 @@
 import CardMediaLeft from "@/components/features/card/CardMediaLeft";
 import type { Character } from "@/types/character";
 import type { ChatSummary } from "@/types/chat";
+import { getImageUrl } from "@/utils/imageUtils";
 
 interface CharacterChatTabProps {
   character: Character;
@@ -22,7 +23,7 @@ export default function CharacterChatTab({
           {chatList.map((chat: ChatSummary) => (
             <CardMediaLeft
               key={chat.chatId}
-              imageUrl="src/assets/images/characters/character_1.png"
+              imageUrl={getImageUrl(chat.characterImg) || ""}
               name={chat.storyName}
               description={chat.lastMessage || "채팅 기록이 없습니다"}
               onClick={() => onChatClick(chat.chatId)}

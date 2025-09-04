@@ -5,6 +5,8 @@ import path from "path";
 
 export default defineConfig({
   plugins: [react(), svgr()],
+  // 루트 public 폴더를 정적 파일 서빙 디렉토리로 설정
+  publicDir: path.resolve(__dirname, "../public"),
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),

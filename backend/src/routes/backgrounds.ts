@@ -12,6 +12,7 @@ import {
   downloadAndSaveImage,
   generateArtworkWithVision,
 } from "src/model/common";
+import path from "node:path";
 
 declare module "fastify" {
   interface FastifyInstance {
@@ -60,7 +61,6 @@ export default async function backgroundsRoutes(fastify: FastifyInstance) {
         if (writerId) {
           where.writerId = writerId;
         }
-
         const [backgrounds, total] = await Promise.all([
           fastify.prisma.background.findMany({
             where,
@@ -133,7 +133,6 @@ export default async function backgroundsRoutes(fastify: FastifyInstance) {
     async (request, reply) => {
       try {
         const { backgroundId } = request.params;
-
         const background = await fastify.prisma.background.findUnique({
           where: { id: backgroundId },
           include: {
@@ -473,8 +472,8 @@ export default async function backgroundsRoutes(fastify: FastifyInstance) {
         const { characterPrompt, opening } = JSON.parse(
           storyPrompt || "{}"
         );
-        const storyImg  = path.join("character", character.characterImg!);
-        // // 작품 이미지 생성
+
+        const storyImg = path.join("story", character.characterImg!);
         // let artworkImageUrl = null;
         // try {
         //   if (background.backgroundImg && character.characterImg) {
@@ -501,6 +500,7 @@ export default async function backgroundsRoutes(fastify: FastifyInstance) {
         // } catch (imageError) {
         //   fastify.log.warn("이미지 생성 실패, 기본값으로 진행");
         // }
+
         const basicStory = await fastify.prisma.story.create({
           data: {
             backgroundId: background.id,
@@ -510,7 +510,7 @@ export default async function backgroundsRoutes(fastify: FastifyInstance) {
             name: background.name,
             characterPrompt: characterPrompt,
             opening: opening,
-            img: storyImg,
+            img: storyImg || undefined,
           },
         });
 

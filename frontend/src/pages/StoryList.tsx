@@ -47,7 +47,7 @@ function StoryListContent({ flows }: StoryListContentProps) {
               >
                 {flowsMemo.map((flow, index) => (
                   <CardMediaLeft
-                    key={flow.id || index}
+                    key={`${flow.id ?? "noid"}-${index}`}
                     isOpen={flow.isOpen}
                     imageUrl={
                       flow.imgUrl || "src/assets/images/backgrounds/library.png"

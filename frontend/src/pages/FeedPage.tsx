@@ -1,4 +1,5 @@
 import BottomNav from "@/components/layout/BottomNav";
+import { getImageUrl } from "@/utils/imageUtils";
 
 import { ReactComponent as SearchIcon } from "@/assets/icons/Search.svg";
 import { ReactComponent as PlayIcon } from "@/assets/icons/Play.svg";
@@ -29,43 +30,43 @@ const mockPosts: Post[] = [
     id: 1,
     username: "Prince_93",
     timeAgo: "38분 전",
-    image: "@/assets/images/characters/office.png",
+    image: getImageUrl("character/yun.png"),
     likes: 51,
     comments: 3,
     shares: 8,
     content: "퇴근하면 전화해",
-    profileImage: "/image/characters/character1.png",
+    profileImage: getImageUrl("character/lin.png"),
   },
   {
     id: 2,
     username: "B_caat",
     timeAgo: "2시간 전",
-    image: "/image/backgrounds/비 오는 밤 레코드숍.png",
+    image: getImageUrl("character/baek.png"),
     likes: 142,
     comments: 16,
     shares: 19,
     content:
       "백현우 내 목숨 다하는 날까지 그대만을 기억하리니, 부디 다른 세상에서 다시 만나기를 바라오. 내 마음은 언제나 그대 곁에 머물 것이오.",
-    profileImage: "/image/characters/character2.png",
+    profileImage: getImageUrl("character/cha.png"),
   },
   {
     id: 3,
     username: "moyaaa__",
     timeAgo: "4시간 전",
-    image: "/image/backgrounds/유리 천장의 온실.png",
+    image: getImageUrl("character/ian.png"),
     likes: 591,
     comments: 33,
     shares: 82,
     content: "내가 너랑 친한 건 행운일까 아님, 불행일까.",
-    profileImage: "/image/characters/character3.png",
+    profileImage: getImageUrl("character/shin.png"),
   },
 ];
 
 const mockRecommendations: Recommendation[] = [
-  { id: 1, name: "Name", image: "/image/characters/character1.png" },
-  { id: 2, name: "Name", image: "/image/characters/character2.png" },
-  { id: 3, name: "Name", image: "/image/characters/character3.png" },
-  { id: 4, name: "Name", image: "/image/characters/character1.png" },
+  { id: 1, name: "윤서준", image: getImageUrl("character/yun.png") },
+  { id: 2, name: "백현우", image: getImageUrl("character/baek.png") },
+  { id: 3, name: "이안", image: getImageUrl("character/ian.png") },
+  { id: 4, name: "양관식", image: getImageUrl("character/yang.png") },
 ];
 
 export default function Feed() {
@@ -98,7 +99,7 @@ export default function Feed() {
             <div className="flex gap-3 ">
               {mockRecommendations.map((rec) => (
                 <div key={rec.id} className="flex flex-col items-center">
-                  <div className="w-15 h-15 rounded-full bg-gray-600 overflow-hidden p-3">
+                  <div className="w-16 h-16 rounded-full bg-gray-600 overflow-hidden flex-shrink-0">
                     <img
                       src={rec.image}
                       alt={rec.name}

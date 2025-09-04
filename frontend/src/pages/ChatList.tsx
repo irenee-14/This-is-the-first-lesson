@@ -15,8 +15,8 @@ export default function ChatList() {
   return (
     <>
       <Header />
-      <div className="flex flex-col gap-4 p-4">
-        <h1 className="text-2xl font-bold mb-4">채팅 목록</h1>
+      <div className="flex flex-col gap-4 pt-16 p-4">
+        <h3 className="text-2xl font-bold mb-4">채팅 목록</h3>
 
         {loading && chatList.length === 0 ? (
           <div className="flex justify-center p-10">
@@ -52,6 +52,7 @@ export default function ChatList() {
           </div>
         )}
       </div>
+
       <BottomNav />
     </>
   );

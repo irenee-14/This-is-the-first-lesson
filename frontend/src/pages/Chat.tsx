@@ -7,6 +7,7 @@ import FloatingInputButton from "@/components/features/FloatingInputButton";
 import { useParams } from "react-router-dom";
 import { useChat } from "@/hooks/useChat";
 import { useTopSentinelObserver } from "@/hooks/useTopSentinelObserver";
+import { getImageUrl } from "@/utils/imageUtils";
 
 const Chat: React.FC = () => {
   const { chatId } = useParams<{ chatId: string }>();
@@ -124,7 +125,9 @@ const Chat: React.FC = () => {
                   <OtherMessage
                     content={message.contents}
                     characterName={chatDetail?.character.name || "캐릭터"}
-                    profileImage={chatDetail?.character.characterImg || ""}
+                    profileImage={getImageUrl(
+                      chatDetail?.character.characterImg || ""
+                    )}
                     isLastMessage={isLastMessage}
                   />
                 </div>
@@ -142,7 +145,9 @@ const Chat: React.FC = () => {
                   typing
                   content=""
                   characterName={chatDetail?.character.name || "캐릭터"}
-                  profileImage={chatDetail?.character.characterImg || ""}
+                  profileImage={getImageUrl(
+                    chatDetail?.character.characterImg || ""
+                  )}
                   isLastMessage={false}
                 />
               </div>

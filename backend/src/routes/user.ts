@@ -3,6 +3,7 @@ import { PrismaClient } from "../../generated/prisma";
 import { User, UpdateUserRequest, ApiResponse } from "../types/api";
 import { open } from "node:fs";
 import { buildGptStory } from "../model/storyPrompt";
+import path from "node:path";
 
 declare module "fastify" {
   interface FastifyInstance {
@@ -352,6 +353,13 @@ export default async function usersRoutes(fastify: FastifyInstance) {
               )
                 .then((r) => (typeof r === "string" ? JSON.parse(r) : r))
                 .catch(() => null);
+
+              const storyImg = path.join(
+                "story",
+                c.characterImg?.replace(/\.png$/i, "") +
+                  "_" +
+                  background.backgroundImg
+              );
               return {
                 userId,
                 backgroundId,
@@ -360,6 +368,7 @@ export default async function usersRoutes(fastify: FastifyInstance) {
                 name: background.name ,
                 opening: parsed?.opening ?? "",
                 characterPrompt: parsed?.characterPrompt ?? c.personality,
+                img: storyImg,
               };
             })
           );
@@ -382,7 +391,6 @@ export default async function usersRoutes(fastify: FastifyInstance) {
       }
     }
   );
-
   // GET /api/v1/users/background-flows-with-opened - 전체 배경 플로우 + 오픈 여부
   fastify.get<{ Querystring: { writerId: string } }>(
     "/api/v1/users/background-flows-with-opened",
