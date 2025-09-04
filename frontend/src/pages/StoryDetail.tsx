@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import type { StoryResponse } from "@/types/story";
 import CharacterInfoSection from "@/components/features/characterTab/CharacterInfoSection";
+import { getImageUrl } from "@/utils/imageUtils";
 
 export default function StoryDetail() {
   const navigate = useNavigate();
@@ -78,7 +79,11 @@ export default function StoryDetail() {
 
             {/*  Image */}
             <img
-              src="/src/assets/images/backgrounds/library.png"
+              src={
+                !Array.isArray(story) && "img" in story
+                  ? getImageUrl(story.img)
+                  : "/image/banner.png"
+              }
               alt="Background Image"
               className="absolute inset-0 w-full h-full object-cover"
               onError={(e) => {

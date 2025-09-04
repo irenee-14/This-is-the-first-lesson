@@ -100,7 +100,7 @@ const Header = React.forwardRef<HTMLElement, HeaderProps>(
         {/* Logo */}
         <div className="flex items-center">
           <img
-            src="/image/logo.svg"
+            src="/public/image/logo.svg"
             alt="logo"
             className="h-[1.125rem] w-auto cursor-pointer"
             onClick={() => navigate("/")}

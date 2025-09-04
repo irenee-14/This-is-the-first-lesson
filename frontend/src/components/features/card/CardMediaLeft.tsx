@@ -3,6 +3,7 @@ import { cn } from "@/lib/utils";
 import { ReactComponent as ArrowRight } from "@/assets/icons/Arrow-Right.svg";
 import { ReactComponent as LockIcon } from "@/assets/icons/Lock.svg";
 import { useState } from "react";
+import { getImageUrl } from "@/utils/imageUtils";
 
 interface CardMediaLeftProps {
   imageUrl?: string;
@@ -29,11 +30,9 @@ export default function CardMediaLeft({
   const hasDescription = description && description.trim().length > 0;
   const showArrowRight = hasDescription && !hasTags; // 설명이 있고 태그가 없을 때만 화살표 표시
 
-  const getImageUrl = (): string | undefined => {
+  const getProcessedImageUrl = (): string | undefined => {
     if (!imageUrl || imageError) return undefined;
-    return imageUrl.startsWith("/assets/images/")
-      ? new URL(".." + imageUrl, import.meta.url).href
-      : imageUrl;
+    return getImageUrl(imageUrl);
   };
 
   return (
@@ -48,9 +47,9 @@ export default function CardMediaLeft({
       >
         {/* image */}
         <div className="w-20 h-20 relative bg-indigo-900 rounded overflow-hidden">
-          {getImageUrl() && (
+          {getProcessedImageUrl() && (
             <img
-              src={getImageUrl()}
+              src={getProcessedImageUrl()}
               alt={name}
               className="w-full h-full object-cover"
               onError={() => setImageError(true)}

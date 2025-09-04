@@ -108,16 +108,13 @@ export default function CharacterDescriptionTab({
             </p>
           </div>
           <div className="overflow-x-auto flex gap-4 scrollbar-hide">
-            {flow.map((flowItem: Flow) => {
+            {flow.map((flowItem: Flow, index: number) => {
               return (
                 <CardMediaTop
-                  key={flowItem.id}
+                  key={`${flowItem.id}-${index}`}
                   id={flowItem.id}
                   flow={flowItem}
-                  imageUrl={
-                    flowItem.imgUrl ||
-                    "src/assets/images/backgrounds/library.png"
-                  }
+                  imageUrl={flowItem.imgUrl || "/background/bg_1.png"}
                   name={flowItem.title || "Unknown Background"}
                   chips={flowItem.tags}
                   onFlowClick={onFlowClick}

@@ -132,7 +132,6 @@ async function chatsRoutes(fastify: FastifyInstance) {
           } as ApiResponse);
         }
 
-        console.log("characterId", characterId);
         const where: any = { ownerId: userId };
         if (characterId) where.characterId = characterId;
         if (storyId) where.storyId = storyId;

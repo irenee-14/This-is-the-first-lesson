@@ -14,14 +14,12 @@ import { ReactComponent as LikeIcon } from "@/assets/icons/Like.svg";
 import { ReactComponent as ChatIcon } from "@/assets/icons/Chat.svg";
 import CharacterDetailTabs from "@/components/features/characterTab/DetailTab";
 import type { Flow } from "@/types/story";
+import { getImageUrl } from "@/utils/imageUtils";
 
 const Count = {
   likeCount: 24,
   chatCount: 24,
 };
-
-const getImageUrl = (dbPath: string) =>
-  new URL(`../assets/images/${dbPath}`, import.meta.url).href;
 
 interface CharacterDetailContentProps {
   flows: import("@/types/story").Flow[];
@@ -142,11 +140,14 @@ function CharacterDetailContent({
             <div className="w-full h-90 bg-gradient-to-b from-purple-600 via-purple-500 to-indigoGray-black" />
             <div className="absolute inset-0 w-full h-90 bg-gradient-to-t from-indigoGray-black via-transparent to-transparent" />
             <img
-              src={getImageUrl(character.characterImg) || "/image/icon.png"}
+              src={
+                getImageUrl(character.characterImg) || "/character/린즈쉔.png"
+              }
               alt="Character Image"
               className="w-full h-90 object-cover aspect-square"
               onError={(e) => {
-                (e.currentTarget as HTMLImageElement).src = "/image/icon.png";
+                (e.currentTarget as HTMLImageElement).src =
+                  "/character/baek.png";
               }}
             />
             <div className="absolute bottom-4 left-4 flex gap-1">
