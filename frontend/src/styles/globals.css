@@ -24,6 +24,14 @@
     /* 스크롤바로 인한 레이아웃 시프트 방지 */
     overflow-y: scroll;
     scrollbar-gutter: stable;
+    /* 모바일 확대 방지 */
+    touch-action: manipulation;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
   }
 
   :root {
@@ -133,5 +141,16 @@
 
   .animate-slide-up {
     animation: slide-up 0.3s ease-out;
+  }
+
+  /* 입력 필드에서는 텍스트 선택 허용 */
+  input,
+  textarea,
+  [contenteditable] {
+    -webkit-user-select: text;
+    -khtml-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
   }
 }
