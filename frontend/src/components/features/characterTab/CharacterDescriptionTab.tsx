@@ -56,7 +56,7 @@ export default function CharacterDescriptionTab({
 
         {/* Flow 데이터가 없을 때 표시 */}
         <div className="text-center py-8 text-gray-500">
-          배경 정보를 불러오는 중입니다...
+          세계관 정보를 불러오는 중입니다...
         </div>
       </div>
     );
@@ -95,16 +95,16 @@ export default function CharacterDescriptionTab({
       <div className="gap-6 flex flex-col">
         {!hasChatHistory && flow[0] && (
           <CharacterInfoSection
-            title="배경 설명"
+            title="세계관 설명"
             content={flow[0].description}
           />
         )}
 
         <div className="flex flex-col gap-3">
           <div className="flex flex-col items-start">
-            <h2 className="text-lg font-semibold">또 다른 배경 보기</h2>
+            <h2 className="text-lg font-semibold">또 다른 세계관 보기</h2>
             <p className="text-sm text-gray-500">
-              🔒 캐릭터와 채팅이 쌓이면 잠금된 배경을 볼 수 있어요.
+              🔒 캐릭터와 채팅이 쌓이면 잠금된 세계관을 볼 수 있어요.
             </p>
           </div>
           <div className="overflow-x-auto flex gap-4 scrollbar-hide">
