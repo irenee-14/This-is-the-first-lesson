@@ -7,6 +7,7 @@ import {
   StoryListQuery
 } from '../types/api'
 import { buildGptStory } from 'src/model/storyPrompt'
+import { generateArtworkWithVision } from 'src/model/common'
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -67,6 +68,7 @@ export default async function storiesRoutes(fastify: FastifyInstance) {
         characterId: story.characterId,
         backgroundId: story.backgroundId,
         writerId: story.userId || '',
+        img: story.img,
         basic: story.basic,
         characterPrompt: story.characterPrompt || undefined,
         opening: story.opening,
@@ -140,6 +142,7 @@ export default async function storiesRoutes(fastify: FastifyInstance) {
         backgroundId: story.backgroundId,
         writerId: story.userId || '',
         basic: story.basic,
+        img: story.img,
         characterPrompt: story.characterPrompt || undefined,
         opening: story.opening,
         createdAt: story.createdAt.toISOString(),
@@ -211,6 +214,7 @@ export default async function storiesRoutes(fastify: FastifyInstance) {
         backgroundId: story.backgroundId,
         writerId: story.userId || '',
         basic: story.basic,
+        img: story.img,
         characterPrompt: story.characterPrompt || undefined,
         opening: story.opening,
         createdAt: story.createdAt.toISOString(),
@@ -281,6 +285,26 @@ export default async function storiesRoutes(fastify: FastifyInstance) {
       const storyPrompt = await buildGptStory(character, background)
 
       const {name, characterPrompt, opening} = JSON.parse(storyPrompt || '{}')
+      
+      // 작품 이미지 생성
+      let artworkImageUrl = null
+      try {
+        if (background.backgroundImg && character.characterImg) {
+          const backgroundImagePath = `public/backgrounds/${background.backgroundImg}`
+          const characterImagePath = `public/characters/${character.characterImg}`
+          
+          const artworkResult = await generateArtworkWithVision(
+            backgroundImagePath,
+            characterImagePath,
+            `${name} - ${background.name} 배경에서 ${character.name} 캐릭터가 등장하는 판타지 작품`
+          )
+          
+          artworkImageUrl = artworkResult.imageUrl
+        }
+      } catch (imageError) {
+        fastify.log.warn('이미지 생성 실패, 기본값으로 진행')
+      }
+      
       // const userId = request.headers['x-user-id'] as string
       const story = await fastify.prisma.story.create({
         data: {
@@ -290,7 +314,8 @@ export default async function storiesRoutes(fastify: FastifyInstance) {
           userId,
           characterPrompt: characterPrompt,
           basic: body.basic || false,
-          opening: opening
+          opening: opening, 
+          img: artworkImageUrl || undefined
         }
       })
 
