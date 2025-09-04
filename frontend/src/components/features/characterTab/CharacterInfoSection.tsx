@@ -2,7 +2,7 @@ import React from "react";
 
 interface CharacterInfoSectionProps {
   title: string;
-  content?: string;
+  content: string;
 }
 
 const CharacterInfoSection: React.FC<CharacterInfoSectionProps> = ({

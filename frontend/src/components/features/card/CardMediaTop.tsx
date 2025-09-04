@@ -1,12 +1,10 @@
 import Chip from "@/components/ui/Chip";
 import { cn } from "@/lib/utils";
 import { ReactComponent as LockIcon } from "@/assets/icons/Lock.svg";
-import { useBackgroundClickHandler } from "@/hooks/useBackgroundClickHandler";
-import BottomSheet from "@/components/ui/BottomSheet";
-import { BackgroundUnlockSheet } from "@components/features/BackgroundUnlockSheet";
 import type { Flow } from "@/types/story";
 
 export interface CardMediaTopProps {
+  id: string;
   flow?: Flow; // string에서 Flow로 변경
   isOpen?: boolean;
   imageUrl?: string;
@@ -14,6 +12,7 @@ export interface CardMediaTopProps {
   description?: string;
   chips?: string[];
   onClick?: () => void;
+  onFlowClick?: (flow: Flow) => void; // flow 클릭 핸들러 추가
   variant?: "vertical" | "horizontal" | "grid";
   className?: string;
 }
@@ -27,14 +26,14 @@ export default function CardMediaTop({
   chips = [],
   className,
   onClick,
+  onFlowClick,
   variant = "grid",
 }: CardMediaTopProps) {
   const isHorizontal = variant === "horizontal";
-  const { handleClick, lockedFlow, closeSheet } = useBackgroundClickHandler();
 
   const handleCardClick = () => {
-    if (flow) {
-      handleClick(flow);
+    if (flow && onFlowClick) {
+      onFlowClick(flow);
     } else if (onClick) {
       onClick();
     }
@@ -101,19 +100,6 @@ export default function CardMediaTop({
           </div>
         )}
       </div>
-
-      {/* flow가 있을 때만 BottomSheet 표시 */}
-      {flow && (
-        <BottomSheet open={!!lockedFlow} onClose={closeSheet}>
-          <BackgroundUnlockSheet
-            name="조선시대" //임시
-            onClose={closeSheet}
-            onUnlock={() => {
-              closeSheet();
-            }}
-          />
-        </BottomSheet>
-      )}
     </>
   );
 }

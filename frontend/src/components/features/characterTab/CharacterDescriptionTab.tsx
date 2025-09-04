@@ -10,6 +10,7 @@ interface CharacterDescriptionTabProps {
   flow: Flow[];
   hasChatHistory: boolean;
   onStoryClick: (storyId: string) => void;
+  onFlowClick: (flow: Flow) => void;
 }
 
 export default function CharacterDescriptionTab({
@@ -17,6 +18,7 @@ export default function CharacterDescriptionTab({
   flow,
   hasChatHistory,
   onStoryClick,
+  onFlowClick,
 }: CharacterDescriptionTabProps) {
   // flow가 undefined이거나 빈 배열인 경우 처리
   if (!flow || flow.length === 0) {
@@ -111,11 +113,13 @@ export default function CharacterDescriptionTab({
                 <CardMediaTop
                   key={flowItem.id}
                   flow={flowItem}
-                  imageUrl="src/assets/images/backgrounds/library.png"
-                  // name={flowItem.name}
-                  name="tmp"
+                  imageUrl={
+                    flowItem.imgUrl ||
+                    "src/assets/images/backgrounds/library.png"
+                  }
+                  name={flowItem.title || "Unknown Background"}
                   chips={flowItem.tags}
-                  onClick={() => onStoryClick(flowItem.id)}
+                  onFlowClick={onFlowClick}
                   variant="horizontal"
                   isOpen={flowItem.isOpen}
                 />

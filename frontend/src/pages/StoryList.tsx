@@ -3,11 +3,12 @@ import BottomNav from "@/components/layout/BottomNav";
 import Header from "@/components/layout/Header";
 import BottomSheet from "@/components/ui/BottomSheet";
 import { useApi } from "@/hooks/useApi";
-import { useBackgroundClickHandler } from "@/hooks/useBackgroundClickHandler";
 import { useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { BackgroundUnlockSheet } from "@/components/features/BackgroundUnlockSheet";
 import type { Flow } from "@/types/story";
+
+import { useBackgroundUnlock } from "@/hooks/useBackgroundUnlock";
 
 export interface BackgroundUnlockSheetProps {
   flow: Flow | null;
@@ -23,21 +24,33 @@ export default function Stories() {
     get,
   } = useApi<{ data: import("@/types/story").Flow[] }>();
 
-  const { handleClick, lockedFlow, closeSheet } = useBackgroundClickHandler();
+  const { handleClick, lockedFlow, closeSheet, unlockBackground } =
+    useBackgroundUnlock();
+
   const [searchParams] = useSearchParams();
 
   const writerId = searchParams.get("writerId");
   const characterId = searchParams.get("characterId");
 
-  useEffect(() => {
+  const reloadFlowData = () => {
     if (writerId && characterId) {
       get(
         `/users/flows-with-opened?writerId=${writerId}&characterId=${characterId}`
       );
     }
+  };
+
+  useEffect(() => {
+    reloadFlowData();
   }, [get, characterId, writerId]);
 
   const flows = flowData?.data || [];
+
+  const handleUnlockSuccessCallback = () => {
+    unlockBackground(() => {
+      reloadFlowData();
+    });
+  };
 
   if (loading) {
     return (
@@ -93,8 +106,10 @@ export default function Stories() {
                   <CardMediaLeft
                     key={flow.id || index}
                     isOpen={flow.isOpen}
-                    imageUrl={flow.imageUrl}
-                    name={flow.name}
+                    imageUrl={
+                      flow.imgUrl || "src/assets/images/backgrounds/library.png"
+                    }
+                    name={flow.title || "Unknown Background"}
                     description={flow.description}
                     tags={flow.tags}
                     onClick={() => handleClick(flow)}
@@ -111,13 +126,16 @@ export default function Stories() {
       </div>
       {/* Pay BottomSheet */}
       <BottomSheet open={!!lockedFlow} onClose={closeSheet}>
-        <BackgroundUnlockSheet
-          name={lockedFlow?.title || "Unknown Background"}
-          onClose={closeSheet}
-          onUnlock={() => {
-            closeSheet();
-          }}
-        />
+        {lockedFlow && (
+          <>
+            <BackgroundUnlockSheet
+              name={lockedFlow.title || "Unknown Background"}
+              backgroundId={lockedFlow.id || ""}
+              onClose={closeSheet}
+              onUnlockSuccess={handleUnlockSuccessCallback}
+            />
+          </>
+        )}
       </BottomSheet>
 
       <BottomNav />
