@@ -93,6 +93,7 @@ export interface Story {
   writerId: string;
   basic: boolean;
   characterPrompt?: string;
+  img: string;
   opening: string;
   createdAt: string;
   updatedAt: string;
