@@ -7,6 +7,8 @@ import {
   BackgroundListQuery,
   ApiResponse 
 } from '../types/api'
+import { buildGptStory } from 'src/model/storyPrompt'
+import { downloadAndSaveImage, generateArtworkWithVision } from 'src/model/common'
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -169,6 +171,85 @@ export default async function backgroundsRoutes(fastify: FastifyInstance) {
     }
   })
 
+    // GET /api/v1/backgrounds/basic?characterId= - 배경 베이직 조회
+    fastify.get<{ Querystring: { characterId: string } }>('/api/v1/backgrounds/basic', {
+      schema: {
+        querystring: {
+          type: 'object',
+          properties: {
+            characterId: { type: 'string' }
+          }
+        }
+      }
+    }, async (request, reply) => {
+      try {
+        const { characterId } = request.query
+  
+        const basicStory = await fastify.prisma.story.findFirst({
+          where: {characterId: characterId, basic: true},
+          include: {
+            background: {
+              select: {
+                id: true
+              }
+            }
+          }
+        })
+
+        if (!basicStory) {
+          return reply.status(404).send({
+            success: false,
+            error: 'basic story not found'
+          } as ApiResponse)
+        }
+
+        const background = await fastify.prisma.background.findUnique({
+          where: { id : basicStory.backgroundId },
+          include: {
+            writer: {
+              select: {
+                id: true,
+                name: true
+              }
+            }
+          }
+        })
+  
+        if (!background) {
+          return reply.status(404).send({
+            success: false,
+            error: 'Background not found'
+          } as ApiResponse)
+        }
+  
+        const response: Background = {
+          backgroundId: background.id,
+          backgroundName: background.name || '',
+          writerId: background.writerId,
+          writerName: background.writer.name || '',
+          description: background.description,
+          tags: background.tags,
+          introTitle: background.introTitle,
+          introDescription: background.introDescription,
+          unlockChatCount: background.unlockChatCount || undefined,
+          backgroundImg: background.backgroundImg || undefined,
+          createdAt: background.createdAt.toISOString(),
+          updatedAt: background.updatedAt.toISOString()
+        }
+  
+        return reply.send({
+          success: true,
+          data: response
+        } as ApiResponse)
+      } catch (error) {
+        fastify.log.error(error)
+        return reply.status(500).send({
+          success: false,
+          error: 'Internal server error'
+        } as ApiResponse)
+      }
+    })
+
   // POST /api/v1/backgrounds - 배경 생성
   fastify.post<{ Body: CreateBackgroundRequest }>('/api/v1/backgrounds', {
     schema: {
@@ -182,7 +263,8 @@ export default async function backgroundsRoutes(fastify: FastifyInstance) {
           tags: { type: 'array', items: { type: 'string' } },
           introTitle: { type: 'string' },
           introDescription: { type: 'string' },
-          unlockChatCount: { type: 'number' }
+          unlockChatCount: { type: 'number' },
+          imgUrl: {type: 'string'}
         }
       }
     }
@@ -200,7 +282,9 @@ export default async function backgroundsRoutes(fastify: FastifyInstance) {
           tags: body.tags || [],
           introTitle: body.introTitle,
           introDescription: body.introDescription,
-          unlockChatCount: body.unlockChatCount
+          unlockChatCount: body.unlockChatCount,
+          basic: false,
+          backgroundImg: body.imgUrl
         }
       })
 
@@ -271,6 +355,137 @@ export default async function backgroundsRoutes(fastify: FastifyInstance) {
       return reply.status(201).send({
         success: true,
         data: { backgroundId: background.id }
+      } as ApiResponse)
+    } catch (error) {
+      fastify.log.error(error)
+      return reply.status(400).send({
+        success: false,
+        error: 'Invalid request data'
+      } as ApiResponse)
+    }
+  })
+
+  // POST /api/v1/backgrounds/basic? - 베이직 배경 생성
+  fastify.post<{ Querystring: { characterId: string }, Body: CreateBackgroundRequest }>('/api/v1/backgrounds/basic', {
+    schema: {
+      querystring: {
+        type: 'object',
+        properties: {
+          characterId: { type: 'string' }
+        }
+      },
+      body: {
+        type: 'object',
+        required: ['backgroundName'],
+        properties: {
+          backgroundName: { type: 'string' },
+          description: { type: 'string' },
+          prompt: { type: 'string' },
+          tags: { type: 'array', items: { type: 'string' } },
+          introTitle: { type: 'string' },
+          introDescription: { type: 'string' },
+          unlockChatCount: { type: 'number' },
+          imgUrl: {type: 'string'}
+        }
+      }
+    }
+  }, async (request, reply) => {
+    try {
+      const body = request.body
+      const writerId = request.headers['x-user-id'] as string
+
+      const background = await fastify.prisma.background.create({
+        data: {
+          writerId,
+          name: body.backgroundName,
+          description: body.description,
+          prompt: body.prompt,
+          tags: body.tags || [],
+          introTitle: body.introTitle,
+          introDescription: body.introDescription,
+          unlockChatCount: body.unlockChatCount,
+          basic: true,
+          backgroundImg: body.imgUrl
+        }
+      })
+
+      const tags = body.tags ?? [] 
+      await Promise.all(
+        tags.map(async (tagName) => {
+          let tag = await fastify.prisma.tag.findUnique({
+            where: { name: tagName },
+            select: { id: true },
+          })
+      
+          if (!tag) {
+            tag = await fastify.prisma.tag.create({
+              data: { name: tagName }
+            }) 
+          }
+      
+          await fastify.prisma.backgroundTag.create({
+            data: {
+              tagId: tag.id,
+              backgroundId: background.id
+            }
+          })
+          
+          return tag.id
+        })
+      )
+      const character = await fastify.prisma.character.findUnique({
+        where: { id: body.characterId }
+      })
+
+      if (!character) {
+        return reply.status(404).send({
+          success: false,
+          error: 'Character not found'
+        } as ApiResponse)
+      }
+      
+      const storyPrompt = await buildGptStory(character, background)
+      const {name, characterPrompt, opening} = JSON.parse(storyPrompt || '{}')
+            // 작품 이미지 생성
+      let artworkImageUrl = null
+      try {
+        if (background.backgroundImg && character.characterImg) {
+          const backgroundImagePath = `public/backgrounds/${background.backgroundImg}`
+          const characterImagePath = `public/characters/${character.characterImg}`
+          
+          const artworkResult = await generateArtworkWithVision(
+            backgroundImagePath,
+            characterImagePath,
+            `${name} - ${background.name} 배경에서 ${character.name} 캐릭터가 등장하는 판타지 작품`
+          )
+          
+          // 생성된 이미지를 public/story 폴더에 저장
+          if (artworkResult.imageUrl) {
+            const storyId = Date.now().toString(); // 고유한 파일명 생성
+            const savePath = `public/story/${storyId}.jpg`;
+            const relativePath = await downloadAndSaveImage(artworkResult.imageUrl, savePath);
+            artworkImageUrl = relativePath; // 로컬 저장 경로 사용
+          }
+        }
+      } catch (imageError) {
+        fastify.log.warn('이미지 생성 실패, 기본값으로 진행')
+      }
+      const basicStory = await fastify.prisma.story.create({
+        data: {
+          backgroundId: background.id,
+          basic: true,
+          userId: writerId,
+          characterId: body.characterId,
+          name: name,
+          characterPrompt: characterPrompt,
+          opening: opening,
+          img: artworkImageUrl || undefined
+        }
+      })
+
+      return reply.status(201).send({
+        success: true,
+        data: { backgroundId: background.id, storyId: basicStory.id }
       } as ApiResponse)
     } catch (error) {
       fastify.log.error(error)

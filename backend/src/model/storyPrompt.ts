@@ -1,6 +1,4 @@
-import dotenv from "dotenv";
 import { $Enums } from "generated/prisma";
-import path from "path";
 import { callGptApi, toMessageInputs } from "./common";
 
 type CharacterDTO = {
