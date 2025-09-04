@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 import path from "path";
 import OpenAI from "openai";
+import fs from "fs";
 
 dotenv.config({ path: path.resolve(__dirname, "../../../.env") });
 
@@ -96,5 +97,123 @@ export async function callGptApiDirect(
   } catch (error) {
     console.error("GPT API 호출 오류:", error);
     throw new Error(`GPT API Error: ${error}`);
+  }
+}
+
+// 이미지를 base64로 인코딩하는 함수
+export function encodeImageToBase64(imagePath: string): string {
+  try {
+    const imageBuffer = fs.readFileSync(imagePath);
+    return imageBuffer.toString('base64');
+  } catch (error) {
+    console.error(`이미지 인코딩 오류: ${error}`);
+    throw new Error(`이미지를 base64로 변환할 수 없습니다: ${imagePath}`);
+  }
+}
+
+// DALL-E API로 이미지 생성하는 함수
+export async function generateArtworkImage(
+  backgroundImagePath: string,
+  characterImagePath: string,
+  prompt: string = "배경과 캐릭터를 자연스럽게 조합한 아름다운 작품 이미지"
+) {
+  console.log("DALL-E API 호출 시작");
+  const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+  try {
+    // 이미지들을 base64로 인코딩
+    const backgroundBase64 = encodeImageToBase64(backgroundImagePath);
+    const characterBase64 = encodeImageToBase64(characterImagePath);
+
+    const response = await openai.images.generate({
+      model: "dall-e-3",
+      prompt: `${prompt}. 배경 이미지와 캐릭터 이미지를 참고하여 자연스럽게 조합해주세요.`,
+      n: 1,
+      size: "1024x1024",
+      quality: "standard",
+      style: "natural",
+    });
+
+    if (!response.data || response.data.length === 0) {
+      throw new Error("DALL-E API에서 이미지를 생성하지 못했습니다.");
+    }
+
+    return response.data[0].url;
+  } catch (error) {
+    console.error("DALL-E API 호출 오류:", error);
+    throw new Error(`이미지 생성 오류: ${error}`);
+  }
+}
+
+// Vision API를 사용해서 이미지 분석 후 작품 생성하는 함수
+export async function generateArtworkWithVision(
+  backgroundImagePath: string,
+  characterImagePath: string,
+  prompt: string = "배경과 캐릭터를 자연스럽게 조합한 아름다운 작품 이미지"
+) {
+  console.log("Vision API + DALL-E 호출 시작");
+  const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+  try {
+    // 이미지들을 base64로 인코딩
+    const backgroundBase64 = encodeImageToBase64(backgroundImagePath);
+    const characterBase64 = encodeImageToBase64(characterImagePath);
+
+    // Vision API로 이미지 분석
+    const visionResponse = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "system",
+          content: "당신은 이미지 분석 전문가입니다. 배경 이미지와 캐릭터 이미지를 분석하여 작품 이미지 생성을 위한 상세한 프롬프트를 작성해주세요."
+        },
+        {
+          role: "user",
+          content: [
+            {
+              type: "text",
+              text: `배경 이미지와 캐릭터 이미지를 분석하여 "${prompt}"에 맞는 작품 이미지 생성을 위한 상세한 프롬프트를 작성해주세요. 스타일, 색감, 구도 등을 구체적으로 설명해주세요.`
+            },
+            {
+              type: "image_url",
+              image_url: {
+                url: `data:image/jpeg;base64,${backgroundBase64}`
+              }
+            },
+            {
+              type: "image_url",
+              image_url: {
+                url: `data:image/jpeg;base64,${characterBase64}`
+              }
+            }
+          ]
+        }
+      ],
+      max_tokens: 500
+    });
+
+    const enhancedPrompt = visionResponse.choices[0].message.content || prompt;
+
+    // DALL-E로 이미지 생성
+    const imageResponse = await openai.images.generate({
+      model: "dall-e-3",
+      prompt: enhancedPrompt,
+      n: 1,
+      size: "1024x1024",
+      quality: "standard",
+      style: "natural",
+    });
+
+    if (!imageResponse.data || imageResponse.data.length === 0) {
+      throw new Error("DALL-E API에서 이미지를 생성하지 못했습니다.");
+    }
+
+    return {
+      imageUrl: imageResponse.data[0].url,
+      enhancedPrompt: enhancedPrompt
+    };
+  } catch (error) {
+    console.error("Vision API + DALL-E 호출 오류:", error);
+    throw new Error(`이미지 생성 오류: ${error}`);
   }
 }
