@@ -112,6 +112,7 @@ export default function CharacterDescriptionTab({
               return (
                 <CardMediaTop
                   key={flowItem.id}
+                  id={flowItem.id}
                   flow={flowItem}
                   imageUrl={
                     flowItem.imgUrl ||

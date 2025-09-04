@@ -31,7 +31,7 @@ export default function ChatList() {
                   chat.characterImg ||
                   "src/assets/images/characters/character_1.png"
                 }
-                name={chat.backgroundName}
+                name={chat.storyName}
                 description={chat.lastMessage || "채팅 기록이 없습니다"}
                 onClick={() => handleChatClick(chat.chatId)}
               />

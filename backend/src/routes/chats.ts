@@ -11,7 +11,7 @@ import {
   MessageListQuery,
   MessageListResponse,
 } from "../types/api";
-import { buildGptxChat } from "../model/chatPrompt";
+import { buildGptChat } from "../model/chatPrompt";
 
 const prisma = new PrismaClient();
 
@@ -61,7 +61,6 @@ async function chatsRoutes(fastify: FastifyInstance) {
           data: {
             backgroundId: story.backgroundId,
             characterId: story.characterId,
-            personaId: tempPersona.id,
             storyId: story.id,
             ownerId: userId,
             chatCount: 0n,
@@ -91,7 +90,6 @@ async function chatsRoutes(fastify: FastifyInstance) {
             characterId: chat.characterId,
             storyId: chat.storyId,
             ownerId: chat.ownerId,
-            personaId: chat.personaId,
             chatCount: Number(chat.chatCount),
             createdAt: chat.createdAt.toISOString(),
             updatedAt: chat.updatedAt.toISOString(),
