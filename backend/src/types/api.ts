@@ -72,6 +72,7 @@ export interface CreateBackgroundRequest {
   introDescription: string;
   unlockChatCount: number;
   characterId: string;
+  imgUrl: string;
 }
 
 export interface UpdateBackgroundRequest {
