@@ -417,7 +417,7 @@ export default async function backgroundsRoutes(fastify: FastifyInstance) {
       try {
         const body = request.body;
         const writerId = request.headers["x-user-id"] as string;
-
+        const {characterId} = request.query
         const background = await fastify.prisma.background.create({
           data: {
             writerId,
@@ -458,7 +458,7 @@ export default async function backgroundsRoutes(fastify: FastifyInstance) {
           })
         );
         const character = await fastify.prisma.character.findUnique({
-          where: { id: body.characterId },
+          where: { id: characterId },
         });
 
         if (!character) {
@@ -506,7 +506,7 @@ export default async function backgroundsRoutes(fastify: FastifyInstance) {
             backgroundId: background.id,
             basic: true,
             userId: writerId,
-            characterId: body.characterId,
+            characterId: characterId,
             name: background.name,
             characterPrompt: characterPrompt,
             opening: opening,
