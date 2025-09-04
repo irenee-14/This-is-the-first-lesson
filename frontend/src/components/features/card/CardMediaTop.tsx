@@ -5,7 +5,6 @@ import type { Flow } from "@/types/story";
 import { getImageUrl } from "@/utils/imageUtils";
 
 export interface CardMediaTopProps {
-  id: string;
   flow?: Flow; // string에서 Flow로 변경
   isOpen?: boolean;
   imageUrl?: string;

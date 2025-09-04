@@ -112,7 +112,6 @@ export default function CharacterDescriptionTab({
               return (
                 <CardMediaTop
                   key={`${flowItem.id}-${index}`}
-                  id={flowItem.id}
                   flow={flowItem}
                   imageUrl={flowItem.imgUrl || "/background/bg_1.png"}
                   name={flowItem.title || "Unknown Background"}

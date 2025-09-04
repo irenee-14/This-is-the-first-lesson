@@ -62,7 +62,6 @@ export default function Characters() {
 
   const characters = charactersData?.data?.characters || [];
 
-  console.log(charactersData);
   return (
     <>
       <Header />
@@ -85,7 +84,6 @@ export default function Characters() {
 
                 return (
                   <CardMediaTop
-                    id={transformedCharacter.id}
                     key={transformedCharacter.id}
                     imageUrl={transformedCharacter.imageUrl}
                     name={transformedCharacter.name}
@@ -117,7 +115,6 @@ export default function Characters() {
                 const transformedCharacter = transformCharacterData(character);
                 return (
                   <CardMediaTop
-                    id={transformedCharacter.id}
                     key={transformedCharacter.id}
                     imageUrl={transformedCharacter.imageUrl}
                     name={transformedCharacter.name}
