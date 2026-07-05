@@ -28,9 +28,7 @@ export default function StoryDetail() {
     }
   };
 
-  const handleInputSubmit = (value: string) => {
-    // console.log("Message submitted:", value);
-  };
+  const handleInputSubmit = (_value: string) => {};
 
   if (loading) {
     return (

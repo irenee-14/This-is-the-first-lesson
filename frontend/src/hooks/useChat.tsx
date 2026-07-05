@@ -11,7 +11,7 @@ import { useToastContext } from "@/components/ui/ToastProvider";
 
 export function useChat(chatId: string) {
   const { get, post, loading: apiLoading } = useApi();
-  const { showBackgroundUnlockToast } = useToastContext();
+  const { showToast, showBackgroundUnlockToast } = useToastContext();
 
   const [chatDetail, setChatDetail] = useState<ChatDetail | null>(null);
 
@@ -93,9 +93,11 @@ export function useChat(chatId: string) {
 
       setIsSending(true);
 
+      // 페이지네이션된 목록에서도 기존 seq와 충돌하지 않도록 마지막 seq 기준으로 부여
+      const lastSeq = messages.length > 0 ? messages[messages.length - 1].seq : 0;
       const tempUserMessage: Message = {
         chatId,
-        seq: messages.length,
+        seq: lastSeq + 1,
         unlockedBackground: chatDetail?.background.name || "",
         backgroundId: chatDetail?.background.backgroundId || "",
         characterId: chatDetail?.character.characterId || "",
@@ -130,14 +132,17 @@ export function useChat(chatId: string) {
         }
       } catch (error) {
         console.error("메시지 전송 실패:", error);
-        // 실패 시 임시 유저 메시지 제거
+        // 실패 시 임시 유저 메시지 제거 후 사용자에게 알림
         setMessages((prev) => prev.slice(0, -1));
+        showToast("메시지 전송에 실패했어요. 다시 시도해 주세요.", {
+          icon: "⚠️",
+        });
       } finally {
         setIsAiTyping(false);
         setIsSending(false);
       }
     },
-    [chatId, post, isSending, messages.length, chatDetail]
+    [chatId, post, isSending, messages, chatDetail, showToast]
   );
 
   return {

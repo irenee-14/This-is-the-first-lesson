@@ -26,7 +26,6 @@ export function useTopSentinelObserver({
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries.some((e) => e.isIntersecting)) {
-          console.debug("🔼 Sentinel intersected, load more triggered");
           handleLoadMore();
         }
       },

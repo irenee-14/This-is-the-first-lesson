@@ -76,20 +76,6 @@ const Chat: React.FC = () => {
     sendMessage(value);
   };
 
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    const onScroll = () => {
-      if (container.scrollTop < 50) {
-        handleLoadMore();
-      }
-    };
-
-    container.addEventListener("scroll", onScroll);
-    return () => container.removeEventListener("scroll", onScroll);
-  }, [handleLoadMore]);
-
   if (!chatId) return <div>잘못된 접근입니다.</div>;
 
   return (

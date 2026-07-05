@@ -146,10 +146,6 @@ export async function generateArtworkImage(
   const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
   try {
-    // 이미지들을 base64로 인코딩
-    const backgroundBase64 = encodeImageToBase64(backgroundImagePath);
-    const characterBase64 = encodeImageToBase64(characterImagePath);
-
     const response = await openai.images.generate({
       model: "dall-e-3",
       prompt: `${prompt}. 이미지로 준 똑같은 배경과 똑같은 캐릭터를 자연스럽게 조합한 아름다운 작품 이미지를 만들어줘. 모르는 사람이 봐도 같은 캐릭터임을 알 수 있을 정도로 캐릭터 외모가 똑같아야 함.`,

@@ -8,10 +8,6 @@ import {
   ApiResponse,
 } from "../types/api";
 import { buildGptStory } from "src/model/storyPrompt";
-import {
-  downloadAndSaveImage,
-  generateArtworkWithVision,
-} from "src/model/common";
 import path from "node:path";
 
 declare module "fastify" {

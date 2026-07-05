@@ -8,7 +8,6 @@ import {
   ChatListQuery,
   ChatListResponse,
   ChatDetail,
-  MessageListQuery,
   MessageListResponse,
 } from "../types/api";
 import { buildGptChat } from "../model/chatPrompt";
@@ -47,7 +46,7 @@ async function chatsRoutes(fastify: FastifyInstance) {
         }
 
         // 페르소나 생성
-        const tempPersona = await prisma.persona.create({
+        await prisma.persona.create({
           data: {
             userId,
             name: persona.name,
@@ -486,54 +485,56 @@ async function chatsRoutes(fastify: FastifyInstance) {
         const unlockCnt = chat.background.unlockChatCount;
         let unlockedBackground = null;
 
-        // 채팅 개수가 일정 개수를 넘으면 Toast 알림
-        // if (updated.chatCount >= unlockCnt) {
-        if (updated.chatCount >= 2) {
+        // 채팅 개수가 해금 조건을 충족하면 다음 배경 해금
+        // (플로우/다음 단계가 없거나 이미 해금된 경우는 조용히 건너뜀 — 메시지 전송 자체는 성공 처리)
+        if (updated.chatCount >= unlockCnt) {
           const latestFlow = await fastify.prisma.backgroundFlow.findFirst({
             where: { writerId: chat.background.writerId },
             orderBy: { createdAt: "desc" },
           });
-          if (!latestFlow) {
-            return reply.status(400).send({
-              success: false,
-              error: "해당 작가의 배경 플로우가 존재하지 않습니다.",
-            } as ApiResponse);
+          if (latestFlow) {
+            const thisStep = await fastify.prisma.backgroundStep.findFirst({
+              where: {
+                flowId: latestFlow.id,
+                backgroundId: chat.backgroundId,
+              },
+            });
+            const nextStep = await fastify.prisma.backgroundStep.findFirst({
+              where: {
+                flowId: latestFlow.id,
+                ...(thisStep
+                  ? { orderKey: { gt: thisStep.orderKey } } // 현재 단계가 있으면 그 다음
+                  : {}),
+              },
+              include: {
+                background: true,
+              },
+              orderBy: {
+                orderKey: "asc", // 가장 작은 orderKey부터 정렬
+              },
+            });
+            if (nextStep) {
+              const alreadyOpened =
+                await fastify.prisma.openBackground.findFirst({
+                  where: {
+                    userId,
+                    flowId: latestFlow.id,
+                    backgroundId: nextStep.backgroundId,
+                  },
+                });
+              if (!alreadyOpened) {
+                await fastify.prisma.openBackground.create({
+                  data: {
+                    userId,
+                    backgroundId: nextStep.backgroundId,
+                    flowId: latestFlow.id,
+                    writerId: chat.background.writerId,
+                  },
+                });
+                unlockedBackground = nextStep.background.name;
+              }
+            }
           }
-          const thisStep = await fastify.prisma.backgroundStep.findFirst({
-            where: {
-              flowId: latestFlow.id,
-              backgroundId: chat.backgroundId,
-            },
-          });
-          const nextStep = await fastify.prisma.backgroundStep.findFirst({
-            where: {
-              flowId: latestFlow.id,
-              ...(thisStep
-                ? { orderKey: { gt: thisStep.orderKey } } // 현재 단계가 있으면 그 다음
-                : {}),
-            },
-            include: {
-              background: true,
-            },
-            orderBy: {
-              orderKey: "asc", // 가장 작은 orderKey부터 정렬
-            },
-          });
-          if (!nextStep) {
-            return reply.status(400).send({
-              success: false,
-              error: "해당 작가의 배경 플로우가 존재하지 않습니다.",
-            } as ApiResponse);
-          }
-          await fastify.prisma.openBackground.create({
-            data: {
-              userId,
-              backgroundId: nextStep.backgroundId,
-              flowId: latestFlow.id,
-              writerId: chat.background.writerId,
-            },
-          });
-          unlockedBackground = nextStep.background.name;
         }
 
         return reply.send({
